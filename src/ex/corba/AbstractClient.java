@@ -63,15 +63,11 @@ public abstract class AbstractClient {
 
 		orb.shutdown(true);
 		orb.destroy();
-
 	}
 
 	public Properties getConnectionParams() throws Exception {
 		Properties props = new Properties();
 		props.load(new FileInputStream(new File("corba.properties")));
-
-		// corbaConnect = "corbaloc:iiop:" + props.getProperty("host") + ":"
-		// + props.getProperty("port") + "/NameService";
 
 		corbaConnect = "corbaloc:iiop:" + props.getProperty("host") + ":"
 				+ props.getProperty("port") + "/"

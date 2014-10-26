@@ -25,26 +25,11 @@ public class AlcatelClient extends AbstractClient {
 				.resolve_initial_references("NameService"));
 		System.out.println("NameService found.");
 
-		// Resolve the reference to EMSSessionFactory
-		// NameComponent name[] = rootContext
-		// .to_name("TMF_MTNM.Class/ALU.Vendor/" + emsName
-		// + ".EmsInstance/2\\.0.Version");
-
-		// NamingContextExt subContext =
-		// NamingContextExtHelper.narrow(rootContext
-		// .resolve(name));
-
 		NameComponent[] name = rootContext
 				.to_name("alu/nbi/EmsSessionFactory_I");
 
 		org.omg.CORBA.Object ems = rootContext.resolve(name);
 		System.out.println("ems:" + ems);
-
-		// Obtaining reference to SessionFactory
-		// org.omg.CORBA.Object ems = subContext.resolve_str(emsName
-		// + ".EmsSessionFactory_I");
-
-		// System.out.println("ems: " + ems);
 
 		EmsSessionFactory_I sessionFactory = EmsSessionFactory_IHelper
 				.narrow(ems);
