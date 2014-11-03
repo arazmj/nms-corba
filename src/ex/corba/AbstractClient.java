@@ -81,14 +81,14 @@ public abstract class AbstractClient {
 		realEMSName = emsName;
 		emsName = emsName.replaceAll("/", "\\\\/");
 		emsName = emsName.replaceAll("\\.", "\\\\\\.");
-		
+
 		props.setProperty("jacorb.net.socket_factory",
 				"org.jacorb.orb.factory.DefaultSocketFactory");
 		props.setProperty("jacorb.net.server_socket_factory",
 				"org.jacorb.orb.factory.DefaultServerSocketFactory");
 
-		props.setProperty("jacorb.log.default.verbosity", "4");
-		props.setProperty("jacorb.logfile", "log/jacorb.log");
+		// props.setProperty("jacorb.log.default.verbosity", "4");
+		// props.setProperty("jacorb.logfile", "log/jacorb.log");
 
 		props.setProperty(
 				"org.omg.PortableInterceptor.ORBInitializerClass.bidir_init",
@@ -104,6 +104,14 @@ public abstract class AbstractClient {
 		props.setProperty(
 				"jacorb.connection.client.timeout_ignores_pending_messages",
 				"on");
+
+		// Proxy address in IOR
+		String iorProxy = props.getProperty("jacorb.ior_proxy_address");
+		System.out.println("iorProxy: " + iorProxy);
+
+		if (iorProxy != null && !iorProxy.trim().equals("")) {
+			props.setProperty("jacorb.ior_proxy_address", iorProxy);
+		}
 
 		return props;
 	}
