@@ -1,7 +1,9 @@
 package ex.corba.alu;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.util.Properties;
 
 import nmsSession.NmsSession_I;
@@ -33,10 +35,9 @@ public abstract class AbstractClient {
 	protected String realEMSName;
 	protected ORB orb;
 	protected POA rootPOA = null;
-	protected NmsSession_I nmsSession = null;
-	protected EmsSession_I emsSession = null;
+	//protected EmsSession_I emsSession = null;
 
-	public void openEmsSession(String args[]) throws Exception {
+	public EmsSession_I openEmsSession(String args[]) throws Exception {
 		Properties props = getConnectionParams();
 
 		// create and initialize the ORB
@@ -59,13 +60,49 @@ public abstract class AbstractClient {
 		System.out.println("\nEmsSessionFactory: " + sessionFactory);
 
 		// Create NMS Session
-		nmsSession = createNmsSession();
+		NmsSession_I nmsSession = createNmsSession();
 
 		// Create EMS Session
 		EmsSession_IHolder sessionHolder = new EmsSession_IHolder();
 		sessionFactory.getEmsSession(login, pass, nmsSession, sessionHolder);
-		emsSession = sessionHolder.value;
+		EmsSession_I emsSession = sessionHolder.value;
 		System.out.println("emsSession: " + emsSession);
+		
+		return emsSession;
+	}
+
+	public EmsSession_I openEmsSessionUsingIOR(String args[]) throws Exception {
+		Properties props = getConnectionParams();
+
+		// create and initialize the ORB
+		orb = ORB.init(args, props);
+		System.out.println("ORB.init called.");
+
+		// read stringified object to file (IOR file)
+		FileReader fr = new FileReader("alu-lab.ior");
+		BufferedReader br = new BufferedReader(fr);
+		String ior = br.readLine();
+		br.close();
+
+		// Obtaining reference to SessionFactory
+		org.omg.CORBA.Object ems = orb.string_to_object(ior);
+
+		System.out.println("ems: " + ems);
+
+		EmsSessionFactory_I sessionFactory = EmsSessionFactory_IHelper
+				.narrow(ems);
+		System.out.println("\nEmsSessionFactory: " + sessionFactory);
+
+		// Create NMS Session
+		NmsSession_I nmsSession = createNmsSession();
+
+		// Create EMS Session
+		EmsSession_IHolder sessionHolder = new EmsSession_IHolder();
+		sessionFactory.getEmsSession(login, pass, nmsSession, sessionHolder);
+		EmsSession_I emsSession = sessionHolder.value;
+		System.out.println("emsSession: " + emsSession);
+		
+		return emsSession;
 	}
 
 	public NmsSession_I createNmsSession() throws Exception {
@@ -86,12 +123,12 @@ public abstract class AbstractClient {
 		NmsSessionImpl nms = new NmsSessionImpl();
 		NmsSession_IPOATie tieobj = new NmsSession_IPOATie(nms, rootPOA);
 		rootPOA.activate_object(tieobj);
-		nmsSession = NmsSession_IHelper.narrow(tieobj._this());
+		NmsSession_I nmsSession = NmsSession_IHelper.narrow(tieobj._this());
 
 		return nmsSession;
 	}
 
-	public void closeEmsSession() {
+	public void closeEmsSession(EmsSession_I emsSession) {
 		if (emsSession != null) {
 			emsSession.endSession();
 		}

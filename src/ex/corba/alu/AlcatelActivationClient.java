@@ -1,9 +1,5 @@
 package ex.corba.alu;
 
-import globaldefs.ConnectionDirection_T;
-import globaldefs.NameAndStringValue_T;
-import globaldefs.ProcessingFailureException;
-
 import java.util.Enumeration;
 import java.util.Hashtable;
 
@@ -21,17 +17,23 @@ import subnetworkConnection.SNCType_T;
 import subnetworkConnection.StaticProtectionLevel_T;
 import subnetworkConnection.TPDataList_THolder;
 import subnetworkConnection.TPData_T;
+import emsSession.EmsSession_I;
+import globaldefs.ConnectionDirection_T;
+import globaldefs.NameAndStringValue_T;
+import globaldefs.ProcessingFailureException;
 
 public class AlcatelActivationClient extends AbstractClient {
 
 	public static final Logger LOG = Logger
 			.getLogger(AlcatelActivationClient.class);
 
+	private static EmsSession_I emsSession = null;
+
 	public static void main(String[] args) {
 		AlcatelActivationClient main = new AlcatelActivationClient();
 
 		try {
-			main.openEmsSession(args);
+			emsSession = main.openEmsSession(args);
 
 			main.createPDHServiceE1();
 			// main.createPDHServiceE3();
@@ -52,7 +54,7 @@ public class AlcatelActivationClient extends AbstractClient {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		} finally {
-			main.closeEmsSession();
+			main.closeEmsSession(emsSession);
 		}
 	}
 

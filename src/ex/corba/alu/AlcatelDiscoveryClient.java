@@ -1,14 +1,17 @@
 package ex.corba.alu;
 
+import emsSession.EmsSession_I;
+
 public class AlcatelDiscoveryClient extends AbstractClient {
 
 	public static void main(String args[]) {
 		AlcatelDiscoveryClient main = new AlcatelDiscoveryClient();
-
+		EmsSession_I emsSession = null;
+		
 		try {
-			main.openEmsSession(args);
+			emsSession = main.openEmsSession(args);
 
-			CorbaCommands cmd = new CorbaCommands(main.emsSession,
+			CorbaCommands cmd = new CorbaCommands(emsSession,
 					main.realEMSName);
 
 			cmd.getAllManagedElementNames();
@@ -16,7 +19,7 @@ public class AlcatelDiscoveryClient extends AbstractClient {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		} finally {
-			main.closeEmsSession();
+			main.closeEmsSession(emsSession);
 		}
 	}
 }
