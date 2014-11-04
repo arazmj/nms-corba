@@ -7,7 +7,9 @@
 	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-api.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-jdk14.jar"/>
-	<classpathentry kind="lib" path="lib/huawei-idl.jar"/>
-	<classpathentry kind="lib" path="lib/rad-idl.jar"/>
+	<classpathentry kind="lib" path="lib/idl-alu.jar"/>
+	<classpathentry kind="lib" path="lib/idl-huawei.jar"/>
+	<classpathentry kind="lib" path="lib/idl-rad.jar"/>
+	<classpathentry kind="lib" path="lib/log4j.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

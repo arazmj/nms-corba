@@ -1,5 +1,7 @@
 package ex.corba;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.Properties;
 
 import org.omg.CORBA.ORB;
@@ -55,11 +57,44 @@ public class CienaClient extends AbstractClient {
 		System.out.println("emsSession: " + emsSession);
 	}
 
+	public void openEmsSessionUsingIOR(String args[]) throws Exception {
+		Properties props = getConnectionParams();
+
+		// create and initialize the ORB
+		orb = ORB.init(args, props);
+		System.out.println("ORB.init called.");
+
+		System.out.println("Connecting using IOR file: ciena-lab.ior");
+		// read stringified object to file (IOR file)
+		FileReader fr = new FileReader("ciena-lab.ior");
+		BufferedReader br = new BufferedReader(fr);
+		String ior = br.readLine();
+		br.close();
+
+		// Obtaining reference to SessionFactory
+		org.omg.CORBA.Object ems = orb.string_to_object(ior);
+
+		System.out.println("ems: " + ems);
+
+		EmsSessionFactory_I sessionFactory = EmsSessionFactory_IHelper
+				.narrow(ems);
+		System.out.println("\nEmsSessionFactory: " + sessionFactory);
+
+		// Create NMS Session
+		nmsSession = createNmsSession();
+
+		// Create EMS Session
+		EmsSession_IHolder sessionHolder = new EmsSession_IHolder();
+		sessionFactory.getEmsSession(login, pass, nmsSession, sessionHolder);
+		emsSession = sessionHolder.value;
+		System.out.println("emsSession: " + emsSession);
+	}
+
 	public static void main(String args[]) {
 		CienaClient main = new CienaClient();
 
 		try {
-			main.openEmsSession(args);
+			main.openEmsSessionUsingIOR(args);
 
 			CorbaCommands cmd = new CorbaCommands(main.emsSession,
 					main.realEMSName);
