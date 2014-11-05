@@ -1,1 +1,1 @@
-java -Xmx512m -cp ".:./bin:lib/jacorb.jar:lib/slf4j-api.jar:lib/slf4j-jdk14.jar:lib/commons-logging.jar:lib/huawei-idl.jar" ex.corba.CienaClient
+java -Xmx512m -cp "./bin:lib/jacorb.jar::lib/idl-alu.jar:lib/idl-huawei.jar:lib/commons-logging.jar:lib/log4j.jar:lib/slf4j-api.jar:lib/slf4j-jdk14.jar" ex.corba.CienaClient

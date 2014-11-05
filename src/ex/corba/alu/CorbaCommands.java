@@ -3,6 +3,9 @@ package ex.corba.alu;
 import java.util.ArrayList;
 import java.util.List;
 
+import managedElement.ManagedElementIterator_IHolder;
+import managedElement.ManagedElementList_THolder;
+import managedElement.ManagedElement_T;
 import managedElementManager.ManagedElementMgr_I;
 import managedElementManager.ManagedElementMgr_IHelper;
 import multiLayerSubnetwork.EMSFreedomLevel_T;
@@ -12,6 +15,7 @@ import multiLayerSubnetwork.MultiLayerSubnetworkMgr_IHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.omg.CORBA.StringHolder;
+import org.xml.sax.ContentHandler;
 
 import subnetworkConnection.GradesOfImpact_T;
 import subnetworkConnection.SNCCreateData_T;
@@ -28,6 +32,11 @@ import equipment.EquipmentOrHolderIterator_IHolder;
 import equipment.EquipmentOrHolderList_THolder;
 import equipment.EquipmentOrHolder_T;
 import equipment.Equipment_T;
+import ex.corba.alu.transform.jaxb.Corba2Object;
+import ex.corba.alu.transform.sax.Corba2XMLHandler;
+import ex.corba.xml.JaxbOutputHandler;
+import ex.corba.xml.ManagedElement;
+import ex.corba.xml.NmsObjects;
 import globaldefs.NameAndStringValue_T;
 import globaldefs.NamingAttributesIterator_IHolder;
 import globaldefs.NamingAttributesList_THolder;
@@ -36,25 +45,33 @@ import globaldefs.ProcessingFailureException;
 public class CorbaCommands {
 	public static final String ME_MANAGER_NAME = "ManagedElement";
 	public static final String EI_MANAGER_NAME = "EquipmentInventory";
-	private static final String MLS_MANAGER_NAME = "MultiLayerSubnetwork";
+	public static final String MLS_MANAGER_NAME = "MultiLayerSubnetwork";
 
-	private static final Log LOG = LogFactory.getLog(CorbaCommands.class);
+	public static final int HOW_MANY = 100;
 
-	private EmsSession_I emsSession = null;
+	public static final Log LOG = LogFactory.getLog(CorbaCommands.class);
 
-	private String emsName = null;
+	private EmsSession_I emsSession;
+	private String emsName;
+	private Corba2XMLHandler handler;
 
-	private Common_IHolder managerInterface = null;
-	private ManagedElementMgr_I meManager = null;
+	private Common_IHolder managerInterface;
+	private ManagedElementMgr_I meManager;
 	private EquipmentInventoryMgr_I eiManager;
 	private MultiLayerSubnetworkMgr_I mlsnManager;
+
+	private List<String> neNames;
 
 	public CorbaCommands(EmsSession_I emsSession, String emsName) {
 		this.emsSession = emsSession;
 		this.emsName = emsName;
+	}
 
-		System.out.println("CorbaCommands:emsSession: " + emsSession);
-		System.out.println("CorbaCommands:emsName: " + emsName);
+	public CorbaCommands(EmsSession_I emsSession, String emsName,
+			ContentHandler contentHandler) {
+		this.emsSession = emsSession;
+		this.emsName = emsName;
+		this.handler = new Corba2XMLHandler(contentHandler);
 	}
 
 	public boolean setManagerByName(final String managerName)
@@ -79,7 +96,7 @@ public class CorbaCommands {
 	}
 
 	public List<String> getAllManagedElementNames() throws Exception {
-		System.out.println("\ngetAllManagedElementNames...");
+		System.out.println("getAllManagedElementNames...");
 
 		if (!setManagerByName(ME_MANAGER_NAME)) {
 			return null;
@@ -88,18 +105,16 @@ public class CorbaCommands {
 		NamingAttributesList_THolder meNameList = new NamingAttributesList_THolder();
 		NamingAttributesIterator_IHolder meNameItr = new NamingAttributesIterator_IHolder();
 
-		int howMany = 100;
+		this.meManager.getAllManagedElementNames(HOW_MANY, meNameList,
+				meNameItr);
 
-		this.meManager
-				.getAllManagedElementNames(howMany, meNameList, meNameItr);
-
-		List<String> neName = new ArrayList<String>();
+		neNames = new ArrayList<String>();
 
 		for (int i = 0; i < meNameList.value.length; i++)
 			for (int j = 0; j < meNameList.value[i].length; j++)
 				if (meNameList.value[i][j].name.equals("ManagedElement")) {
-					neName.add(meNameList.value[i][j].value);
-					System.out.println("\nNE: " + meNameList.value[i][j].value);
+					neNames.add(meNameList.value[i][j].value);
+					System.out.println("NE: " + meNameList.value[i][j].value);
 				}
 
 		boolean exitwhile = false;
@@ -108,26 +123,91 @@ public class CorbaCommands {
 			try {
 				boolean hasMoreData = true;
 				while (hasMoreData) {
-					hasMoreData = meNameItr.value.next_n(howMany, meNameList);
+					hasMoreData = meNameItr.value.next_n(HOW_MANY, meNameList);
 					for (int i = 0; i < meNameList.value.length; i++)
 						for (int j = 0; j < meNameList.value[i].length; j++)
 							if (meNameList.value[i][j].name
 									.equals("ManagedElement"))
-								neName.add(meNameList.value[i][j].value);
+								neNames.add(meNameList.value[i][j].value);
 				}
+
 				exitwhile = true;
 			} finally {
 				if (!exitwhile)
 					meNameItr.value.destroy();
 			}
 
-		return neName;
+		return neNames;
+	}
+
+	public void getAllManagedElements() throws Exception {
+		LOG.info("getAllManagedElements() start.");
+
+		if (!setManagerByName(ME_MANAGER_NAME)) {
+			return;
+		}
+
+		ManagedElementList_THolder meList = new ManagedElementList_THolder();
+		ManagedElementIterator_IHolder meItr = new ManagedElementIterator_IHolder();
+
+		this.meManager.getAllManagedElements(HOW_MANY, meList, meItr);
+		neNames = new ArrayList<String>();
+
+		ManagedElement_T[] mes = meList.value;
+		if (LOG.isDebugEnabled())
+			LOG.debug("getAllManagedElements: got " + mes.length + " MEs ");
+
+		// Corba2XMLHelper helper = new Corba2XMLHelper(handler);
+		List<ManagedElement> managedElements = new ArrayList<ManagedElement>();
+
+		for (ManagedElement_T me : mes) {
+			// handler.printStructure(helper.getManagedElementParams(me));
+			managedElements.add(Corba2Object.getManagedElement(me));
+			neNames.add(handler.getValueByName(me.name, "ManagedElement"));
+		}
+
+		boolean exitWhile = false;
+
+		if (meItr.value != null)
+			try {
+				boolean hasMoreData = true;
+				while (hasMoreData) {
+					hasMoreData = meItr.value.next_n(HOW_MANY, meList);
+					mes = meList.value;
+					if (LOG.isDebugEnabled())
+						LOG.debug("getAllManagedElements: got " + mes.length
+								+ " MEs ");
+
+					for (ManagedElement_T me : mes) {
+						// handler.printStructure(helper.getManagedElementParams(me));
+						managedElements.add(Corba2Object.getManagedElement(me));
+						neNames.add(handler.getValueByName(me.name,
+								"ManagedElement"));
+					}
+				}
+
+				exitWhile = true;
+			} finally {
+				if (!exitWhile)
+					meItr.value.destroy();
+			}
+
+		// Specific to JAXB XML output: Start
+		JaxbOutputHandler out = new JaxbOutputHandler("managedelement.xml");
+		NmsObjects nmsObjects = new NmsObjects();
+		nmsObjects.setManagedElements(managedElements);
+		out.print(nmsObjects);
+		// Specific to JAXB XML output: End
+
+		LOG.info("getAllManagedElements() complete.");
 	}
 
 	public void getAllEquipment() throws Exception {
 		System.out.println("getAllEquipment...");
 
-		List<String> neNames = getAllManagedElementNames();
+		if (neNames == null) {
+			neNames = getAllManagedElementNames();
+		}
 
 		if (!setManagerByName(EI_MANAGER_NAME))
 			return;
@@ -143,13 +223,12 @@ public class CorbaCommands {
 		EquipmentOrHolderList_THolder equipOrHolderList = new EquipmentOrHolderList_THolder();
 		EquipmentOrHolderIterator_IHolder equipOrHolderItr = new EquipmentOrHolderIterator_IHolder();
 
-		int howMany = 100;
 		int meCounter = 0;
 		boolean exitWhile = false;
 
 		for (String neName : neNames) {
 			ne[1].value = neName;
-			eiManager.getAllEquipment(ne, howMany, equipOrHolderList,
+			eiManager.getAllEquipment(ne, HOW_MANY, equipOrHolderList,
 					equipOrHolderItr);
 
 			System.out.println("getAllEquipment: got "
@@ -166,7 +245,7 @@ public class CorbaCommands {
 				try {
 					boolean hasMoreData = true;
 					while (hasMoreData) {
-						hasMoreData = equipOrHolderItr.value.next_n(howMany,
+						hasMoreData = equipOrHolderItr.value.next_n(HOW_MANY,
 								equipOrHolderList);
 
 						for (int i = 0; i < equipOrHolderList.value.length; i++) {
@@ -245,9 +324,7 @@ public class CorbaCommands {
 				emsFreedomLevel, tpsToModify, theSNC, errorReason);
 
 		if (errorReason != null) {
-			if (LOG.isInfoEnabled()) {
-				LOG.info("errorReason:" + errorReason.value);
-			}
+			LOG.error("errorReason:" + errorReason.value);
 		}
 
 		if (LOG.isInfoEnabled()) {
@@ -274,6 +351,10 @@ public class CorbaCommands {
 
 		this.mlsnManager.deactivateAndDeleteSNC(sncName, tolerableImpact,
 				emsFreedomLevel, tpsToModify, theSNC, errorReason);
+
+		if (errorReason != null) {
+			LOG.error("errorReason:" + errorReason.value);
+		}
 
 		if (LOG.isInfoEnabled()) {
 			LOG.info(" deactivateAndDeleteSNC() complete.");

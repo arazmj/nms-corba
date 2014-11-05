@@ -22,12 +22,12 @@ import globaldefs.ConnectionDirection_T;
 import globaldefs.NameAndStringValue_T;
 import globaldefs.ProcessingFailureException;
 
-public class AlcatelActivationClient extends AbstractClient {
+public class AlcatelActivationClient extends AlcatelConnection {
 
 	public static final Logger LOG = Logger
 			.getLogger(AlcatelActivationClient.class);
 
-	private static EmsSession_I emsSession = null;
+	protected static EmsSession_I emsSession;
 
 	public static void main(String[] args) {
 		AlcatelActivationClient main = new AlcatelActivationClient();
@@ -128,7 +128,7 @@ public class AlcatelActivationClient extends AbstractClient {
 		TPDataList_THolder tpsToModify = new TPDataList_THolder();
 		tpsToModify.value = new TPData_T[0];
 
-		CorbaCommands cmd = new CorbaCommands(this.emsSession, this.realEMSName);
+		CorbaCommands cmd = new CorbaCommands(emsSession, this.realEMSName);
 		cmd.createAndActivateSNC(createData, tolerableImpact, emsFreedomLevel,
 				tpsToModify);
 	}
@@ -204,7 +204,7 @@ public class AlcatelActivationClient extends AbstractClient {
 		TPDataList_THolder tpsToModify = new TPDataList_THolder();
 		tpsToModify.value = new TPData_T[0];
 
-		CorbaCommands cmd = new CorbaCommands(this.emsSession, this.realEMSName);
+		CorbaCommands cmd = new CorbaCommands(emsSession, this.realEMSName);
 		cmd.createAndActivateSNC(createData, tolerableImpact, emsFreedomLevel,
 				tpsToModify);
 	}
@@ -285,7 +285,7 @@ public class AlcatelActivationClient extends AbstractClient {
 		TPDataList_THolder tpsToModify = new TPDataList_THolder();
 		tpsToModify.value = new TPData_T[0];
 
-		CorbaCommands cmd = new CorbaCommands(this.emsSession, this.realEMSName);
+		CorbaCommands cmd = new CorbaCommands(emsSession, this.realEMSName);
 		cmd.createAndActivateSNC(createData, tolerableImpact, emsFreedomLevel,
 				tpsToModify);
 	}
@@ -369,7 +369,7 @@ public class AlcatelActivationClient extends AbstractClient {
 		TPDataList_THolder tpsToModify = new TPDataList_THolder();
 		tpsToModify.value = new TPData_T[0];
 
-		CorbaCommands cmd = new CorbaCommands(this.emsSession, this.realEMSName);
+		CorbaCommands cmd = new CorbaCommands(emsSession, this.realEMSName);
 		cmd.createAndActivateSNC(createData, tolerableImpact, emsFreedomLevel,
 				tpsToModify);
 	}
@@ -462,7 +462,7 @@ public class AlcatelActivationClient extends AbstractClient {
 		TPDataList_THolder tpsToModify = new TPDataList_THolder();
 		tpsToModify.value = new TPData_T[0];
 
-		CorbaCommands cmd = new CorbaCommands(this.emsSession, this.realEMSName);
+		CorbaCommands cmd = new CorbaCommands(emsSession, this.realEMSName);
 		cmd.createAndActivateSNC(createData, tolerableImpact, emsFreedomLevel,
 				tpsToModify);
 	}
@@ -540,7 +540,7 @@ public class AlcatelActivationClient extends AbstractClient {
 		TPDataList_THolder tpsToModify = new TPDataList_THolder();
 		tpsToModify.value = new TPData_T[0];
 
-		CorbaCommands cmd = new CorbaCommands(this.emsSession, this.realEMSName);
+		CorbaCommands cmd = new CorbaCommands(emsSession, this.realEMSName);
 		cmd.createAndActivateSNC(createData, tolerableImpact, emsFreedomLevel,
 				tpsToModify);
 	}
@@ -616,7 +616,7 @@ public class AlcatelActivationClient extends AbstractClient {
 		TPDataList_THolder tpsToModify = new TPDataList_THolder();
 		tpsToModify.value = new TPData_T[0];
 
-		CorbaCommands cmd = new CorbaCommands(this.emsSession, this.realEMSName);
+		CorbaCommands cmd = new CorbaCommands(emsSession, this.realEMSName);
 		cmd.createAndActivateSNC(createData, tolerableImpact, emsFreedomLevel,
 				tpsToModify);
 	}
@@ -693,7 +693,7 @@ public class AlcatelActivationClient extends AbstractClient {
 		TPDataList_THolder tpsToModify = new TPDataList_THolder();
 		tpsToModify.value = new TPData_T[0];
 
-		CorbaCommands cmd = new CorbaCommands(this.emsSession, this.realEMSName);
+		CorbaCommands cmd = new CorbaCommands(emsSession, this.realEMSName);
 		cmd.createAndActivateSNC(createData, tolerableImpact, emsFreedomLevel,
 				tpsToModify);
 	}
@@ -786,7 +786,7 @@ public class AlcatelActivationClient extends AbstractClient {
 		TPDataList_THolder tpsToModify = new TPDataList_THolder();
 		tpsToModify.value = new TPData_T[0];
 
-		CorbaCommands cmd = new CorbaCommands(this.emsSession, this.realEMSName);
+		CorbaCommands cmd = new CorbaCommands(emsSession, this.realEMSName);
 		cmd.createAndActivateSNC(createData, tolerableImpact, emsFreedomLevel,
 				tpsToModify);
 	}
@@ -870,7 +870,7 @@ public class AlcatelActivationClient extends AbstractClient {
 		TPDataList_THolder tpsToModify = new TPDataList_THolder();
 		tpsToModify.value = new TPData_T[0];
 
-		CorbaCommands cmd = new CorbaCommands(this.emsSession, this.realEMSName);
+		CorbaCommands cmd = new CorbaCommands(emsSession, this.realEMSName);
 		cmd.createAndActivateSNC(createData, tolerableImpact, emsFreedomLevel,
 				tpsToModify);
 	}
@@ -890,7 +890,7 @@ public class AlcatelActivationClient extends AbstractClient {
 		TPDataList_THolder tpsToModify = new TPDataList_THolder();
 		tpsToModify.value = new TPData_T[0];
 
-		CorbaCommands cmd = new CorbaCommands(this.emsSession, this.realEMSName);
+		CorbaCommands cmd = new CorbaCommands(emsSession, this.realEMSName);
 
 		cmd.deactivateAndDeleteSNC(sncName, tolerableImpact, emsFreedomLevel,
 				tpsToModify);

@@ -27,15 +27,29 @@ import emsSession.EmsSession_IHolder;
 import emsSessionFactory.EmsSessionFactory_I;
 import emsSessionFactory.EmsSessionFactory_IHelper;
 
-public abstract class AbstractClient {
+public class AlcatelConnection {
 	protected String corbaConnect;
 	protected String login;
 	protected String pass;
 	protected String emsName;
 	protected String realEMSName;
 	protected ORB orb;
-	protected POA rootPOA = null;
-	//protected EmsSession_I emsSession = null;
+	protected POA rootPOA;
+
+	// protected EmsSession_I emsSession;
+
+	public static void main(String args[]) {
+		AlcatelConnection main = new AlcatelConnection();
+		EmsSession_I emsSession = null;
+
+		try {
+			main.openEmsSession(args);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			main.closeEmsSession(emsSession);
+		}
+	}
 
 	public EmsSession_I openEmsSession(String args[]) throws Exception {
 		Properties props = getConnectionParams();
@@ -66,8 +80,10 @@ public abstract class AbstractClient {
 		EmsSession_IHolder sessionHolder = new EmsSession_IHolder();
 		sessionFactory.getEmsSession(login, pass, nmsSession, sessionHolder);
 		EmsSession_I emsSession = sessionHolder.value;
-		System.out.println("emsSession: " + emsSession);
-		
+
+		System.out.println("Authentication successful!!! emsSession: "
+				+ emsSession);
+
 		return emsSession;
 	}
 
@@ -100,8 +116,10 @@ public abstract class AbstractClient {
 		EmsSession_IHolder sessionHolder = new EmsSession_IHolder();
 		sessionFactory.getEmsSession(login, pass, nmsSession, sessionHolder);
 		EmsSession_I emsSession = sessionHolder.value;
-		System.out.println("emsSession: " + emsSession);
-		
+
+		System.out.println("Authentication successful!!! emsSession: "
+				+ emsSession);
+
 		return emsSession;
 	}
 
@@ -137,8 +155,10 @@ public abstract class AbstractClient {
 			rootPOA.destroy(true, true);
 		}
 
-		orb.shutdown(true);
-		orb.destroy();
+		if (orb != null) {
+			orb.shutdown(true);
+			orb.destroy();
+		}
 	}
 
 	public Properties getConnectionParams() throws Exception {
