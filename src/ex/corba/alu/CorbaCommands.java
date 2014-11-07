@@ -86,7 +86,7 @@ public class CorbaCommands {
 	private EmsSession_I emsSession;
 	private String emsName;
 	private Corba2XMLHandler handler;
-	private JaxbOutputHandler jaxbOutputHandler;
+	// private JaxbOutputHandler jaxbOutputHandler;
 
 	private Common_IHolder managerInterface;
 	private ManagedElementMgr_I meManager;
@@ -112,7 +112,7 @@ public class CorbaCommands {
 		this.emsSession = emsSession;
 		this.emsName = emsName;
 		this.handler = new Corba2XMLHandler(contentHandler);
-		this.jaxbOutputHandler = new JaxbOutputHandler(contentHandler);
+		// this.jaxbOutputHandler = new JaxbOutputHandler(contentHandler);
 	}
 
 	public boolean setManagerByName(final String managerName)
