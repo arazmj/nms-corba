@@ -5,10 +5,10 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-//Below annotation defines root element of XML file  
-@XmlRootElement (name = "main")
+@XmlRootElement(name = "main")
 public class NmsObjects {
 	private List<ManagedElement> managedElements;
+	private List<EquipmentHolder> equipmentHolders;
 
 	public List<ManagedElement> getManagedElements() {
 		return managedElements;
@@ -18,4 +18,14 @@ public class NmsObjects {
 	public void setManagedElements(List<ManagedElement> managedElements) {
 		this.managedElements = managedElements;
 	}
+
+	public List<EquipmentHolder> getEquipmentHolders() {
+		return equipmentHolders;
+	}
+
+	@XmlElement(name = "HOLDERS")
+	public void setEquipmentHolders(List<EquipmentHolder> equipmentHolders) {
+		this.equipmentHolders = equipmentHolders;
+	}
+
 }

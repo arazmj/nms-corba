@@ -2,16 +2,19 @@ package ex.corba.alu;
 
 import java.io.FileOutputStream;
 
-import org.apache.log4j.Logger;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import emsSession.EmsSession_I;
+import ex.corba.alu.error.CorbaErrorProcessor;
 import ex.corba.alu.transform.sax.Corba2XMLHandler;
+import globaldefs.ProcessingFailureException;
 
 public class AlcatelDiscoveryClient extends AlcatelConnection {
-	public static final Logger LOG = Logger
-			.getLogger(AlcatelActivationClient.class);
+	public static final Logger LOG = LoggerFactory
+			.getLogger(AlcatelDiscoveryClient.class);
 
 	protected static Corba2XMLHandler handler;
 
@@ -24,6 +27,9 @@ public class AlcatelDiscoveryClient extends AlcatelConnection {
 
 			// main.executeCommands(emsSession);
 			main.executeCommandsXmlOutput(emsSession);
+		} catch (ProcessingFailureException prf) {
+			LOG.error("Alcatel OMS 1350>> getAllSubnetworkConnections:"
+					+ CorbaErrorProcessor.printError(prf));
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		} finally {
@@ -49,7 +55,12 @@ public class AlcatelDiscoveryClient extends AlcatelConnection {
 				xmlWriter);
 
 		handler.handlerBuilderStart();
-		cmd.getAllManagedElements();
+		// cmd.getAllManagedElements();
+		// cmd.getAllEquipment();
+		// cmd.getAllPTPs();
+		// cmd.getAllTopologicalLinks();
+		cmd.getAllSubnetworkConnections();
+		cmd.getRoute();
 		handler.handlerBuilderEnd();
 	}
 }

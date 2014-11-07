@@ -1,33 +1,51 @@
 package ex.corba.xml;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-//Below annotation defines root element of XML file  
-@XmlRootElement
-// You can define order in which elements will be created in XML file
-// Optional
+@XmlRootElement(name = "NETWORK_ELEMENTS")
+@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "neID", "neName", "userLabel", "owner", "location",
 		"productName", "communicationState", "emsSyncState", "supportedRate",
 		"gateway" })
 public class ManagedElement {
+	@XmlElement(name = "NE_ID")
 	private String neID;
+
+	@XmlElement(name = "NE_NAME")
 	private String neName;
+
+	@XmlElement(name = "USER_LABEL")
 	private String userLabel;
+
+	@XmlElement(name = "OWNER")
 	private String owner;
+
+	@XmlElement(name = "LOCATION")
 	private String location;
+
+	@XmlElement(name = "PRODUCT_NAME")
 	private String productName;
+
+	@XmlElement(name = "COMMUNICATION_STATE")
 	private String communicationState;
+
+	@XmlElement(name = "EMS_INSYNC_STATE")
 	private boolean emsSyncState;
+
+	@XmlElement(name = "SUPPORTED_RATES")
 	private short[] supportedRate;
+
+	@XmlElement(name = "GATEWAYS")
 	private String gateway;
 
 	public String getNeID() {
 		return neID;
 	}
 
-	@XmlElement(name = "NE_ID")
 	public void setNeID(String neID) {
 		this.neID = neID;
 	}
@@ -36,7 +54,6 @@ public class ManagedElement {
 		return neName;
 	}
 
-	@XmlElement(name = "NE_NAME")
 	public void setNeName(String neName) {
 		this.neName = neName;
 	}
@@ -45,7 +62,6 @@ public class ManagedElement {
 		return userLabel;
 	}
 
-	@XmlElement(name = "USER_LABEL")
 	public void setUserLabel(String userLabel) {
 		this.userLabel = userLabel;
 	}
@@ -54,7 +70,6 @@ public class ManagedElement {
 		return owner;
 	}
 
-	@XmlElement(name = "OWNER")
 	public void setOwner(String owner) {
 		this.owner = owner;
 	}
@@ -63,7 +78,6 @@ public class ManagedElement {
 		return location;
 	}
 
-	@XmlElement(name = "LOCATION")
 	public void setLocation(String location) {
 		this.location = location;
 	}
@@ -72,7 +86,6 @@ public class ManagedElement {
 		return productName;
 	}
 
-	@XmlElement(name = "PRODUCT_NAME")
 	public void setProductName(String productName) {
 		this.productName = productName;
 	}
@@ -81,7 +94,6 @@ public class ManagedElement {
 		return communicationState;
 	}
 
-	@XmlElement(name = "COMMUNICATION_STATE")
 	public void setCommunicationState(String communicationState) {
 		this.communicationState = communicationState;
 	}
@@ -90,7 +102,6 @@ public class ManagedElement {
 		return emsSyncState;
 	}
 
-	@XmlElement(name = "EMS_INSYNC_STATE")
 	public void setEmsSyncState(boolean emsSyncState) {
 		this.emsSyncState = emsSyncState;
 	}
@@ -99,7 +110,6 @@ public class ManagedElement {
 		return supportedRate;
 	}
 
-	@XmlElement(name = "SUPPORTED_RATES")
 	public void setSupportedRate(short[] supportedRate) {
 		this.supportedRate = supportedRate;
 	}
@@ -108,7 +118,6 @@ public class ManagedElement {
 		return gateway;
 	}
 
-	@XmlElement(name = "GATEWAYS")
 	public void setGateway(String gateway) {
 		this.gateway = gateway;
 	}

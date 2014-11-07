@@ -5,7 +5,8 @@ import java.util.Hashtable;
 
 import multiLayerSubnetwork.EMSFreedomLevel_T;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import subnetworkConnection.CrossConnect_T;
 import subnetworkConnection.GradesOfImpact_T;
@@ -24,7 +25,7 @@ import globaldefs.ProcessingFailureException;
 
 public class AlcatelActivationClient extends AlcatelConnection {
 
-	public static final Logger LOG = Logger
+	public static final Logger LOG = LoggerFactory
 			.getLogger(AlcatelActivationClient.class);
 
 	protected static EmsSession_I emsSession;
