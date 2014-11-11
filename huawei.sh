@@ -1,1 +1,1 @@
-java -Xmx512m -cp "./bin:lib/jacorb.jar::lib/idl-alu.jar:lib/idl-huawei.jar:lib/commons-logging.jar:lib/log4j.jar:lib/slf4j-api.jar:lib/slf4j-jdk14.jar" ex.corba.HuaweiClient
+java -Xmx512m -cp "./bin:lib/jacorb.jar:lib/idl-huawei.jar:lib/commons-logging.jar:lib/slf4j-api.jar:lib/slf4j-jdk14.jar:lib/dom4j-1.6.1.jar" ex.corba.huawei.HuaweiConnection

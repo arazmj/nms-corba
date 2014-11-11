@@ -31,6 +31,7 @@ public class AlcatelDiscoveryClient extends AlcatelConnection {
 			LOG.error("Alcatel OMS 1350: "
 					+ CorbaErrorProcessor.printError(prf));
 		} catch (Exception ex) {
+			LOG.error(ex.getMessage());
 			ex.printStackTrace();
 		} finally {
 			main.closeEmsSession(emsSession);
