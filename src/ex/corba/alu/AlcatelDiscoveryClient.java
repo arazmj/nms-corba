@@ -28,7 +28,7 @@ public class AlcatelDiscoveryClient extends AlcatelConnection {
 			// main.executeCommands(emsSession);
 			main.executeCommandsXmlOutput(emsSession);
 		} catch (ProcessingFailureException prf) {
-			LOG.error("Alcatel OMS 1350>> getAllSubnetworkConnections:"
+			LOG.error("Alcatel OMS 1350: "
 					+ CorbaErrorProcessor.printError(prf));
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -55,10 +55,10 @@ public class AlcatelDiscoveryClient extends AlcatelConnection {
 				xmlWriter);
 
 		handler.handlerBuilderStart();
-		// cmd.getAllManagedElements();
-		// cmd.getAllEquipment();
-		// cmd.getAllPTPs();
-		// cmd.getAllTopologicalLinks();
+		cmd.getAllManagedElements();
+		cmd.getAllEquipment();
+		cmd.getAllPTPs();
+		cmd.getAllTopologicalLinks();
 		cmd.getAllSubnetworkConnections();
 		cmd.getRoute();
 		handler.handlerBuilderEnd();
