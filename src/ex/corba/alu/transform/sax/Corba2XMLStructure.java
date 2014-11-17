@@ -170,7 +170,8 @@ public enum Corba2XMLStructure {
             CorbaConstants.REROUTEALLOWED_STR,
             CorbaConstants.NETWORKREROUTED_STR,
             CorbaConstants.FREQ_A_STR,
-            CorbaConstants.FREQ_Z_STR
+            CorbaConstants.FREQ_Z_STR,
+            CorbaConstants.ADDITIONAL_INFO_STR
     }),
 
     /**

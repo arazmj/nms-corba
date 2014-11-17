@@ -56,10 +56,10 @@ public class AlcatelDiscoveryClient extends AlcatelConnection {
 				xmlWriter);
 
 		handler.handlerBuilderStart();
-		cmd.getAllManagedElements();
-		cmd.getAllEquipment();
-		cmd.getAllPTPs();
-		cmd.getAllTopologicalLinks();
+		// cmd.getAllManagedElements();
+		// cmd.getAllEquipment();
+		// cmd.getAllPTPs();
+		// cmd.getAllTopologicalLinks();
 		cmd.getAllSubnetworkConnections();
 		cmd.getRoute();
 		handler.handlerBuilderEnd();

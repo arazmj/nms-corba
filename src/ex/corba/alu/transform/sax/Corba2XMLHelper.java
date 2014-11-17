@@ -334,105 +334,93 @@ public class Corba2XMLHelper {
 	}
 
 	public Corba2XMLContainer getSubnetworkConnectionParams(
-			SubnetworkConnection_T subnetworkConnection)
-			throws ProcessingFailureException {
+			SubnetworkConnection_T snc) throws ProcessingFailureException {
 		Corba2XMLContainer container = new Corba2XMLContainer(
 				Corba2XMLStructure.SNCS);
 		container.setFieldValue(CorbaConstants.SNS_ID_STR, handler
-				.getValueByName(subnetworkConnection.name,
+				.getValueByName(snc.name,
 						CorbaConstants.SUBNETWORK_CONNECTION_STR));
-		container.setFieldValue(CorbaConstants.USER_LABEL_STR,
-				subnetworkConnection.userLabel);
+		container.setFieldValue(CorbaConstants.USER_LABEL_STR, snc.userLabel);
 		container.setFieldValue(CorbaConstants.NATIVE_EMS_NAME_STR,
-				subnetworkConnection.nativeEMSName);
-		container.setFieldValue(CorbaConstants.OWNER_STR,
-				subnetworkConnection.owner);
+				snc.nativeEMSName);
+		container.setFieldValue(CorbaConstants.OWNER_STR, snc.owner);
 		container.setFieldValue(CorbaConstants.SNC_STATE_STR,
-				String.valueOf(subnetworkConnection.sncState.value()));
+				String.valueOf(snc.sncState.value()));
 		container.setFieldValue(CorbaConstants.DIRECTION_STR,
-				String.valueOf(subnetworkConnection.direction.value()));
+				String.valueOf(snc.direction.value()));
 		container.setFieldValue(CorbaConstants.RATE_STR,
-				String.valueOf(subnetworkConnection.rate));
+				String.valueOf(snc.rate));
 		container.setFieldValue(CorbaConstants.STATIC_PROTECTION_LEVEL_STR,
-				String.valueOf(subnetworkConnection.staticProtectionLevel
-						.value()));
+				String.valueOf(snc.staticProtectionLevel.value()));
 		container.setFieldValue(CorbaConstants.SNC_TYPE_STR,
-				String.valueOf(subnetworkConnection.sncType.value()));
+				String.valueOf(snc.sncType.value()));
 
-		if (subnetworkConnection.aEnd.length > 0) {
+		if (snc.aEnd.length > 0) {
 			container.setFieldValue(CorbaConstants.A1_TPNAME_NE_STR, handler
-					.getValueByName(subnetworkConnection.aEnd[0].tpName,
+					.getValueByName(snc.aEnd[0].tpName,
 							CorbaConstants.MANAGED_ELEMENT_STR));
-			container.setFieldValue(CorbaConstants.A1_TPNAME_PTP_STR, handler
-					.getValueByName(subnetworkConnection.aEnd[0].tpName,
-							CorbaConstants.PTP_STR));
-			container.setFieldValue(CorbaConstants.A1_TPNAME_CTP_STR, handler
-					.getValueByName(subnetworkConnection.aEnd[0].tpName,
-							CorbaConstants.CTP_STR));
+			container
+					.setFieldValue(CorbaConstants.A1_TPNAME_PTP_STR, handler
+							.getValueByName(snc.aEnd[0].tpName,
+									CorbaConstants.PTP_STR));
+			container
+					.setFieldValue(CorbaConstants.A1_TPNAME_CTP_STR, handler
+							.getValueByName(snc.aEnd[0].tpName,
+									CorbaConstants.CTP_STR));
 			container.setFieldValue(CorbaConstants.A1_TPMAPPING_MODE_STR,
-					String.valueOf(subnetworkConnection.aEnd[0].tpMappingMode
-							.value()));
+					String.valueOf(snc.aEnd[0].tpMappingMode.value()));
 
-			if (subnetworkConnection.aEnd.length > 1) {
+			if (snc.aEnd.length > 1) {
 				container.setFieldValue(CorbaConstants.A2_TPNAME_NE_STR,
-						handler.getValueByName(
-								subnetworkConnection.aEnd[1].tpName,
+						handler.getValueByName(snc.aEnd[1].tpName,
 								CorbaConstants.MANAGED_ELEMENT_STR));
 				container.setFieldValue(CorbaConstants.A2_TPNAME_PTP_STR,
-						handler.getValueByName(
-								subnetworkConnection.aEnd[1].tpName,
+						handler.getValueByName(snc.aEnd[1].tpName,
 								CorbaConstants.PTP_STR));
 				container.setFieldValue(CorbaConstants.A2_TPNAME_CTP_STR,
-						handler.getValueByName(
-								subnetworkConnection.aEnd[1].tpName,
+						handler.getValueByName(snc.aEnd[1].tpName,
 								CorbaConstants.CTP_STR));
-				container
-						.setFieldValue(
-								CorbaConstants.A2_TPMAPPING_MODE_STR,
-								String.valueOf(subnetworkConnection.aEnd[1].tpMappingMode
-										.value()));
+				container.setFieldValue(CorbaConstants.A2_TPMAPPING_MODE_STR,
+						String.valueOf(snc.aEnd[1].tpMappingMode.value()));
 			}
 		}
 
-		if (subnetworkConnection.zEnd.length > 0) {
+		if (snc.zEnd.length > 0) {
 			container.setFieldValue(CorbaConstants.Z1_TPNAME_NE_STR, handler
-					.getValueByName(subnetworkConnection.zEnd[0].tpName,
+					.getValueByName(snc.zEnd[0].tpName,
 							CorbaConstants.MANAGED_ELEMENT_STR));
-			container.setFieldValue(CorbaConstants.Z1_TPNAME_PTP_STR, handler
-					.getValueByName(subnetworkConnection.zEnd[0].tpName,
-							CorbaConstants.PTP_STR));
-			container.setFieldValue(CorbaConstants.Z1_TPNAME_CTP_STR, handler
-					.getValueByName(subnetworkConnection.zEnd[0].tpName,
-							CorbaConstants.CTP_STR));
+			container
+					.setFieldValue(CorbaConstants.Z1_TPNAME_PTP_STR, handler
+							.getValueByName(snc.zEnd[0].tpName,
+									CorbaConstants.PTP_STR));
+			container
+					.setFieldValue(CorbaConstants.Z1_TPNAME_CTP_STR, handler
+							.getValueByName(snc.zEnd[0].tpName,
+									CorbaConstants.CTP_STR));
 			container.setFieldValue(CorbaConstants.Z1_TPMAPPING_MODE_STR,
-					String.valueOf(subnetworkConnection.zEnd[0].tpMappingMode
-							.value()));
+					String.valueOf(snc.zEnd[0].tpMappingMode.value()));
 
-			if (subnetworkConnection.zEnd.length > 1) {
+			if (snc.zEnd.length > 1) {
 				container.setFieldValue(CorbaConstants.Z2_TPNAME_NE_STR,
-						handler.getValueByName(
-								subnetworkConnection.zEnd[1].tpName,
+						handler.getValueByName(snc.zEnd[1].tpName,
 								CorbaConstants.MANAGED_ELEMENT_STR));
 				container.setFieldValue(CorbaConstants.Z2_TPNAME_PTP_STR,
-						handler.getValueByName(
-								subnetworkConnection.zEnd[1].tpName,
+						handler.getValueByName(snc.zEnd[1].tpName,
 								CorbaConstants.PTP_STR));
 				container.setFieldValue(CorbaConstants.Z2_TPNAME_CTP_STR,
-						handler.getValueByName(
-								subnetworkConnection.zEnd[1].tpName,
+						handler.getValueByName(snc.zEnd[1].tpName,
 								CorbaConstants.CTP_STR));
-				container
-						.setFieldValue(
-								CorbaConstants.Z2_TPMAPPING_MODE_STR,
-								String.valueOf(subnetworkConnection.zEnd[1].tpMappingMode
-										.value()));
+				container.setFieldValue(CorbaConstants.Z2_TPMAPPING_MODE_STR,
+						String.valueOf(snc.zEnd[1].tpMappingMode.value()));
 			}
 		}
 
 		container.setFieldValue(CorbaConstants.REROUTEALLOWED_STR,
-				String.valueOf(subnetworkConnection.rerouteAllowed.value()));
+				String.valueOf(snc.rerouteAllowed.value()));
 		container.setFieldValue(CorbaConstants.NETWORKREROUTED_STR,
-				String.valueOf(subnetworkConnection.networkRouted.value()));
+				String.valueOf(snc.networkRouted.value()));
+		container.setFieldValue(CorbaConstants.ADDITIONAL_INFO_STR,
+				handler.convertNameAndStringValueToString(snc.additionalInfo));
 
 		return container;
 	}

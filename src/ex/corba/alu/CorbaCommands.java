@@ -902,10 +902,6 @@ public class CorbaCommands {
 		this.mlsnManager.createAndActivateSNC(createData, tolerableImpact,
 				emsFreedomLevel, tpsToModify, theSNC, errorReason);
 
-		if (errorReason != null) {
-			LOG.error("errorReason:" + errorReason.value);
-		}
-
 		if (LOG.isInfoEnabled()) {
 			LOG.info("createAndActivateSNC() complete.");
 		}
@@ -930,10 +926,6 @@ public class CorbaCommands {
 
 		this.mlsnManager.deactivateAndDeleteSNC(sncName, tolerableImpact,
 				emsFreedomLevel, tpsToModify, theSNC, errorReason);
-
-		if (errorReason != null) {
-			LOG.error("errorReason:" + errorReason.value);
-		}
 
 		if (LOG.isInfoEnabled()) {
 			LOG.info(" deactivateAndDeleteSNC() complete.");
