@@ -37,7 +37,7 @@ public class AlcatelActivationClient extends AlcatelConnection {
 			emsSession = main.openEmsSession(args);
 
 			main.createPDHServiceE1();
-			// main.createPDHServiceE3();
+			// main.createPDHServiceDS3();
 			// main.createPDHServiceWithConstraintsNE();
 			// main.createPDHServiceWithConstraintsST();
 			// main.createPDHServiceSNCP();
@@ -134,12 +134,12 @@ public class AlcatelActivationClient extends AlcatelConnection {
 				tpsToModify);
 	}
 
-	public void createPDHServiceE3() throws ProcessingFailureException {
-		String sncID = "NISA-PDHService-E3-1";
-		String userLabel = "NISA-PDHService-E3-1";
+	public void createPDHServiceDS3() throws ProcessingFailureException {
+		String sncID = "NISA-PDHService-DS3-1";
+		String userLabel = "NISA-PDHService-DS3-1";
 		String owner = "";
 
-		// E3
+		// DS3
 		short layerRate = 84;
 
 		NameAndStringValue_T[][] aEnd = new NameAndStringValue_T[1][4];

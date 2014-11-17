@@ -42,18 +42,25 @@ public class HuaweiActivationClient extends HuaweiConnection {
 			emsSession = main.openEmsSession(args);
 
 			// main.createPDHServiceE1();
-			main.createPDHServiceE1WithVNE();
-			// main.createE4Path();
-			// main.createVC12Path();
+			// main.createPDHServiceE3();
+			// main.createE1WithVNE();
 			// main.createE1withNEtpInc();
 			// main.createE1withCCInc();
+			// main.createE4orVC4();
 			// main.createE4withProtection();
 			// main.createServerTrail();
 			// main.createVC4_16c();
+
+			// SDH Path for Ethernet service
+			// main.createVC12Path();
+			// main.createVC3Path();
+
 			// main.deactivateAndDeleteSNC();
 
 			// main.createEthService();
-			// main.addBindingPath();
+			// main.addBindingPathVC12();
+			// main.addBindingPathVC3();
+			main.addBindingPathVC12for4M();
 			// main.configureEthernetPort();
 			// main.configureVCTRUNKPort();
 		} catch (ProcessingFailureException pfe) {
@@ -141,7 +148,82 @@ public class HuaweiActivationClient extends HuaweiConnection {
 				emsFreedomLevel, tpsToModify);
 	}
 
-	public void createPDHServiceE1WithVNE() throws ProcessingFailureException {
+	public void createPDHServiceE3() throws ProcessingFailureException {
+		String userLabel = "NISA-PDHService-E3-1";
+		String owner = "";
+
+		// 7 = LR_E3_34M
+		short layerRate = 7;
+
+		NameAndStringValue_T[][] aEnd = new NameAndStringValue_T[1][4];
+
+		// A-End
+		aEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		aEnd[0][1] = new NameAndStringValue_T("ManagedElement", "3145729");
+
+		// PDH E1 Service
+		aEnd[0][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=1/slot=2/domain=sdh/port=3");
+		aEnd[0][3] = new NameAndStringValue_T("CTP", "/tu3_vc3=1");
+
+		// Z-End
+		NameAndStringValue_T[][] zEnd = new NameAndStringValue_T[1][4];
+		zEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		zEnd[0][1] = new NameAndStringValue_T("ManagedElement", "3145728");
+
+		// PDH E1 Service
+		zEnd[0][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=1/slot=2/domain=sdh/port=3");
+		zEnd[0][3] = new NameAndStringValue_T("CTP", "/tu3_vc3=1");
+
+		NameAndStringValue_T[][] neTpInclusions = new NameAndStringValue_T[0][0];
+		NameAndStringValue_T[][] neTpExclusions = new NameAndStringValue_T[0][0];
+		CrossConnect_T[] ccInclusions = new CrossConnect_T[0];
+
+		Hashtable<String, String> additionalInfo = new Hashtable<String, String>();
+
+		NameAndStringValue_T[] additionalCreationInfo = new NameAndStringValue_T[additionalInfo
+				.size()];
+		Enumeration<String> keySet = additionalInfo.keys();
+
+		for (int i = 0; keySet.hasMoreElements(); i++) {
+			String name = (String) keySet.nextElement();
+			String value = (String) additionalInfo.get(name);
+			additionalCreationInfo[i] = new NameAndStringValue_T(name, value);
+		}
+
+		SNCCreateData_T createData = new SNCCreateData_T();
+
+		createData.aEnd = aEnd;
+		createData.zEnd = zEnd;
+		createData.additionalCreationInfo = additionalCreationInfo;
+		createData.neTpInclusions = neTpInclusions;
+		createData.neTpSncExclusions = neTpExclusions;
+		createData.ccInclusions = ccInclusions;
+		createData.forceUniqueness = false;
+		createData.fullRoute = false;
+		createData.layerRate = layerRate;
+		createData.networkRouted = NetworkRouted_T.NR_NA;
+		createData.rerouteAllowed = Reroute_T.RR_NA;
+		createData.direction = ConnectionDirection_T.CD_BI;
+		createData.sncType = SNCType_T.ST_SIMPLE;
+		createData.staticProtectionLevel = StaticProtectionLevel_T.UNPROTECTED;
+		createData.protectionEffort = ProtectionEffort_T.EFFORT_WHATEVER;
+		createData.owner = owner;
+		createData.userLabel = userLabel;
+
+		GradesOfImpact_T tolerableImpact = GradesOfImpact_T.GOI_HITLESS;// GOI_HITLESS;
+		EMSFreedomLevel_T emsFreedomLevel = EMSFreedomLevel_T.EMSFL_CC_AT_SNC_LAYER;// EMSFL_CC_AT_SNC_LAYER;
+
+		TPDataList_THolder tpsToModify = new TPDataList_THolder();
+		tpsToModify.value = new TPData_T[0];
+
+		CorbaCommands cmd = new CorbaCommands(emsSession, this.realEMSName);
+		errorReason = cmd.createAndActivateSNC(createData, tolerableImpact,
+				emsFreedomLevel, tpsToModify);
+	}
+
+	public void createE1WithVNE() throws ProcessingFailureException {
 		String userLabel = "NISA-E1-VNE-1";
 		String owner = "";
 
@@ -165,160 +247,6 @@ public class HuaweiActivationClient extends HuaweiConnection {
 				"/rack=1/shelf=1/slot=8/domain=sdh/port=2");
 		zEnd[0][3] = new NameAndStringValue_T("CTP",
 				"/sts3c_au4-j=1/vt2_tu12-k=1-l=1-m=2");
-
-		NameAndStringValue_T[][] neTpInclusions = new NameAndStringValue_T[0][0];
-		NameAndStringValue_T[][] neTpExclusions = new NameAndStringValue_T[0][0];
-		CrossConnect_T[] ccInclusions = new CrossConnect_T[0];
-
-		Hashtable<String, String> additionalInfo = new Hashtable<String, String>();
-
-		NameAndStringValue_T[] additionalCreationInfo = new NameAndStringValue_T[additionalInfo
-				.size()];
-		Enumeration<String> keySet = additionalInfo.keys();
-
-		for (int i = 0; keySet.hasMoreElements(); i++) {
-			String name = (String) keySet.nextElement();
-			String value = (String) additionalInfo.get(name);
-			additionalCreationInfo[i] = new NameAndStringValue_T(name, value);
-		}
-
-		SNCCreateData_T createData = new SNCCreateData_T();
-
-		createData.aEnd = aEnd;
-		createData.zEnd = zEnd;
-		createData.additionalCreationInfo = additionalCreationInfo;
-		createData.neTpInclusions = neTpInclusions;
-		createData.neTpSncExclusions = neTpExclusions;
-		createData.ccInclusions = ccInclusions;
-		createData.forceUniqueness = false;
-		createData.fullRoute = false;
-		createData.layerRate = layerRate;
-		createData.networkRouted = NetworkRouted_T.NR_NA;
-		createData.rerouteAllowed = Reroute_T.RR_NA;
-		createData.direction = ConnectionDirection_T.CD_BI;
-		createData.sncType = SNCType_T.ST_SIMPLE;
-		createData.staticProtectionLevel = StaticProtectionLevel_T.UNPROTECTED;
-		createData.protectionEffort = ProtectionEffort_T.EFFORT_WHATEVER;
-		createData.owner = owner;
-		createData.userLabel = userLabel;
-
-		GradesOfImpact_T tolerableImpact = GradesOfImpact_T.GOI_HITLESS;// GOI_HITLESS;
-		EMSFreedomLevel_T emsFreedomLevel = EMSFreedomLevel_T.EMSFL_CC_AT_SNC_LAYER;// EMSFL_CC_AT_SNC_LAYER;
-
-		TPDataList_THolder tpsToModify = new TPDataList_THolder();
-		tpsToModify.value = new TPData_T[0];
-
-		CorbaCommands cmd = new CorbaCommands(emsSession, this.realEMSName);
-		errorReason = cmd.createAndActivateSNC(createData, tolerableImpact,
-				emsFreedomLevel, tpsToModify);
-	}
-
-	// E4 path between Ethernet card (N3EFS4) SDH ports
-	public void createE4Path() throws ProcessingFailureException {
-		String userLabel = "NISA-E4-Path-1";
-		String owner = "";
-
-		// 8 = LR_E4_140M
-		short layerRate = 8;
-
-		NameAndStringValue_T[][] aEnd = new NameAndStringValue_T[1][4];
-
-		// A-End
-		aEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
-		aEnd[0][1] = new NameAndStringValue_T("ManagedElement", "3145729");
-
-		// E4/VC4 path
-		aEnd[0][2] = new NameAndStringValue_T("PTP",
-				"/rack=1/shelf=1/slot=4/domain=sdh/port=1");
-		aEnd[0][3] = new NameAndStringValue_T("CTP", "/sts3c_au4-j=3");
-
-		// Z-End
-		NameAndStringValue_T[][] zEnd = new NameAndStringValue_T[1][4];
-		zEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
-		zEnd[0][1] = new NameAndStringValue_T("ManagedElement", "3145728");
-
-		// E4/VC4 path
-		zEnd[0][2] = new NameAndStringValue_T("PTP",
-				"/rack=1/shelf=1/slot=4/domain=sdh/port=1");
-		zEnd[0][3] = new NameAndStringValue_T("CTP", "/sts3c_au4-j=3");
-
-		NameAndStringValue_T[][] neTpInclusions = new NameAndStringValue_T[0][0];
-		NameAndStringValue_T[][] neTpExclusions = new NameAndStringValue_T[0][0];
-		CrossConnect_T[] ccInclusions = new CrossConnect_T[0];
-
-		Hashtable<String, String> additionalInfo = new Hashtable<String, String>();
-
-		NameAndStringValue_T[] additionalCreationInfo = new NameAndStringValue_T[additionalInfo
-				.size()];
-		Enumeration<String> keySet = additionalInfo.keys();
-
-		for (int i = 0; keySet.hasMoreElements(); i++) {
-			String name = (String) keySet.nextElement();
-			String value = (String) additionalInfo.get(name);
-			additionalCreationInfo[i] = new NameAndStringValue_T(name, value);
-		}
-
-		SNCCreateData_T createData = new SNCCreateData_T();
-
-		createData.aEnd = aEnd;
-		createData.zEnd = zEnd;
-		createData.additionalCreationInfo = additionalCreationInfo;
-		createData.neTpInclusions = neTpInclusions;
-		createData.neTpSncExclusions = neTpExclusions;
-		createData.ccInclusions = ccInclusions;
-		createData.forceUniqueness = false;
-		createData.fullRoute = false;
-		createData.layerRate = layerRate;
-		createData.networkRouted = NetworkRouted_T.NR_NA;
-		createData.rerouteAllowed = Reroute_T.RR_NA;
-		createData.direction = ConnectionDirection_T.CD_BI;
-		createData.sncType = SNCType_T.ST_SIMPLE;
-		createData.staticProtectionLevel = StaticProtectionLevel_T.UNPROTECTED;
-		createData.protectionEffort = ProtectionEffort_T.EFFORT_WHATEVER;
-		createData.owner = owner;
-		createData.userLabel = userLabel;
-
-		GradesOfImpact_T tolerableImpact = GradesOfImpact_T.GOI_HITLESS;// GOI_HITLESS;
-		EMSFreedomLevel_T emsFreedomLevel = EMSFreedomLevel_T.EMSFL_CC_AT_SNC_LAYER;// EMSFL_CC_AT_SNC_LAYER;
-
-		TPDataList_THolder tpsToModify = new TPDataList_THolder();
-		tpsToModify.value = new TPData_T[0];
-
-		CorbaCommands cmd = new CorbaCommands(emsSession, this.realEMSName);
-		errorReason = cmd.createAndActivateSNC(createData, tolerableImpact,
-				emsFreedomLevel, tpsToModify);
-	}
-
-	// VC12 path between Ethernet card (EGS4) SDH ports
-	public void createVC12Path() throws ProcessingFailureException {
-		String userLabel = "NISA-VC12-Path-1";
-		String owner = "";
-
-		// 5 = LR_E1_2M
-		short layerRate = 5;
-
-		NameAndStringValue_T[][] aEnd = new NameAndStringValue_T[1][4];
-
-		// A-End
-		aEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
-		aEnd[0][1] = new NameAndStringValue_T("ManagedElement", "3145729");
-
-		// VC12 Path
-		aEnd[0][2] = new NameAndStringValue_T("PTP",
-				"/rack=1/shelf=1/slot=5/domain=sdh/port=1");
-		aEnd[0][3] = new NameAndStringValue_T("CTP",
-				"/sts3c_au4-j=1/vt2_tu12-k=3-l=1-m=1");
-
-		// Z-End
-		NameAndStringValue_T[][] zEnd = new NameAndStringValue_T[1][4];
-		zEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
-		zEnd[0][1] = new NameAndStringValue_T("ManagedElement", "3145728");
-
-		// VC12 Path
-		zEnd[0][2] = new NameAndStringValue_T("PTP",
-				"/rack=1/shelf=1/slot=5/domain=sdh/port=1");
-		zEnd[0][3] = new NameAndStringValue_T("CTP",
-				"/sts3c_au4-j=2/vt2_tu12-k=3-l=1-m=1");
 
 		NameAndStringValue_T[][] neTpInclusions = new NameAndStringValue_T[0][0];
 		NameAndStringValue_T[][] neTpExclusions = new NameAndStringValue_T[0][0];
@@ -597,7 +525,84 @@ public class HuaweiActivationClient extends HuaweiConnection {
 				emsFreedomLevel, tpsToModify);
 	}
 
+	// E4 path between Ethernet card (N3EFS4) SDH ports
+	public void createE4orVC4() throws ProcessingFailureException {
+		String userLabel = "NISA-E4-1";
+		String owner = "";
+
+		// 8 = LR_E4_140M
+		short layerRate = 8;
+
+		NameAndStringValue_T[][] aEnd = new NameAndStringValue_T[1][4];
+
+		// A-End (VNE)
+		aEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		aEnd[0][1] = new NameAndStringValue_T("ManagedElement", "3145732");
+
+		// E4/VC4 path
+		aEnd[0][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=1/slot=8/domain=sdh/port=1");
+		aEnd[0][3] = new NameAndStringValue_T("CTP", "/sts3c_au4-j=4");
+
+		// Z-End
+		NameAndStringValue_T[][] zEnd = new NameAndStringValue_T[1][4];
+		zEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		zEnd[0][1] = new NameAndStringValue_T("ManagedElement", "3145728");
+
+		// E4/VC4 path
+		zEnd[0][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=1/slot=11/domain=sdh/port=11");
+		zEnd[0][3] = new NameAndStringValue_T("CTP", "/sts3c_au4-j=1");
+
+		NameAndStringValue_T[][] neTpInclusions = new NameAndStringValue_T[0][0];
+		NameAndStringValue_T[][] neTpExclusions = new NameAndStringValue_T[0][0];
+		CrossConnect_T[] ccInclusions = new CrossConnect_T[0];
+
+		Hashtable<String, String> additionalInfo = new Hashtable<String, String>();
+
+		NameAndStringValue_T[] additionalCreationInfo = new NameAndStringValue_T[additionalInfo
+				.size()];
+		Enumeration<String> keySet = additionalInfo.keys();
+
+		for (int i = 0; keySet.hasMoreElements(); i++) {
+			String name = (String) keySet.nextElement();
+			String value = (String) additionalInfo.get(name);
+			additionalCreationInfo[i] = new NameAndStringValue_T(name, value);
+		}
+
+		SNCCreateData_T createData = new SNCCreateData_T();
+
+		createData.aEnd = aEnd;
+		createData.zEnd = zEnd;
+		createData.additionalCreationInfo = additionalCreationInfo;
+		createData.neTpInclusions = neTpInclusions;
+		createData.neTpSncExclusions = neTpExclusions;
+		createData.ccInclusions = ccInclusions;
+		createData.forceUniqueness = false;
+		createData.fullRoute = false;
+		createData.layerRate = layerRate;
+		createData.networkRouted = NetworkRouted_T.NR_NA;
+		createData.rerouteAllowed = Reroute_T.RR_NA;
+		createData.direction = ConnectionDirection_T.CD_BI;
+		createData.sncType = SNCType_T.ST_SIMPLE;
+		createData.staticProtectionLevel = StaticProtectionLevel_T.UNPROTECTED;
+		createData.protectionEffort = ProtectionEffort_T.EFFORT_WHATEVER;
+		createData.owner = owner;
+		createData.userLabel = userLabel;
+
+		GradesOfImpact_T tolerableImpact = GradesOfImpact_T.GOI_HITLESS;// GOI_HITLESS;
+		EMSFreedomLevel_T emsFreedomLevel = EMSFreedomLevel_T.EMSFL_CC_AT_SNC_LAYER;// EMSFL_CC_AT_SNC_LAYER;
+
+		TPDataList_THolder tpsToModify = new TPDataList_THolder();
+		tpsToModify.value = new TPData_T[0];
+
+		CorbaCommands cmd = new CorbaCommands(emsSession, this.realEMSName);
+		errorReason = cmd.createAndActivateSNC(createData, tolerableImpact,
+				emsFreedomLevel, tpsToModify);
+	}
+
 	// Slot 8 has SLQ4A board: 4xSTM-4 Optical Interface Board
+	// Slot 11 has N1SLT1 board: 12xSTM-1 Optical Interface Board
 	public void createE4withProtection() throws ProcessingFailureException {
 		String userLabel = "NISA-E4-Prot-1";
 		String owner = "";
@@ -939,6 +944,162 @@ public class HuaweiActivationClient extends HuaweiConnection {
 				emsFreedomLevel, tpsToModify);
 	}
 
+	// VC12 path between Ethernet card (EGS4) SDH port for Ethernet service
+	public void createVC12Path() throws ProcessingFailureException {
+		String userLabel = "NISA-VC12-Path-1";
+		String owner = "";
+
+		// 5 = LR_E1_2M
+		short layerRate = 5;
+
+		NameAndStringValue_T[][] aEnd = new NameAndStringValue_T[1][4];
+
+		// A-End
+		aEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		aEnd[0][1] = new NameAndStringValue_T("ManagedElement", "3145729");
+
+		// VC12 Path
+		aEnd[0][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=1/slot=5/domain=sdh/port=1");
+		aEnd[0][3] = new NameAndStringValue_T("CTP",
+				"/sts3c_au4-j=1/vt2_tu12-k=3-l=1-m=1");
+
+		// Z-End
+		NameAndStringValue_T[][] zEnd = new NameAndStringValue_T[1][4];
+		zEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		zEnd[0][1] = new NameAndStringValue_T("ManagedElement", "3145728");
+
+		// VC12 Path
+		zEnd[0][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=1/slot=5/domain=sdh/port=1");
+		zEnd[0][3] = new NameAndStringValue_T("CTP",
+				"/sts3c_au4-j=2/vt2_tu12-k=3-l=1-m=1");
+
+		NameAndStringValue_T[][] neTpInclusions = new NameAndStringValue_T[0][0];
+		NameAndStringValue_T[][] neTpExclusions = new NameAndStringValue_T[0][0];
+		CrossConnect_T[] ccInclusions = new CrossConnect_T[0];
+
+		Hashtable<String, String> additionalInfo = new Hashtable<String, String>();
+
+		NameAndStringValue_T[] additionalCreationInfo = new NameAndStringValue_T[additionalInfo
+				.size()];
+		Enumeration<String> keySet = additionalInfo.keys();
+
+		for (int i = 0; keySet.hasMoreElements(); i++) {
+			String name = (String) keySet.nextElement();
+			String value = (String) additionalInfo.get(name);
+			additionalCreationInfo[i] = new NameAndStringValue_T(name, value);
+		}
+
+		SNCCreateData_T createData = new SNCCreateData_T();
+
+		createData.aEnd = aEnd;
+		createData.zEnd = zEnd;
+		createData.additionalCreationInfo = additionalCreationInfo;
+		createData.neTpInclusions = neTpInclusions;
+		createData.neTpSncExclusions = neTpExclusions;
+		createData.ccInclusions = ccInclusions;
+		createData.forceUniqueness = false;
+		createData.fullRoute = false;
+		createData.layerRate = layerRate;
+		createData.networkRouted = NetworkRouted_T.NR_NA;
+		createData.rerouteAllowed = Reroute_T.RR_NA;
+		createData.direction = ConnectionDirection_T.CD_BI;
+		createData.sncType = SNCType_T.ST_SIMPLE;
+		createData.staticProtectionLevel = StaticProtectionLevel_T.UNPROTECTED;
+		createData.protectionEffort = ProtectionEffort_T.EFFORT_WHATEVER;
+		createData.owner = owner;
+		createData.userLabel = userLabel;
+
+		GradesOfImpact_T tolerableImpact = GradesOfImpact_T.GOI_HITLESS;// GOI_HITLESS;
+		EMSFreedomLevel_T emsFreedomLevel = EMSFreedomLevel_T.EMSFL_CC_AT_SNC_LAYER;// EMSFL_CC_AT_SNC_LAYER;
+
+		TPDataList_THolder tpsToModify = new TPDataList_THolder();
+		tpsToModify.value = new TPData_T[0];
+
+		CorbaCommands cmd = new CorbaCommands(emsSession, this.realEMSName);
+		errorReason = cmd.createAndActivateSNC(createData, tolerableImpact,
+				emsFreedomLevel, tpsToModify);
+	}
+
+	// VC3 path between Ethernet card (EGS4) SDH ports for Ethernet service
+	public void createVC3Path() throws ProcessingFailureException {
+		String userLabel = "NISA-VC3-Path-1";
+		String owner = "";
+
+		// 7 = LR_E3_34M
+		short layerRate = 7;
+
+		NameAndStringValue_T[][] aEnd = new NameAndStringValue_T[1][4];
+
+		// A-End
+		aEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		aEnd[0][1] = new NameAndStringValue_T("ManagedElement", "3145729");
+
+		// VC12 Path
+		aEnd[0][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=1/slot=5/domain=sdh/port=1");
+		aEnd[0][3] = new NameAndStringValue_T("CTP",
+				"/sts3c_au4-j=3/tu3_vc3-k=1");
+
+		// Z-End
+		NameAndStringValue_T[][] zEnd = new NameAndStringValue_T[1][4];
+		zEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		zEnd[0][1] = new NameAndStringValue_T("ManagedElement", "3145728");
+
+		// VC12 Path
+		zEnd[0][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=1/slot=5/domain=sdh/port=1");
+		zEnd[0][3] = new NameAndStringValue_T("CTP",
+				"/sts3c_au4-j=3/tu3_vc3-k=1");
+
+		NameAndStringValue_T[][] neTpInclusions = new NameAndStringValue_T[0][0];
+		NameAndStringValue_T[][] neTpExclusions = new NameAndStringValue_T[0][0];
+		CrossConnect_T[] ccInclusions = new CrossConnect_T[0];
+
+		Hashtable<String, String> additionalInfo = new Hashtable<String, String>();
+
+		NameAndStringValue_T[] additionalCreationInfo = new NameAndStringValue_T[additionalInfo
+				.size()];
+		Enumeration<String> keySet = additionalInfo.keys();
+
+		for (int i = 0; keySet.hasMoreElements(); i++) {
+			String name = (String) keySet.nextElement();
+			String value = (String) additionalInfo.get(name);
+			additionalCreationInfo[i] = new NameAndStringValue_T(name, value);
+		}
+
+		SNCCreateData_T createData = new SNCCreateData_T();
+
+		createData.aEnd = aEnd;
+		createData.zEnd = zEnd;
+		createData.additionalCreationInfo = additionalCreationInfo;
+		createData.neTpInclusions = neTpInclusions;
+		createData.neTpSncExclusions = neTpExclusions;
+		createData.ccInclusions = ccInclusions;
+		createData.forceUniqueness = false;
+		createData.fullRoute = false;
+		createData.layerRate = layerRate;
+		createData.networkRouted = NetworkRouted_T.NR_NA;
+		createData.rerouteAllowed = Reroute_T.RR_NA;
+		createData.direction = ConnectionDirection_T.CD_BI;
+		createData.sncType = SNCType_T.ST_SIMPLE;
+		createData.staticProtectionLevel = StaticProtectionLevel_T.UNPROTECTED;
+		createData.protectionEffort = ProtectionEffort_T.EFFORT_WHATEVER;
+		createData.owner = owner;
+		createData.userLabel = userLabel;
+
+		GradesOfImpact_T tolerableImpact = GradesOfImpact_T.GOI_HITLESS;// GOI_HITLESS;
+		EMSFreedomLevel_T emsFreedomLevel = EMSFreedomLevel_T.EMSFL_CC_AT_SNC_LAYER;// EMSFL_CC_AT_SNC_LAYER;
+
+		TPDataList_THolder tpsToModify = new TPDataList_THolder();
+		tpsToModify.value = new TPData_T[0];
+
+		CorbaCommands cmd = new CorbaCommands(emsSession, this.realEMSName);
+		errorReason = cmd.createAndActivateSNC(createData, tolerableImpact,
+				emsFreedomLevel, tpsToModify);
+	}
+
 	public void createEthService() throws ProcessingFailureException {
 		HW_EthServiceCreateData_T createData = new HW_EthServiceCreateData_T();
 
@@ -981,7 +1142,7 @@ public class HuaweiActivationClient extends HuaweiConnection {
 		cmd.createEthService(createData);
 	}
 
-	public void addBindingPath() throws ProcessingFailureException {
+	public void addBindingPathVC12() throws ProcessingFailureException {
 		NameAndStringValue_T[] vctrunkPort = new NameAndStringValue_T[3];
 		vctrunkPort[0] = new NameAndStringValue_T("EMS", this.realEMSName);
 		vctrunkPort[1] = new NameAndStringValue_T("ManagedElement", "3145729");
@@ -998,6 +1159,60 @@ public class HuaweiActivationClient extends HuaweiConnection {
 				"/rack=1/shelf=1/slot=5/domain=sdh/port=1");
 		pathList[0][3] = new NameAndStringValue_T("CTP",
 				"/sts3c_au4-j=1/vt2_tu12-k=3-l=1-m=1");
+
+		CorbaCommands cmd = new CorbaCommands(emsSession, this.realEMSName);
+		cmd.addBindingPath(vctrunkPort, Directionality_T.D_BIDIRECTIONAL,
+				pathList);
+	}
+
+	public void addBindingPathVC3() throws ProcessingFailureException {
+		NameAndStringValue_T[] vctrunkPort = new NameAndStringValue_T[3];
+		vctrunkPort[0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		vctrunkPort[1] = new NameAndStringValue_T("ManagedElement", "3145729");
+		vctrunkPort[2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=1/slot=5/domain=eth/type=mp/port=3");
+
+		NameAndStringValue_T[][] pathList = new NameAndStringValue_T[1][4];
+
+		// Bind VCTRUNK port to VC-3 SDH path which is created using method
+		// createVC3Path
+		pathList[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		pathList[0][1] = new NameAndStringValue_T("ManagedElement", "3145729");
+		pathList[0][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=1/slot=5/domain=sdh/port=1");
+		pathList[0][3] = new NameAndStringValue_T("CTP",
+				"/sts3c_au4-j=3/tu3_vc3-k=1");
+
+		CorbaCommands cmd = new CorbaCommands(emsSession, this.realEMSName);
+		cmd.addBindingPath(vctrunkPort, Directionality_T.D_BIDIRECTIONAL,
+				pathList);
+	}
+
+	// Bind 2 VC12 SDH Path for 4M Ethernet service
+	public void addBindingPathVC12for4M() throws ProcessingFailureException {
+		NameAndStringValue_T[] vctrunkPort = new NameAndStringValue_T[3];
+		vctrunkPort[0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		vctrunkPort[1] = new NameAndStringValue_T("ManagedElement", "3145729");
+		vctrunkPort[2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=1/slot=5/domain=eth/type=mp/port=4");
+
+		NameAndStringValue_T[][] pathList = new NameAndStringValue_T[2][4];
+
+		// Bind VCTRUNK port to 2x VC-12 SDH path which is created using method
+		// createVC12Path
+		pathList[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		pathList[0][1] = new NameAndStringValue_T("ManagedElement", "3145729");
+		pathList[0][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=1/slot=5/domain=sdh/port=1");
+		pathList[0][3] = new NameAndStringValue_T("CTP",
+				"/sts3c_au4-j=1/vt2_tu12-k=3-l=1-m=2");
+
+		pathList[1][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		pathList[1][1] = new NameAndStringValue_T("ManagedElement", "3145729");
+		pathList[1][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=1/slot=5/domain=sdh/port=1");
+		pathList[1][3] = new NameAndStringValue_T("CTP",
+				"/sts3c_au4-j=1/vt2_tu12-k=3-l=1-m=3");
 
 		CorbaCommands cmd = new CorbaCommands(emsSession, this.realEMSName);
 		cmd.addBindingPath(vctrunkPort, Directionality_T.D_BIDIRECTIONAL,
@@ -1072,7 +1287,7 @@ public class HuaweiActivationClient extends HuaweiConnection {
 	}
 
 	public void deactivateAndDeleteSNC() throws ProcessingFailureException {
-		String sncID = "2014-11-12 07:28:04 - 68-sdh";
+		String sncID = "2014-11-11 13:20:55 - 61-sdh";
 
 		NameAndStringValue_T[] sncName = new NameAndStringValue_T[3];
 		sncName[0] = new NameAndStringValue_T("EMS", this.realEMSName);
