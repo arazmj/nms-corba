@@ -1,7 +1,9 @@
 package ex.corba.alu;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
 
 import multiLayerSubnetwork.EMSFreedomLevel_T;
 
@@ -13,7 +15,9 @@ import subnetworkConnection.GradesOfImpact_T;
 import subnetworkConnection.NetworkRouted_T;
 import subnetworkConnection.ProtectionEffort_T;
 import subnetworkConnection.Reroute_T;
+import subnetworkConnection.RouteDescriptor_T;
 import subnetworkConnection.SNCCreateData_T;
+import subnetworkConnection.SNCModifyData_T;
 import subnetworkConnection.SNCType_T;
 import subnetworkConnection.StaticProtectionLevel_T;
 import subnetworkConnection.TPDataList_THolder;
@@ -53,7 +57,11 @@ public class AlcatelActivationClient extends AlcatelConnection {
 
 			// Path for Ethernet services
 			// main.create2MPathForEVC();
-			main.create4MPathForEVC();
+			// main.create4MPathForEVC();
+			// main.create10MPathForEVC();
+
+			// main.modifySNCUpgrade();
+			main.modifySNCDowngrade();
 
 			// main.createServerTrail();
 			// main.createServerTrailWithConstraintsPort();
@@ -478,6 +486,7 @@ public class AlcatelActivationClient extends AlcatelConnection {
 				tpsToModify);
 	}
 
+	// This create one Path and 2 Trails (VC12)
 	public void create4MPathForEVC() throws ProcessingFailureException {
 		String sncID = "NISA-EVC-4M-1";
 		String userLabel = "NISA-EVC-4M-1";
@@ -558,6 +567,250 @@ public class AlcatelActivationClient extends AlcatelConnection {
 		CorbaCommands cmd = new CorbaCommands(emsSession, this.realEMSName);
 		cmd.createAndActivateSNC(createData, tolerableImpact, emsFreedomLevel,
 				tpsToModify);
+	}
+
+	// This create one Path and 10 Trails (VC12)
+	public void create10MPathForEVC() throws ProcessingFailureException {
+		String sncID = "NISA-EVC-10M-1";
+		String userLabel = "NISA-EVC-10M-1";
+		String owner = "";
+
+		// Service Type = Ethernet
+		short layerRate = 96;
+
+		NameAndStringValue_T[][] aEnd = new NameAndStringValue_T[1][2];
+
+		// A-End - VNE
+		aEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		aEnd[0][1] = new NameAndStringValue_T("ManagedElement", "9000/44");
+
+		// Z-End
+		NameAndStringValue_T[][] zEnd = new NameAndStringValue_T[1][4];
+		zEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		zEnd[0][1] = new NameAndStringValue_T("ManagedElement", "103/1");
+		zEnd[0][2] = new NameAndStringValue_T("PTP",
+				"NISA_CC1/r01s1b29p07-gMAU");
+		zEnd[0][3] = new NameAndStringValue_T("CTP",
+				"NISA_CC1/r01s1b29p07-gMAU");
+
+		NameAndStringValue_T[][] neTpInclusions = new NameAndStringValue_T[0][0];
+		NameAndStringValue_T[][] neTpExclusions = new NameAndStringValue_T[0][0];
+		CrossConnect_T[] ccInclusions = new CrossConnect_T[0];
+
+		Hashtable<String, String> additionalInfo = new Hashtable<String, String>();
+		additionalInfo.put("SNC_NAME", sncID);
+		additionalInfo.put("SIGNALRATE", "eth10or100MbRateAdapt");
+		additionalInfo.put("transportRate", "tu12virtN");
+		additionalInfo.put("ConcatenationLevel", "5");
+
+		NameAndStringValue_T[] additionalCreationInfo = new NameAndStringValue_T[additionalInfo
+				.size()];
+		Enumeration<String> keySet = additionalInfo.keys();
+
+		for (int i = 0; keySet.hasMoreElements(); i++) {
+			String name = (String) keySet.nextElement();
+			String value = (String) additionalInfo.get(name);
+			additionalCreationInfo[i] = new NameAndStringValue_T(name, value);
+		}
+
+		SNCCreateData_T createData = new SNCCreateData_T();
+
+		createData.aEnd = aEnd;
+		createData.zEnd = zEnd;
+		createData.additionalCreationInfo = additionalCreationInfo;
+		createData.neTpInclusions = neTpInclusions;
+		createData.neTpSncExclusions = neTpExclusions;
+		createData.ccInclusions = ccInclusions;
+		createData.forceUniqueness = true;
+		createData.fullRoute = false;
+		createData.layerRate = layerRate;
+		createData.networkRouted = NetworkRouted_T.NR_YES;
+		createData.rerouteAllowed = Reroute_T.RR_NO;
+		createData.direction = ConnectionDirection_T.CD_BI;
+		createData.sncType = SNCType_T.ST_SIMPLE;
+		createData.staticProtectionLevel = StaticProtectionLevel_T.UNPROTECTED;
+		createData.protectionEffort = ProtectionEffort_T.EFFORT_SAME;
+		createData.owner = owner;
+		createData.userLabel = userLabel;
+
+		GradesOfImpact_T tolerableImpact = GradesOfImpact_T.GOI_HITLESS;// GOI_HITLESS;
+		EMSFreedomLevel_T emsFreedomLevel = EMSFreedomLevel_T.EMSFL_RECONFIGURATION;// EMSFL_CC_AT_SNC_LAYER;
+
+		TPDataList_THolder tpsToModify = new TPDataList_THolder();
+		tpsToModify.value = new TPData_T[0];
+
+		CorbaCommands cmd = new CorbaCommands(emsSession, this.realEMSName);
+		cmd.createAndActivateSNC(createData, tolerableImpact, emsFreedomLevel,
+				tpsToModify);
+	}
+
+	// Upgrade Ethernet service bandwidth
+	public void modifySNCUpgrade() throws ProcessingFailureException {
+		String userLabel = "NISA-EVC-10M-1";
+		String owner = "";
+
+		// Service Type = Ethernet
+		short layerRate = 96;
+
+		NameAndStringValue_T[] sncName = new NameAndStringValue_T[3];
+		sncName[0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		sncName[1] = new NameAndStringValue_T("MultiLayerSubnetwork", "SDH");
+		sncName[2] = new NameAndStringValue_T("SubnetworkConnection",
+				"PATH_173");
+
+		NameAndStringValue_T[][] aEnd = new NameAndStringValue_T[1][2];
+
+		// A-End - VNE
+		aEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		aEnd[0][1] = new NameAndStringValue_T("ManagedElement", "9000/44");
+
+		// Z-End
+		NameAndStringValue_T[][] zEnd = new NameAndStringValue_T[1][4];
+		zEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		zEnd[0][1] = new NameAndStringValue_T("ManagedElement", "103/1");
+		zEnd[0][2] = new NameAndStringValue_T("PTP",
+				"NISA_CC1/r01s1b29p07-gMAU");
+		zEnd[0][3] = new NameAndStringValue_T("CTP",
+				"NISA_CC1/r01s1b29p07-gMAU");
+
+		NameAndStringValue_T[][] neTpInclusions = new NameAndStringValue_T[0][0];
+		NameAndStringValue_T[][] neTpExclusions = new NameAndStringValue_T[0][0];
+		RouteDescriptor_T[] addedOrNewRoute = new subnetworkConnection.RouteDescriptor_T[0];
+		RouteDescriptor_T[] removedRoute = new subnetworkConnection.RouteDescriptor_T[0];
+
+		Hashtable<String, String> additionalInfo = new Hashtable<String, String>();
+		// Add 2 more trails. Initial bandwidth 10M i.e. 5 VC12 trails. Final
+		// will be 5+2=7 trails i.e. 14M
+		additionalInfo.put("numberOfTrail", "2");
+		additionalInfo.put("serverTrailState", "activated");
+		additionalInfo.put("protType", "None");
+
+		NameAndStringValue_T[] additionalCreationInfo = new NameAndStringValue_T[additionalInfo
+				.size()];
+		Enumeration<String> keySet = additionalInfo.keys();
+
+		for (int i = 0; keySet.hasMoreElements(); i++) {
+			String name = (String) keySet.nextElement();
+			String value = (String) additionalInfo.get(name);
+			additionalCreationInfo[i] = new NameAndStringValue_T(name, value);
+		}
+
+		SNCModifyData_T modifyData = new SNCModifyData_T();
+
+		modifyData.aEnd = aEnd;
+		modifyData.zEnd = zEnd;
+		modifyData.modifyType = "increaseNewTrailsOnPath";
+		modifyData.retainOldSNC = false;
+		modifyData.addedOrNewRoute = addedOrNewRoute;
+		modifyData.removedRoute = removedRoute;
+		modifyData.additionalCreationInfo = additionalCreationInfo;
+		modifyData.neTpInclusions = neTpInclusions;
+		modifyData.neTpSncExclusions = neTpExclusions;
+		modifyData.forceUniqueness = true;
+		modifyData.fullRoute = false;
+		modifyData.layerRate = layerRate;
+		modifyData.networkRouted = NetworkRouted_T.NR_YES;
+		modifyData.rerouteAllowed = Reroute_T.RR_NO;
+		modifyData.direction = ConnectionDirection_T.CD_BI;
+		modifyData.sncType = SNCType_T.ST_SIMPLE;
+		modifyData.staticProtectionLevel = StaticProtectionLevel_T.UNPROTECTED;
+		modifyData.protectionEffort = ProtectionEffort_T.EFFORT_SAME;
+		modifyData.owner = owner;
+		modifyData.userLabel = userLabel;
+
+		GradesOfImpact_T tolerableImpact = GradesOfImpact_T.GOI_HITLESS;
+		EMSFreedomLevel_T emsFreedomLevel = EMSFreedomLevel_T.EMSFL_RECONFIGURATION;
+
+		TPDataList_THolder tpsToModify = new TPDataList_THolder();
+		tpsToModify.value = new TPData_T[0];
+
+		CorbaCommands cmd = new CorbaCommands(emsSession, this.realEMSName);
+		cmd.modifySNC(sncName, modifyData, tolerableImpact,
+				ProtectionEffort_T.EFFORT_SAME, emsFreedomLevel, tpsToModify);
+	}
+
+	// Downgrade Ethernet service bandwidth
+	public void modifySNCDowngrade() throws ProcessingFailureException {
+		String userLabel = "NISA-EVC-10M-1";
+		String owner = "";
+
+		// Service Type = Ethernet
+		short layerRate = 96;
+
+		NameAndStringValue_T[] sncName = new NameAndStringValue_T[3];
+		sncName[0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		sncName[1] = new NameAndStringValue_T("MultiLayerSubnetwork", "SDH");
+		sncName[2] = new NameAndStringValue_T("SubnetworkConnection",
+				"PATH_173");
+
+		NameAndStringValue_T[][] aEnd = new NameAndStringValue_T[1][2];
+
+		// A-End - VNE
+		aEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		aEnd[0][1] = new NameAndStringValue_T("ManagedElement", "9000/44");
+
+		// Z-End
+		NameAndStringValue_T[][] zEnd = new NameAndStringValue_T[1][4];
+		zEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		zEnd[0][1] = new NameAndStringValue_T("ManagedElement", "103/1");
+		zEnd[0][2] = new NameAndStringValue_T("PTP",
+				"NISA_CC1/r01s1b29p07-gMAU");
+		zEnd[0][3] = new NameAndStringValue_T("CTP",
+				"NISA_CC1/r01s1b29p07-gMAU");
+
+		NameAndStringValue_T[][] neTpInclusions = new NameAndStringValue_T[0][0];
+		NameAndStringValue_T[][] neTpExclusions = new NameAndStringValue_T[0][0];
+		RouteDescriptor_T[] addedOrNewRoute = new subnetworkConnection.RouteDescriptor_T[0];
+		RouteDescriptor_T[] removedRoute = new subnetworkConnection.RouteDescriptor_T[0];
+
+		Hashtable<String, String> additionalInfo = new Hashtable<String, String>();
+		// Decrease 2 trails. Initial bandwidth 14M i.e. 7 VC12 trails.
+		// Final 7-2=5 trails i.e. 10M
+		additionalInfo.put("numberOfTrail", "2");
+		additionalInfo.put("enableDeactivate", "enabled");
+
+		NameAndStringValue_T[] additionalCreationInfo = new NameAndStringValue_T[additionalInfo
+				.size()];
+		Enumeration<String> keySet = additionalInfo.keys();
+
+		for (int i = 0; keySet.hasMoreElements(); i++) {
+			String name = (String) keySet.nextElement();
+			String value = (String) additionalInfo.get(name);
+			additionalCreationInfo[i] = new NameAndStringValue_T(name, value);
+		}
+
+		SNCModifyData_T modifyData = new SNCModifyData_T();
+
+		modifyData.aEnd = aEnd;
+		modifyData.zEnd = zEnd;
+		modifyData.modifyType = "decreaseIdleTrailsOnPath";
+		modifyData.retainOldSNC = false;
+		modifyData.addedOrNewRoute = addedOrNewRoute;
+		modifyData.removedRoute = removedRoute;
+		modifyData.additionalCreationInfo = additionalCreationInfo;
+		modifyData.neTpInclusions = neTpInclusions;
+		modifyData.neTpSncExclusions = neTpExclusions;
+		modifyData.forceUniqueness = true;
+		modifyData.fullRoute = false;
+		modifyData.layerRate = layerRate;
+		modifyData.networkRouted = NetworkRouted_T.NR_YES;
+		modifyData.rerouteAllowed = Reroute_T.RR_NO;
+		modifyData.direction = ConnectionDirection_T.CD_BI;
+		modifyData.sncType = SNCType_T.ST_SIMPLE;
+		modifyData.staticProtectionLevel = StaticProtectionLevel_T.UNPROTECTED;
+		modifyData.protectionEffort = ProtectionEffort_T.EFFORT_SAME;
+		modifyData.owner = owner;
+		modifyData.userLabel = userLabel;
+
+		GradesOfImpact_T tolerableImpact = GradesOfImpact_T.GOI_HITLESS;
+		EMSFreedomLevel_T emsFreedomLevel = EMSFreedomLevel_T.EMSFL_RECONFIGURATION;
+
+		TPDataList_THolder tpsToModify = new TPDataList_THolder();
+		tpsToModify.value = new TPData_T[0];
+
+		CorbaCommands cmd = new CorbaCommands(emsSession, this.realEMSName);
+		cmd.modifySNC(sncName, modifyData, tolerableImpact,
+				ProtectionEffort_T.EFFORT_SAME, emsFreedomLevel, tpsToModify);
 	}
 
 	public void createE1WithVNE() throws ProcessingFailureException {
@@ -1290,13 +1543,11 @@ public class AlcatelActivationClient extends AlcatelConnection {
 	}
 
 	public void deactivateAndDeleteSNC() throws ProcessingFailureException {
-		String sncID = "PATH_82";
+		final String sncType = "path";
 
-		NameAndStringValue_T[] sncName = new NameAndStringValue_T[4];
-		sncName[0] = new NameAndStringValue_T("EMS", this.realEMSName);
-		sncName[1] = new NameAndStringValue_T("MultiLayerSubnetwork", "SDH");
-		sncName[2] = new NameAndStringValue_T("SubnetworkConnection", sncID);
-		sncName[3] = new NameAndStringValue_T("sncType", "path");
+		List<String> sncIDsList = new ArrayList<String>();
+		sncIDsList.add("PATH_172");
+		// sncIDsList.add("PATH_28");
 
 		GradesOfImpact_T tolerableImpact = GradesOfImpact_T.GOI_MAJOR_IMPACT;
 		EMSFreedomLevel_T emsFreedomLevel = EMSFreedomLevel_T.EMSFL_CC_AT_SNC_LAYER;
@@ -1306,7 +1557,15 @@ public class AlcatelActivationClient extends AlcatelConnection {
 
 		CorbaCommands cmd = new CorbaCommands(emsSession, this.realEMSName);
 
-		cmd.deactivateAndDeleteSNC(sncName, tolerableImpact, emsFreedomLevel,
-				tpsToModify);
+		for (String sncID : sncIDsList) {
+			NameAndStringValue_T[] sncName = new NameAndStringValue_T[4];
+			sncName[0] = new NameAndStringValue_T("EMS", this.realEMSName);
+			sncName[1] = new NameAndStringValue_T("MultiLayerSubnetwork", "SDH");
+			sncName[2] = new NameAndStringValue_T("SubnetworkConnection", sncID);
+			sncName[3] = new NameAndStringValue_T("sncType", sncType);
+
+			cmd.deactivateAndDeleteSNC(sncName, tolerableImpact,
+					emsFreedomLevel, tpsToModify);
+		}
 	}
 }

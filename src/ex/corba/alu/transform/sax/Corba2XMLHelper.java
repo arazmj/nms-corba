@@ -328,7 +328,7 @@ public class Corba2XMLHelper {
 				terminationPoint.edgePoint ? "true" : "false");
 		container
 				.setFieldValue(
-						CorbaConstants.ADDITIONALINFO_STR,
+						CorbaConstants.ADDITIONAL_INFO_STR,
 						handler.convertNameAndStringValueToString(terminationPoint.additionalInfo));
 		return container;
 	}

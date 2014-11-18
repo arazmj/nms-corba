@@ -61,7 +61,7 @@ public class AlcatelDiscoveryClient extends AlcatelConnection {
 		// cmd.getAllPTPs();
 		// cmd.getAllTopologicalLinks();
 		cmd.getAllSubnetworkConnections();
-		cmd.getRoute();
+		// cmd.getRoute();
 		handler.handlerBuilderEnd();
 	}
 }

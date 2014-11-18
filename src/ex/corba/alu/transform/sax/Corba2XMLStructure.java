@@ -80,7 +80,7 @@ public enum Corba2XMLStructure {
             CorbaConstants.TRANSMISSION_PARAMS_STR,
             CorbaConstants.TP_PROTECTION_ASSOCIATION_STR,
             CorbaConstants.EDGE_POINT_STR,
-            CorbaConstants.ADDITIONALINFO_STR
+            CorbaConstants.ADDITIONAL_INFO_STR
     }),
     
     /**
@@ -97,13 +97,13 @@ public enum Corba2XMLStructure {
             CorbaConstants.RATE_STR,
             CorbaConstants.PGP_TP_LIST_STR,
             CorbaConstants.PGP_PARAMETERS_STR,
-            CorbaConstants.ADDITIONALINFO_STR
+            CorbaConstants.ADDITIONAL_INFO_STR
     }),
     
     /**
      * Corba entity: TopologicalLink_T
      */
-    TOPOL_LINKS("TOPOL_LINKS", new String[]{
+    TOPOL_LINKS("TOPO_LINKS", new String[]{
             CorbaConstants.USER_LABEL_STR,
             CorbaConstants.TL_ID_STR,
             CorbaConstants.NATIVE_EMS_NAME_STR,
@@ -205,7 +205,7 @@ FLOWDOMAINFRAGMENTS("FLOWDOMAINFRAGMENT", new String[]{
 	        CorbaConstants.NATIVE_EMS_NAME_STR,
 	        CorbaConstants.USER_LABEL_STR,
 	        CorbaConstants.OWNER_STR,
-	        CorbaConstants.ADDITIONALINFO_STR,
+	        CorbaConstants.ADDITIONAL_INFO_STR,
 	        CorbaConstants.NAME_STR,
 	        CorbaConstants.NETWORKACCESSDOMAIN_STR,
 	        CorbaConstants.ADMINISTRATIVESTATE_STR,

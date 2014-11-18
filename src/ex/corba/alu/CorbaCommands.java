@@ -22,9 +22,11 @@ import org.xml.sax.SAXException;
 
 import subnetworkConnection.CrossConnect_T;
 import subnetworkConnection.GradesOfImpact_T;
+import subnetworkConnection.ProtectionEffort_T;
 import subnetworkConnection.Route_THolder;
 import subnetworkConnection.SNCCreateData_T;
 import subnetworkConnection.SNCIterator_IHolder;
+import subnetworkConnection.SNCModifyData_T;
 import subnetworkConnection.SubnetworkConnectionList_THolder;
 import subnetworkConnection.SubnetworkConnection_THolder;
 import subnetworkConnection.TPDataList_THolder;
@@ -929,6 +931,33 @@ public class CorbaCommands {
 
 		if (LOG.isInfoEnabled()) {
 			LOG.info(" deactivateAndDeleteSNC() complete.");
+		}
+
+		return errorReason;
+	}
+
+	public StringHolder modifySNC(NameAndStringValue_T[] sncName,
+			SNCModifyData_T modifyData, GradesOfImpact_T tolerableImpact,
+			ProtectionEffort_T tolerableImpactEffort,
+			EMSFreedomLevel_T emsFreedomLevel, TPDataList_THolder tpsToModify)
+			throws ProcessingFailureException {
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info("modifySNC() start.");
+		}
+
+		if (!setManagerByName(MLS_MANAGER_NAME))
+			return null;
+
+		SubnetworkConnection_THolder theSNC = new SubnetworkConnection_THolder();
+		StringHolder errorReason = new StringHolder();
+
+		this.mlsnManager.modifySNC(sncName, "", modifyData, tolerableImpact,
+				tolerableImpactEffort, emsFreedomLevel, tpsToModify, theSNC,
+				errorReason);
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info("modifySNC() complete.");
 		}
 
 		return errorReason;
