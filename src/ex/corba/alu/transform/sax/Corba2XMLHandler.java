@@ -7,11 +7,9 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
+import subnetworkConnection.TPData_T;
 import transmissionParameters.LayeredParameters_T;
 
-/**
- * User: ROAG1205 Date: 16.05.2011 Time: 22:55:59
- */
 public class Corba2XMLHandler {
 	public static final String XML_ROOT_TAG = "main";
 	public static final String XML_DEFAULT_URI = "";
@@ -54,7 +52,7 @@ public class Corba2XMLHandler {
 	public void printStructure(Corba2XMLContainer container,
 			boolean closeStructure) throws SAXException {
 		startElement(container.getStructureName());
-		
+
 		for (String field : container.getFields()) {
 			printElement(field, container.getValue(field));
 		}
@@ -244,5 +242,46 @@ public class Corba2XMLHandler {
 		}
 
 		return nameAndValuesList.toString();
+	}
+
+	public String convertTPDatasToString(TPData_T[] tpDatasArray) {
+
+		if (tpDatasArray == null || tpDatasArray.length == 0) {
+			return "";
+		}
+
+		StringBuffer stBuf = new StringBuffer();
+		for (TPData_T lp : tpDatasArray) {
+			stBuf.append("[ ");
+			stBuf.append(convertTPDataToString(lp));
+			stBuf.append(" ]");
+		}
+
+		return stBuf.toString();
+	}
+
+	public String convertTPDataToString(TPData_T tpData) {
+
+		if (tpData == null) {
+			return "";
+		}
+
+		StringBuffer stBuf = new StringBuffer();
+		stBuf.append("{tpName=")
+				.append(convertNameAndStringValueToString(tpData.tpName))
+				.append('}');
+		stBuf.append("{egressTrafficDescriptorName=")
+				.append(convertNameAndStringValueToString(tpData.egressTrafficDescriptorName))
+				.append('}');
+		stBuf.append("{ingressTrafficDescriptorName=")
+				.append(convertNameAndStringValueToString(tpData.ingressTrafficDescriptorName))
+				.append('}');
+		stBuf.append("{tpMappingMode=").append(tpData.tpMappingMode.value())
+				.append('}');
+		stBuf.append("{transmissionParams=")
+				.append(convertLayeredParametersToString(tpData.transmissionParams))
+				.append('}');
+
+		return stBuf.toString();
 	}
 }

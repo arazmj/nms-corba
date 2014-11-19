@@ -21,6 +21,8 @@ import org.omg.CosNaming.NamingContextExt;
 import org.omg.CosNaming.NamingContextExtHelper;
 import org.omg.PortableServer.POA;
 import org.omg.PortableServer.POAHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import emsSession.EmsSession_I;
 import emsSession.EmsSession_IHolder;
@@ -28,6 +30,9 @@ import emsSessionFactory.EmsSessionFactory_I;
 import emsSessionFactory.EmsSessionFactory_IHelper;
 
 public class AlcatelConnection {
+	public static final Logger LOG = LoggerFactory
+			.getLogger(AlcatelConnection.class);
+
 	protected String corbaConnect;
 	protected String login;
 	protected String pass;
@@ -81,8 +86,18 @@ public class AlcatelConnection {
 		sessionFactory.getEmsSession(login, pass, nmsSession, sessionHolder);
 		EmsSession_I emsSession = sessionHolder.value;
 
-		System.out.println("Authentication successful!!! emsSession: "
-				+ emsSession);
+		// check the obtained session
+		if (emsSession.associatedSession()._non_existent()) {
+			if (LOG.isInfoEnabled()) {
+				LOG.info("Alcatel 1350 OMS>> Auth Fail or EmsSession not exist");
+			}
+
+			closeEmsSession(emsSession);
+
+			return null;
+		}
+
+		LOG.info("Authentication successful!!! emsSession: {}.", emsSession);
 
 		return emsSession;
 	}
@@ -117,8 +132,18 @@ public class AlcatelConnection {
 		sessionFactory.getEmsSession(login, pass, nmsSession, sessionHolder);
 		EmsSession_I emsSession = sessionHolder.value;
 
-		System.out.println("Authentication successful!!! emsSession: "
-				+ emsSession);
+		// check the obtained session
+		if (emsSession.associatedSession()._non_existent()) {
+			if (LOG.isInfoEnabled()) {
+				LOG.info("Alcatel 1350 OMS>> Auth Fail or EmsSession not exist");
+			}
+
+			closeEmsSession(emsSession);
+
+			return null;
+		}
+
+		LOG.info("Authentication successful!!! emsSession: {}.", emsSession);
 
 		return emsSession;
 	}

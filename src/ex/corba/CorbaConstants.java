@@ -65,8 +65,8 @@ public class CorbaConstants {
 	public static final String A_END_TP_STR = "A_END_TP";
 	public static final String Z_END_TP_STR = "Z_END_TP";
 	public static final String Z_END_NE_STR = "Z_END_NE";
-	public static final String A_TRANSMISSIONPARAMS_STR = "A_TRANSMISSIONPARAMS";
-	public static final String Z_TRANSMISSIONPARAMS_STR = "Z_TRANSMISSIONPARAMS";
+	public static final String A_TRANSMISSION_PARAMS_STR = "A_TRANSMISSION_PARAMS";
+	public static final String Z_TRANSMISSION_PARAMS_STR = "Z_TRANSMISSION_PARAMS";
 	public static final String SNS_ID_STR = "SNS_ID";
 	public static final String SNC_STATE_STR = "SNC_STATE";
 	public static final String STATIC_PROTECTION_LEVEL_STR = "STATIC_PROTECTION_LEVEL";
@@ -124,7 +124,6 @@ public class CorbaConstants {
 	public static final String VB_STR = "VB";
 	public static final String VLAN_ID_STR = "VLAN_ID";
 	public static final String PARALIST_STR = "PARALIST";
-	public static final String TRANSMISSIONPARAMS_STR = "TRANSMISSIONPARAMS";
 	public static final String QOSRULENAMES_STR = "QOSRULENAMES";
 	public static final String MAINPORTNAME_STR = "MAINPORTNAME";
 	public static final String BRANCHPORTLIST_STR = "BRANCHPORTLIST";
@@ -147,7 +146,7 @@ public class CorbaConstants {
 	public static final String PROTECTROLE_STR = "PROTECTROLE";
 	public static final String A_END_BPC_STR = "A_END_BPC";
 	public static final String Z_END_BPC_STR = "Z_END_BPC";
-	public static final String NETWORKACCESSDOMAIN_STR = "NETWORKACCESSDOMAIN";
+	public static final String NETWORK_ACCESS_DOMAIN_STR = "NETWORK_ACCESS_DOMAIN";
 	public static final String FDCONNECTIVITYSTATE_STR = "FDCONNECTIVITYSTATE";
 	public static final String FDEDGECPTPS_STR = "FDEDGECPTPS";
 	public static final String MFDS_STR = "MFDS";
@@ -155,10 +154,10 @@ public class CorbaConstants {
 	public static final String FDTYPE_STR = "FDTYPE";
 	public static final String AENDNAMELIST_STR = "AENDNAMELIST";
 	public static final String ZENDNAMELIST_STR = "ZENDNAMELIST";
-	public static final String ADMINISTRATIVESTATE_STR = "ADMINISTRATIVESTATE";
+	public static final String ADMINISTRATIVE_STATE_STR = "ADMINISTRATIVE_STATE";
 	public static final String FLEXIBLE_STR = "FLEXIBLE";
-	public static final String FDFRTYPE_STR = "FDFRTYPE";
-	public static final String FDFRSTATE_STR = "FDFRSTATE";
+	public static final String FDFR_TYPE_STR = "FDFR_TYPE";
+	public static final String FDFR_STATE_STR = "FDFR_STATE";
 	public static final String ENDTPS_STR = "ENDTPS";
 	public static final String MFDFRTYPE_STR = "MFDFRTYPE";
 	public static final String MULTIPOINTSERVICEATTR_STR = "MULTIPOINTSERVICEATTR";

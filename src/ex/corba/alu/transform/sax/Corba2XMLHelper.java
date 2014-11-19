@@ -5,12 +5,17 @@ import equipment.EquipmentOrHolder_T;
 import equipment.Equipment_T;
 import equipment.HolderState_T;
 import ex.corba.CorbaConstants;
+import flowDomainFragment.FlowDomainFragment_T;
 import globaldefs.NameAndStringValue_T;
 import globaldefs.ProcessingFailureException;
 import managedElement.ManagedElement_T;
 
 import org.xml.sax.SAXException;
 
+import protection.ProtectionGroupType_T;
+import protection.ProtectionGroup_T;
+import protection.ProtectionSchemeState_T;
+import protection.ReversionMode_T;
 import subnetworkConnection.CrossConnect_T;
 import subnetworkConnection.SubnetworkConnection_T;
 import terminationPoint.Directionality_T;
@@ -19,6 +24,7 @@ import terminationPoint.TPProtectionAssociation_T;
 import terminationPoint.TPType_T;
 import terminationPoint.TerminationMode_T;
 import terminationPoint.TerminationPoint_T;
+import topologicalLink.TopologicalLink_T;
 
 public class Corba2XMLHelper {
 	public Corba2XMLHandler handler;
@@ -60,7 +66,7 @@ public class Corba2XMLHelper {
 		return container;
 	}
 
-	public void listEquipmentOrHolderList(EquipmentOrHolder_T eoh)
+	public void printEquipmentOrHolder(EquipmentOrHolder_T eoh)
 			throws ProcessingFailureException, SAXException {
 		if (eoh.discriminator().value() == 1) {
 			handler.printStructure(getHolderParams(eoh.holder()));
@@ -166,7 +172,7 @@ public class Corba2XMLHelper {
 		return container;
 	}
 
-	public void listTerminationPointList(TerminationPoint_T terminationPoint)
+	public void printTerminationPoint(TerminationPoint_T terminationPoint)
 			throws ProcessingFailureException, SAXException {
 		handler.printStructure(getTerminationPointParams(terminationPoint));
 	}
@@ -306,12 +312,15 @@ public class Corba2XMLHelper {
 		if (isFTPExists) {
 			container.setFieldValue(CorbaConstants.FTP_STR, ftpValue);
 		}
+
 		if (isPTPExists) {
 			container.setFieldValue(CorbaConstants.PTP_STR, ptpValue);
 		}
+
 		if (isCTPExists) {
 			container.setFieldValue(CorbaConstants.CTP_STR, ctpValue);
 		}
+
 		container.setFieldValue(CorbaConstants.TYPE_STR, type);
 		container.setFieldValue(CorbaConstants.CONNECTION_STATE_STR,
 				connectionState);
@@ -486,4 +495,237 @@ public class Corba2XMLHelper {
 
 		return container;
 	}
+
+	public void printProtectionGroup(ProtectionGroup_T[] protectionGroup)
+			throws ProcessingFailureException, SAXException {
+
+		if (protectionGroup == null) {
+			return;
+		}
+
+		for (int i = 0; i < protectionGroup.length; i++) {
+			handler.printStructure(getProtectionGroupParams(protectionGroup[i]));
+		}
+	}
+
+	public Corba2XMLContainer getProtectionGroupParams(
+			ProtectionGroup_T protectionGroup)
+			throws ProcessingFailureException {
+		String protectionGroupType = null;
+
+		switch (protectionGroup.protectionGroupType.value()) {
+		case ProtectionGroupType_T._PGT_2_FIBER_BLSR:
+			protectionGroupType = "PGT_2_FIBER_BLSR";
+			break;
+		case ProtectionGroupType_T._PGT_4_FIBER_BLSR:
+			protectionGroupType = "PGT_4_FIBER_BLSR";
+			break;
+		case ProtectionGroupType_T._PGT_MSP_1_FOR_N:
+			protectionGroupType = "PGT_MSP_1_FOR_N";
+			break;
+		case ProtectionGroupType_T._PGT_MSP_1_PLUS_1:
+			protectionGroupType = "PGT_MSP_1_PLUS_1";
+			break;
+		default:
+			protectionGroupType = "";
+			break;
+		}
+
+		String protectionSchemeState = null;
+		switch (protectionGroup.protectionSchemeState.value()) {
+		case ProtectionSchemeState_T._PSS_AUTOMATIC:
+			protectionSchemeState = "AUTOMATIC";
+			break;
+		case ProtectionSchemeState_T._PSS_FORCED_OR_LOCKED_OUT:
+			protectionSchemeState = "FORCED_OR_LOCKED_OUT";
+			break;
+		case ProtectionSchemeState_T._PSS_UNKNOWN:
+			protectionSchemeState = CorbaConstants.UNKNOWN_STR;
+			break;
+		default:
+			protectionSchemeState = "";
+			break;
+		}
+
+		String reversionMode = null;
+		switch (protectionGroup.reversionMode.value()) {
+		case ReversionMode_T._RM_NON_REVERTIVE:
+			reversionMode = "NON_REVERTIVE";
+			break;
+		case ReversionMode_T._RM_REVERTIVE:
+			reversionMode = "REVERTIVE";
+			break;
+		case ReversionMode_T._RM_UNKNOWN:
+			reversionMode = CorbaConstants.UNKNOWN_STR;
+			break;
+		default:
+			reversionMode = "";
+			break;
+		}
+
+		Corba2XMLContainer container = new Corba2XMLContainer(
+				Corba2XMLStructure.PROTECTION_GROUPS);
+		container.setFieldValue(CorbaConstants.NE_ID_STR, handler
+				.getValueByName(protectionGroup.name,
+						CorbaConstants.MANAGED_ELEMENT_STR));
+		container.setFieldValue(CorbaConstants.USER_LABEL_STR,
+				protectionGroup.userLabel);
+		container.setFieldValue(CorbaConstants.NATIVE_EMS_NAME_STR,
+				protectionGroup.nativeEMSName);
+		container
+				.setFieldValue(CorbaConstants.OWNER_STR, protectionGroup.owner);
+		container.setFieldValue(CorbaConstants.PROTECTION_GROUP_TYPE_STR,
+				protectionGroupType);
+		container.setFieldValue(CorbaConstants.PROTECTION_SCHEMA_STATE_STR,
+				protectionSchemeState);
+		container.setFieldValue(CorbaConstants.REVERSION_MODE_STR,
+				reversionMode);
+		container.setFieldValue(CorbaConstants.RATE_STR,
+				String.valueOf(protectionGroup.rate));
+		container.setFieldValue(CorbaConstants.PGP_TP_LIST_STR, handler
+				.convertNameAndStringValuesToString(protectionGroup.pgpTPList));
+		container
+				.setFieldValue(
+						CorbaConstants.PGP_PARAMETERS_STR,
+						handler.convertNameAndStringValueToString(protectionGroup.pgpParameters));
+		container
+				.setFieldValue(
+						CorbaConstants.ADDITIONAL_INFO_STR,
+						handler.convertNameAndStringValueToString(protectionGroup.additionalInfo));
+
+		return container;
+	}
+
+	public void printFDFrs(FlowDomainFragment_T[] fdfrList)
+			throws SAXException, ProcessingFailureException {
+		if (fdfrList == null) {
+			return;
+		}
+
+		for (FlowDomainFragment_T value : fdfrList) {
+			handler.printStructure(getFDFrsParams(value));
+		}
+	}
+
+	public Corba2XMLContainer getFDFrsParams(FlowDomainFragment_T value)
+			throws ProcessingFailureException {
+		Corba2XMLContainer container = new Corba2XMLContainer(
+				Corba2XMLStructure.FLOWDOMAIN_FRAGMENTS);
+
+		container.setFieldValue(CorbaConstants.USER_LABEL_STR, value.userLabel);
+		container.setFieldValue(CorbaConstants.NATIVE_EMS_NAME_STR,
+				value.nativeEMSName);
+		container.setFieldValue(CorbaConstants.OWNER_STR, value.owner);
+		container.setFieldValue(CorbaConstants.NAME_STR,
+				handler.convertNameAndStringValueToString(value.name));
+
+		container.setFieldValue(CorbaConstants.NETWORK_ACCESS_DOMAIN_STR,
+				String.valueOf(value.networkAccessDomain));
+		container.setFieldValue(CorbaConstants.ADMINISTRATIVE_STATE_STR,
+				String.valueOf(value.administrativeState.value()));
+		container.setFieldValue(CorbaConstants.DIRECTION_STR,
+				String.valueOf(value.direction.value()));
+		container.setFieldValue(CorbaConstants.FLEXIBLE_STR,
+				String.valueOf(value.flexible));
+		container.setFieldValue(CorbaConstants.FDFR_TYPE_STR, value.fdfrType);
+		container.setFieldValue(CorbaConstants.FDFR_STATE_STR,
+				String.valueOf(value.fdfrState.value()));
+
+		container.setFieldValue(CorbaConstants.AEND_STR,
+				String.valueOf(handler.convertTPDatasToString(value.aEnd)));
+		container.setFieldValue(CorbaConstants.ZEND_STR,
+				String.valueOf(handler.convertTPDatasToString(value.zEnd)));
+
+		container.setFieldValue(CorbaConstants.TRANSMISSION_PARAMS_STR, handler
+				.convertLayeredParameterToString(value.transmissionParams));
+		container
+				.setFieldValue(
+						CorbaConstants.ADDITIONAL_INFO_STR,
+						handler.convertNameAndStringValueToString(value.additionalInfo));
+
+		return container;
+	}
+
+	public void printTopologicalLinksOfFDFr(FlowDomainFragment_T fdfr,
+			TopologicalLink_T[] list) throws SAXException,
+			ProcessingFailureException {
+		if (list == null) {
+			return;
+		}
+
+		for (TopologicalLink_T value : list) {
+			handler.printStructure(getTopologicalLinksOfFDFrParams(fdfr, value));
+		}
+	}
+
+	public Corba2XMLContainer getTopologicalLinksOfFDFrParams(
+			FlowDomainFragment_T fdfr, TopologicalLink_T topologicalLink)
+			throws ProcessingFailureException {
+		Corba2XMLContainer container = new Corba2XMLContainer(
+				Corba2XMLStructure.EVC_TRANSPORT_LINKS);
+
+		container.setFieldValue("FDFR_NAME",
+				handler.getValueByName(fdfr.name, "FlowDomainFragment"));
+		container.setFieldValue("FDFR_NATIVE_EMS_NAME", fdfr.nativeEMSName);
+		container.setFieldValue("FDFR_USER_LABEL", fdfr.userLabel);
+
+		container.setFieldValue(CorbaConstants.USER_LABEL_STR,
+				topologicalLink.userLabel);
+		container
+				.setFieldValue(CorbaConstants.TL_ID_STR,
+						handler.getValueByName(topologicalLink.name,
+								"TopologicalLink"));
+		container.setFieldValue(CorbaConstants.NATIVE_EMS_NAME_STR,
+				topologicalLink.nativeEMSName);
+		container
+				.setFieldValue(CorbaConstants.OWNER_STR, topologicalLink.owner);
+		container.setFieldValue(CorbaConstants.DIRECTION_STR,
+				String.valueOf(topologicalLink.direction.value()));
+		container.setFieldValue(CorbaConstants.RATE_STR,
+				String.valueOf(topologicalLink.rate));
+		container.setFieldValue(CorbaConstants.A_END_NE_STR, handler
+				.getValueByName(topologicalLink.aEndTP,
+						CorbaConstants.MANAGED_ELEMENT_STR));
+		container
+				.setFieldValue(CorbaConstants.A_END_TP_STR, handler
+						.getValueByName(topologicalLink.aEndTP,
+								CorbaConstants.PTP_STR));
+		container.setFieldValue(CorbaConstants.Z_END_NE_STR, handler
+				.getValueByName(topologicalLink.zEndTP,
+						CorbaConstants.MANAGED_ELEMENT_STR));
+		container
+				.setFieldValue(CorbaConstants.Z_END_TP_STR, handler
+						.getValueByName(topologicalLink.zEndTP,
+								CorbaConstants.PTP_STR));
+
+		// TerminationPoint_T aEndTP =
+		// getTerminationPoint(topologicalLink.aEndTP,
+		// topologicalLink.rate);
+		// if (aEndTP != null) {
+		// container
+		// .setFieldValue(
+		// CorbaConstants.A_TRANSMISSIONPARAMS_STR,
+		// handler.convertLayeredParametersToString(aEndTP.transmissionParams));
+		// } else {
+		// container
+		// .setFieldValue(CorbaConstants.A_TRANSMISSIONPARAMS_STR, "");
+		// }
+		//
+		// TerminationPoint_T zEndTP =
+		// getTerminationPoint(topologicalLink.zEndTP,
+		// topologicalLink.rate);
+		//
+		// if (zEndTP != null) {
+		// container
+		// .setFieldValue(
+		// CorbaConstants.Z_TRANSMISSION_PARAMS_STR,
+		// handler.convertLayeredParametersToString(zEndTP.transmissionParams));
+		// } else {
+		// container
+		// .setFieldValue(CorbaConstants.Z_TRANSMISSION_PARAMS_STR, "");
+		// }
+
+		return container;
+	}
+
 }

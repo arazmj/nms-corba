@@ -20,6 +20,10 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
+import protection.ProtectionGroupIterator_IHolder;
+import protection.ProtectionGroupList_THolder;
+import protection.ProtectionMgr_I;
+import protection.ProtectionMgr_IHelper;
 import subnetworkConnection.CrossConnect_T;
 import subnetworkConnection.GradesOfImpact_T;
 import subnetworkConnection.ProtectionEffort_T;
@@ -59,6 +63,14 @@ import ex.corba.xml.EquipmentHolder;
 import ex.corba.xml.JaxbOutputHandler;
 import ex.corba.xml.ManagedElement;
 import ex.corba.xml.NmsObjects;
+import extendServiceMgr.ExtendServiceMgr_I;
+import extendServiceMgr.ExtendServiceMgr_IHelper;
+import flowDomain.FlowDomainMgr_I;
+import flowDomain.FlowDomainMgr_IHelper;
+import flowDomainFragment.FDFrIterator_I;
+import flowDomainFragment.FDFrIterator_IHolder;
+import flowDomainFragment.FDFrList_THolder;
+import flowDomainFragment.FlowDomainFragment_T;
 import globaldefs.NameAndStringValue_T;
 import globaldefs.NamingAttributesIterator_IHolder;
 import globaldefs.NamingAttributesList_THolder;
@@ -68,7 +80,10 @@ public class CorbaCommands {
 	public static final String ME_MANAGER_NAME = "ManagedElement";
 	public static final String EI_MANAGER_NAME = "EquipmentInventory";
 	public static final String MLS_MANAGER_NAME = "MultiLayerSubnetwork";
-	private static final String EMS_MANAGER_NAME = "EMS";
+	public static final String EMS_MANAGER_NAME = "EMS";
+	public static final String PRT_MANAGER_NAME = "Protection";
+	public static final String FLOW_DOMAIN_MANAGER = "FlowDomain";
+	public static final String EXTEND_SERVICE_MANAGER = "ExtendService";
 
 	public static final int HOW_MANY = 100;
 
@@ -86,6 +101,9 @@ public class CorbaCommands {
 	private EquipmentInventoryMgr_I eiManager;
 	private MultiLayerSubnetworkMgr_I mlsnManager;
 	private EMSMgr_I emsManager;
+	private ProtectionMgr_I protectionMgr;
+	private FlowDomainMgr_I flowDomainMgr;
+	private ExtendServiceMgr_I extendServiceMgr;
 
 	// Cache list
 	private List<String> neNames;
@@ -132,6 +150,21 @@ public class CorbaCommands {
 		} else if (managerName.equals(EMS_MANAGER_NAME)) {
 			if (this.emsManager == null) {
 				this.emsManager = EMSMgr_IHelper.narrow(managerInterface.value);
+			}
+		} else if (managerName.equals(PRT_MANAGER_NAME)) {
+			if (this.protectionMgr == null) {
+				this.protectionMgr = ProtectionMgr_IHelper
+						.narrow(managerInterface.value);
+			}
+		} else if (managerName.equals(FLOW_DOMAIN_MANAGER)) {
+			if (this.flowDomainMgr == null) {
+				this.flowDomainMgr = FlowDomainMgr_IHelper
+						.narrow(managerInterface.value);
+			}
+		} else if (managerName.equals(EXTEND_SERVICE_MANAGER)) {
+			if (this.extendServiceMgr == null) {
+				this.extendServiceMgr = ExtendServiceMgr_IHelper
+						.narrow(managerInterface.value);
 			}
 		} else
 			return false;
@@ -286,7 +319,7 @@ public class CorbaCommands {
 						+ " equipments for ME " + ne[1].value);
 
 				for (int i = 0; i < equipOrHolderList.value.length; i++) {
-					helper.listEquipmentOrHolderList(equipOrHolderList.value[i]);
+					helper.printEquipmentOrHolder(equipOrHolderList.value[i]);
 
 					// if (equipOrHolderList.value[i].discriminator().value() ==
 					// 1)
@@ -299,7 +332,7 @@ public class CorbaCommands {
 
 				exitWhile = false;
 
-				if (equipOrHolderItr.value != null)
+				if (equipOrHolderItr.value != null) {
 					try {
 						boolean hasMoreData = true;
 						while (hasMoreData) {
@@ -307,7 +340,7 @@ public class CorbaCommands {
 									HOW_MANY, equipOrHolderList);
 
 							for (int i = 0; i < equipOrHolderList.value.length; i++) {
-								helper.listEquipmentOrHolderList(equipOrHolderList.value[i]);
+								helper.printEquipmentOrHolder(equipOrHolderList.value[i]);
 							}
 						}
 
@@ -316,31 +349,16 @@ public class CorbaCommands {
 						if (!exitWhile)
 							equipOrHolderItr.value.destroy();
 					}
+				}
 
 				meCounter++;
 
 				System.out
 						.println("getAllEquipment: finished getEquipment for ME "
 								+ ne[1].value + " Order number # " + meCounter);
-			} catch (ProcessingFailureException e) {
-				CorbaErrorProcessor err = new CorbaErrorProcessor(e);
-				if (err.getPriority() == CorbaErrorDescriptions.PRIORITY.MAJOR) {
-					LOG.error(
-							"Alcatel OMS 1350>> getAllEquipment. ME: "
-									+ neName
-									+ ", "
-									+ err.printError()
-									+ " It is a major error. Stop interaction with server",
-							e);
-
-					throw e;
-				} else {
-					LOG.warn(
-							"Alcatel OMS 1350>> getAllEquipment. "
-									+ err.printError()
-									+ " It is a minor error. Continue interaction with server",
-							e);
-				}
+			} catch (ProcessingFailureException ex) {
+				handleProcessingFailureException(ex, "getAllEquipment. ME: "
+						+ neName);
 			}
 		}
 
@@ -356,205 +374,152 @@ public class CorbaCommands {
 	}
 
 	public void getAllPTPs() throws ProcessingFailureException, SAXException {
-		try {
-			if (LOG.isInfoEnabled()) {
-				LOG.info("getAllPTPs() start.");
-			}
+		if (LOG.isInfoEnabled()) {
+			LOG.info("getAllPTPs() start.");
+		}
 
-			if (neNames == null) {
-				neNames = getAllManagedElementNames();
-			}
+		if (neNames == null) {
+			neNames = getAllManagedElementNames();
+		}
 
-			if (!setManagerByName(ME_MANAGER_NAME)) {
-				return;
-			}
+		if (!setManagerByName(ME_MANAGER_NAME)) {
+			return;
+		}
 
-			NameAndStringValue_T[] neNameArray = new NameAndStringValue_T[2];
+		NameAndStringValue_T[] neNameArray = new NameAndStringValue_T[2];
 
-			neNameArray[0] = new NameAndStringValue_T(CorbaConstants.EMS_STR,
-					emsName);
-			neNameArray[1] = new NameAndStringValue_T();
-			neNameArray[1].name = CorbaConstants.MANAGED_ELEMENT_STR;
+		neNameArray[0] = new NameAndStringValue_T(CorbaConstants.EMS_STR,
+				emsName);
+		neNameArray[1] = new NameAndStringValue_T();
+		neNameArray[1].name = CorbaConstants.MANAGED_ELEMENT_STR;
 
-			TerminationPointList_THolder terminationPointList = new TerminationPointList_THolder();
-			TerminationPointIterator_IHolder terminationPointIterator = new TerminationPointIterator_IHolder();
-			short[] tpLayerRateList = new short[0];
-			short[] connectionLayerRateList = new short[0];
+		TerminationPointList_THolder terminationPointList = new TerminationPointList_THolder();
+		TerminationPointIterator_IHolder terminationPointIterator = new TerminationPointIterator_IHolder();
+		short[] tpLayerRateList = new short[0];
+		short[] connectionLayerRateList = new short[0];
 
-			int counter = 0;
-			boolean exitWhile = false;
-			for (String neName : neNames) {
-				try {
-					neNameArray[1].value = neName;
-					meManager.getAllPTPs(neNameArray, tpLayerRateList,
-							connectionLayerRateList, HOW_MANY,
-							terminationPointList, terminationPointIterator);
+		int counter = 0;
+		boolean exitWhile = false;
+		for (String neName : neNames) {
+			try {
+				neNameArray[1].value = neName;
+				meManager.getAllPTPs(neNameArray, tpLayerRateList,
+						connectionLayerRateList, HOW_MANY,
+						terminationPointList, terminationPointIterator);
 
-					if (LOG.isInfoEnabled()) {
-						LOG.info("getAllPTPs: got {} PTP for ME {}.",
-								terminationPointList.value.length,
-								neNameArray[1].value);
-					}
+				if (LOG.isInfoEnabled()) {
+					LOG.info("getAllPTPs: got {} PTP for ME {}.",
+							terminationPointList.value.length,
+							neNameArray[1].value);
+				}
 
-					for (int i = 0; i < terminationPointList.value.length; i++) {
-						helper.listTerminationPointList(terminationPointList.value[i]);
-					}
+				for (int i = 0; i < terminationPointList.value.length; i++) {
+					helper.printTerminationPoint(terminationPointList.value[i]);
+				}
 
-					exitWhile = false;
+				exitWhile = false;
 
-					if (terminationPointIterator.value != null) {
-						try {
-							boolean hasMoreData = true;
-							while (hasMoreData) {
-								hasMoreData = terminationPointIterator.value
-										.next_n(HOW_MANY, terminationPointList);
-								if (LOG.isInfoEnabled()) {
-									LOG.info(
-											"getAllPTPs: got {} PTP for ME {}.",
-											terminationPointList.value.length,
-											neNameArray[1].value);
-								}
-
-								for (int i = 0; i < terminationPointList.value.length; i++) {
-									helper.listTerminationPointList(terminationPointList.value[i]);
-								}
+				if (terminationPointIterator.value != null) {
+					try {
+						boolean hasMoreData = true;
+						while (hasMoreData) {
+							hasMoreData = terminationPointIterator.value
+									.next_n(HOW_MANY, terminationPointList);
+							if (LOG.isInfoEnabled()) {
+								LOG.info("getAllPTPs: got {} PTP for ME {}.",
+										terminationPointList.value.length,
+										neNameArray[1].value);
 							}
-							exitWhile = true;
-						} finally {
-							if (!exitWhile) {
-								terminationPointIterator.value.destroy();
+
+							for (int i = 0; i < terminationPointList.value.length; i++) {
+								helper.printTerminationPoint(terminationPointList.value[i]);
 							}
 						}
-
-						counter++;
-
-						if (LOG.isDebugEnabled()) {
-							LOG.debug("getAllPTPs: finished getPTP for ME "
-									+ neNameArray[1].value + " Order number # "
-									+ counter);
+						exitWhile = true;
+					} finally {
+						if (!exitWhile) {
+							terminationPointIterator.value.destroy();
 						}
 					}
-				} catch (ProcessingFailureException e) {
-					CorbaErrorProcessor err = new CorbaErrorProcessor(e);
-					if (err.getPriority() == CorbaErrorDescriptions.PRIORITY.MAJOR) {
-						LOG.error(
-								"Alcatel OMS 1350>> getAllPTPs. ME: "
-										+ neName
-										+ ", "
-										+ err.printError()
-										+ " It is a major error. Stop interaction with server",
-								e);
 
-						throw e;
-					} else {
-						LOG.error(
-								"Alcatel OMS 1350>> getAllPTPs. "
-										+ err.printError()
-										+ " It is a minor error. Continue interaction with server",
-								e);
+					counter++;
+
+					if (LOG.isDebugEnabled()) {
+						LOG.debug("getAllPTPs: finished getPTP for ME "
+								+ neNameArray[1].value + " Order number # "
+								+ counter);
 					}
 				}
+			} catch (ProcessingFailureException ex) {
+				handleProcessingFailureException(ex, "getAllPTPs. ME: "
+						+ neName);
 			}
+		}
 
-			if (LOG.isInfoEnabled()) {
-				LOG.info("getAllPTPs() complete.");
-			}
-		} catch (ProcessingFailureException prf) {
-			if (LOG.isErrorEnabled()) {
-				LOG.error("Alcatel OMS 1350>> getAllPTPs:"
-						+ CorbaErrorProcessor.printError(prf));
-			}
-
-			throw prf;
+		if (LOG.isInfoEnabled()) {
+			LOG.info("getAllPTPs() complete.");
 		}
 	}
 
 	public void getAllTopologicalLinks() throws ProcessingFailureException,
 			SAXException {
-		try {
-			if (LOG.isInfoEnabled()) {
-				LOG.info("getAllTopologicalLinks() start.");
-			}
+		if (LOG.isInfoEnabled()) {
+			LOG.info("getAllTopologicalLinks() start.");
+		}
 
-			if (subnetworkNames == null) {
-				subnetworkNames = getAllTopLevelSubnetworkNames();
-			}
+		if (subnetworkNames == null) {
+			subnetworkNames = getAllTopLevelSubnetworkNames();
+		}
 
-			if (!setManagerByName(MLS_MANAGER_NAME))
-				return;
+		if (!setManagerByName(MLS_MANAGER_NAME))
+			return;
 
-			NameAndStringValue_T[] nameAndStringValueArray = new NameAndStringValue_T[2];
+		NameAndStringValue_T[] mlsn = new NameAndStringValue_T[2];
 
-			nameAndStringValueArray[0] = new NameAndStringValue_T(
-					CorbaConstants.EMS_STR, emsName);
-			nameAndStringValueArray[1] = new NameAndStringValue_T(
-					CorbaConstants.MULTILAYER_SUBNETWORK_STR, "1");
+		mlsn[0] = new NameAndStringValue_T(CorbaConstants.EMS_STR, emsName);
+		mlsn[1] = new NameAndStringValue_T(
+				CorbaConstants.MULTILAYER_SUBNETWORK_STR, "1");
 
-			TopologicalLinkList_THolder topologicalLinkList = new TopologicalLinkList_THolder();
-			TopologicalLinkIterator_IHolder topologicalLinkIterator = new TopologicalLinkIterator_IHolder();
+		TopologicalLinkList_THolder topologicalLinkList = new TopologicalLinkList_THolder();
+		TopologicalLinkIterator_IHolder topologicalLinkIterator = new TopologicalLinkIterator_IHolder();
 
-			for (String subnetwork : subnetworkNames) {
-				try {
-					nameAndStringValueArray[1].value = subnetwork;
-					mlsnManager.getAllTopologicalLinks(nameAndStringValueArray,
-							HOW_MANY, topologicalLinkList,
-							topologicalLinkIterator);
+		for (String subnetwork : subnetworkNames) {
+			try {
+				mlsn[1].value = subnetwork;
+				mlsnManager.getAllTopologicalLinks(mlsn, HOW_MANY,
+						topologicalLinkList, topologicalLinkIterator);
 
-					for (int i = 0; i < topologicalLinkList.value.length; i++) {
-						handler.printStructure(getTopologicalLinkParams(topologicalLinkList.value[i]));
-					}
+				for (int i = 0; i < topologicalLinkList.value.length; i++) {
+					handler.printStructure(getTopologicalLinkParams(topologicalLinkList.value[i]));
+				}
 
-					boolean exitWhile = false;
-					if (topologicalLinkIterator.value != null) {
-						try {
-							boolean hasMoreData = true;
-							while (hasMoreData) {
-								hasMoreData = topologicalLinkIterator.value
-										.next_n(HOW_MANY, topologicalLinkList);
-								for (int i = 0; i < topologicalLinkList.value.length; i++) {
-									handler.printStructure(getTopologicalLinkParams(topologicalLinkList.value[i]));
-								}
-							}
-
-							exitWhile = true;
-						} finally {
-							if (!exitWhile) {
-								topologicalLinkIterator.value.destroy();
+				boolean exitWhile = false;
+				if (topologicalLinkIterator.value != null) {
+					try {
+						boolean hasMoreData = true;
+						while (hasMoreData) {
+							hasMoreData = topologicalLinkIterator.value.next_n(
+									HOW_MANY, topologicalLinkList);
+							for (int i = 0; i < topologicalLinkList.value.length; i++) {
+								handler.printStructure(getTopologicalLinkParams(topologicalLinkList.value[i]));
 							}
 						}
-					}
-				} catch (ProcessingFailureException ex) {
-					CorbaErrorProcessor err = new CorbaErrorProcessor(ex);
-					if (err.getPriority() == CorbaErrorDescriptions.PRIORITY.MAJOR) {
-						LOG.error(
-								"Alcatel OMS 1350>> getAllTopologicalLinks. MLS: "
-										+ nameAndStringValueArray[1].value
-										+ ", "
-										+ err.printError()
-										+ " It is a major error. Stop interaction with server",
-								ex);
 
-						throw ex;
-					} else {
-						LOG.error(
-								"Alcatel OMS 1350>> getAllTopologicalLinks. MLS: "
-										+ nameAndStringValueArray[1].value
-										+ ", "
-										+ err.printError()
-										+ " It is a minor error. Continue interaction with server",
-								ex);
+						exitWhile = true;
+					} finally {
+						if (!exitWhile) {
+							topologicalLinkIterator.value.destroy();
+						}
 					}
 				}
+			} catch (ProcessingFailureException ex) {
+				handleProcessingFailureException(ex,
+						"getAllTopologicalLinks. MLS: " + mlsn[1].value);
 			}
+		}
 
-			if (LOG.isInfoEnabled()) {
-				LOG.info("getAllTopologicalLinks() complete.");
-			}
-		} catch (ProcessingFailureException prf) {
-			LOG.error("Alcatel OMS 1350>> getAllTopologicalLinks:"
-					+ CorbaErrorProcessor.printError(prf));
-
-			throw prf;
+		if (LOG.isInfoEnabled()) {
+			LOG.info("getAllTopologicalLinks() complete.");
 		}
 	}
 
@@ -599,11 +564,11 @@ public class CorbaCommands {
 		if (aEndTP != null) {
 			container
 					.setFieldValue(
-							CorbaConstants.A_TRANSMISSIONPARAMS_STR,
+							CorbaConstants.A_TRANSMISSION_PARAMS_STR,
 							handler.convertLayeredParametersToString(aEndTP.transmissionParams));
 		} else {
-			container
-					.setFieldValue(CorbaConstants.A_TRANSMISSIONPARAMS_STR, "");
+			container.setFieldValue(CorbaConstants.A_TRANSMISSION_PARAMS_STR,
+					"");
 		}
 
 		TerminationPoint_T zEndTP = getTerminationPoint(topologicalLink.zEndTP,
@@ -611,11 +576,11 @@ public class CorbaCommands {
 		if (zEndTP != null) {
 			container
 					.setFieldValue(
-							CorbaConstants.Z_TRANSMISSIONPARAMS_STR,
+							CorbaConstants.Z_TRANSMISSION_PARAMS_STR,
 							handler.convertLayeredParametersToString(zEndTP.transmissionParams));
 		} else {
-			container
-					.setFieldValue(CorbaConstants.Z_TRANSMISSIONPARAMS_STR, "");
+			container.setFieldValue(CorbaConstants.Z_TRANSMISSION_PARAMS_STR,
+					"");
 		}
 
 		return container;
@@ -624,132 +589,88 @@ public class CorbaCommands {
 	private TerminationPoint_T getTerminationPoint(
 			NameAndStringValue_T[] endPointName, short rate)
 			throws ProcessingFailureException {
-		try {
-			if (LOG.isInfoEnabled()) {
-				LOG.info("getTerminationPoint() start for {}.",
-						handler.convertNameAndStringValueToString(endPointName));
-			}
 
-			if (!setManagerByName(ME_MANAGER_NAME))
-				return null;
+		if (!setManagerByName(ME_MANAGER_NAME))
+			return null;
 
-			if (terminationPointRates == null
-					|| (terminationPointRates != null && !terminationPointRates
-							.contains(Short.valueOf(rate)))) {
-				return null;
-			}
-
-			TerminationPoint_THolder tpHolder = new TerminationPoint_THolder();
-
-			try {
-				meManager.getTP(endPointName, tpHolder);
-			} catch (ProcessingFailureException ex) {
-				CorbaErrorProcessor err = new CorbaErrorProcessor(ex);
-				if (err.getPriority() == CorbaErrorDescriptions.PRIORITY.MAJOR) {
-					LOG.error(
-							"Alcatel OMS 1350>> getTerminationPoint. TP: "
-									+ handler
-											.convertNameAndStringValueToString(endPointName)
-									+ ", "
-									+ err.printError()
-									+ " It is a major error. Stop interaction with server",
-							ex);
-
-					throw ex;
-				} else {
-					LOG.error(
-							"Alcatel OMS 1350>> getTerminationPoint. TP: "
-									+ handler
-											.convertNameAndStringValueToString(endPointName)
-									+ ", "
-									+ err.printError()
-									+ " It is a minor error. Continue interaction with server",
-							ex);
-
-				}
-			}
-
-			if (LOG.isInfoEnabled()) {
-				LOG.info("getTerminationPoint() complete");
-			}
-
-			return tpHolder.value;
-		} catch (ProcessingFailureException prf) {
-			LOG.error("Alcatel OMS 1350>> getTerminationPoint:"
-					+ CorbaErrorProcessor.printError(prf));
-			throw prf;
+		if (terminationPointRates == null
+				|| (terminationPointRates != null && !terminationPointRates
+						.contains(Short.valueOf(rate)))) {
+			return null;
 		}
+
+		TerminationPoint_THolder tpHolder = new TerminationPoint_THolder();
+
+		try {
+			meManager.getTP(endPointName, tpHolder);
+		} catch (ProcessingFailureException ex) {
+			handleProcessingFailureException(ex, "getTerminationPoint. TP: "
+					+ handler.convertNameAndStringValueToString(endPointName));
+		}
+
+		return tpHolder.value;
 	}
 
 	public List<String> getAllTopLevelSubnetworkNames()
 			throws ProcessingFailureException {
-		try {
-			if (LOG.isInfoEnabled()) {
-				LOG.info("getAllTopLevelSubnetworkNames() start.");
-			}
+		if (LOG.isInfoEnabled()) {
+			LOG.info("getAllTopLevelSubnetworkNames() start.");
+		}
 
-			if (!setManagerByName(EMS_MANAGER_NAME)) {
-				return null;
-			}
+		if (!setManagerByName(EMS_MANAGER_NAME)) {
+			return null;
+		}
 
-			NamingAttributesList_THolder namingAttributesList = new NamingAttributesList_THolder();
-			NamingAttributesIterator_IHolder namingAttributesIterator = new NamingAttributesIterator_IHolder();
+		NamingAttributesList_THolder namingAttributesList = new NamingAttributesList_THolder();
+		NamingAttributesIterator_IHolder namingAttributesIterator = new NamingAttributesIterator_IHolder();
 
-			emsManager.getAllTopLevelSubnetworkNames(HOW_MANY,
-					namingAttributesList, namingAttributesIterator);
+		emsManager.getAllTopLevelSubnetworkNames(HOW_MANY,
+				namingAttributesList, namingAttributesIterator);
 
-			List<String> arrayList = new ArrayList<String>();
+		List<String> arrayList = new ArrayList<String>();
 
-			for (int i = 0; i < namingAttributesList.value.length; i++) {
-				for (int j = 0; j < namingAttributesList.value[i].length; j++) {
-					if (namingAttributesList.value[i][j].name
-							.equals(CorbaConstants.MULTILAYER_SUBNETWORK_STR)) {
-						arrayList.add(namingAttributesList.value[i][j].value);
-					}
+		for (int i = 0; i < namingAttributesList.value.length; i++) {
+			for (int j = 0; j < namingAttributesList.value[i].length; j++) {
+				if (namingAttributesList.value[i][j].name
+						.equals(CorbaConstants.MULTILAYER_SUBNETWORK_STR)) {
+					arrayList.add(namingAttributesList.value[i][j].value);
 				}
 			}
+		}
 
-			boolean exitwhile = false;
-			if (namingAttributesIterator.value != null) {
-				try {
-					boolean hasMoreData = true;
-					while (hasMoreData) {
-						hasMoreData = namingAttributesIterator.value.next_n(
-								HOW_MANY, namingAttributesList);
-						for (int i = 0; i < namingAttributesList.value.length; i++) {
-							for (int j = 0; j < namingAttributesList.value[i].length; j++) {
-								if (namingAttributesList.value[i][j].name
-										.equals(CorbaConstants.MULTILAYER_SUBNETWORK_STR)) {
-									arrayList
-											.add(namingAttributesList.value[i][j].value);
-								}
+		boolean exitwhile = false;
+		if (namingAttributesIterator.value != null) {
+			try {
+				boolean hasMoreData = true;
+				while (hasMoreData) {
+					hasMoreData = namingAttributesIterator.value.next_n(
+							HOW_MANY, namingAttributesList);
+					for (int i = 0; i < namingAttributesList.value.length; i++) {
+						for (int j = 0; j < namingAttributesList.value[i].length; j++) {
+							if (namingAttributesList.value[i][j].name
+									.equals(CorbaConstants.MULTILAYER_SUBNETWORK_STR)) {
+								arrayList
+										.add(namingAttributesList.value[i][j].value);
 							}
 						}
 					}
-					exitwhile = true;
-				} finally {
-					if (!exitwhile) {
-						namingAttributesIterator.value.destroy();
-					}
+				}
+				exitwhile = true;
+			} finally {
+				if (!exitwhile) {
+					namingAttributesIterator.value.destroy();
 				}
 			}
-
-			if (LOG.isInfoEnabled()) {
-				LOG.info(
-						"getAllTopLevelSubnetworkNames() got {} top level subnetworks.",
-						arrayList.size());
-				LOG.info("getAllTopLevelSubnetworkNames() complete.");
-			}
-
-			return arrayList;
-		} catch (ProcessingFailureException prf) {
-			if (LOG.isErrorEnabled()) {
-				LOG.error("Alcatel OMS 1350>> getAllTopLevelSubnetworkNames:"
-						+ CorbaErrorProcessor.printError(prf));
-			}
-
-			throw prf;
 		}
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info(
+					"getAllTopLevelSubnetworkNames() got {} top level subnetworks.",
+					arrayList.size());
+			LOG.info("getAllTopLevelSubnetworkNames() complete.");
+		}
+
+		return arrayList;
 	}
 
 	public List<String> getAllSubnetworkConnections()
@@ -759,69 +680,62 @@ public class CorbaCommands {
 
 	public List<String> getAllSubnetworkConnections(final String mlsn)
 			throws ProcessingFailureException, SAXException {
-		try {
-			if (LOG.isInfoEnabled()) {
-				LOG.info("getAllSubnetworkConnections() start.");
-			}
+		if (LOG.isInfoEnabled()) {
+			LOG.info("getAllSubnetworkConnections() start.");
+		}
 
-			if (!setManagerByName(MLS_MANAGER_NAME))
-				return null;
+		if (!setManagerByName(MLS_MANAGER_NAME))
+			return null;
 
-			NameAndStringValue_T[] nameAndStringValueArray = new NameAndStringValue_T[2];
+		NameAndStringValue_T[] nameAndStringValueArray = new NameAndStringValue_T[2];
 
-			nameAndStringValueArray[0] = new NameAndStringValue_T(
-					CorbaConstants.EMS_STR, emsName);
-			nameAndStringValueArray[1] = new NameAndStringValue_T(
-					CorbaConstants.MULTILAYER_SUBNETWORK_STR, mlsn);
+		nameAndStringValueArray[0] = new NameAndStringValue_T(
+				CorbaConstants.EMS_STR, emsName);
+		nameAndStringValueArray[1] = new NameAndStringValue_T(
+				CorbaConstants.MULTILAYER_SUBNETWORK_STR, mlsn);
 
-			SubnetworkConnectionList_THolder sncList = new SubnetworkConnectionList_THolder();
-			SNCIterator_IHolder sncIterator = new SNCIterator_IHolder();
-			short[] rateList = new short[0];
+		SubnetworkConnectionList_THolder sncList = new SubnetworkConnectionList_THolder();
+		SNCIterator_IHolder sncIterator = new SNCIterator_IHolder();
+		short[] rateList = new short[0];
 
-			mlsnManager.getAllSubnetworkConnections(nameAndStringValueArray,
-					rateList, HOW_MANY, sncList, sncIterator);
-			sncNames = new ArrayList<String>();
+		mlsnManager.getAllSubnetworkConnections(nameAndStringValueArray,
+				rateList, HOW_MANY, sncList, sncIterator);
+		sncNames = new ArrayList<String>();
 
-			for (int i = 0; i < sncList.value.length; i++) {
-				sncNames.add(handler.getValueByName(sncList.value[i].name,
-						CorbaConstants.SUBNETWORK_CONNECTION_STR));
-				handler.printStructure(helper
-						.getSubnetworkConnectionParams(sncList.value[i]));
-			}
+		for (int i = 0; i < sncList.value.length; i++) {
+			sncNames.add(handler.getValueByName(sncList.value[i].name,
+					CorbaConstants.SUBNETWORK_CONNECTION_STR));
+			handler.printStructure(helper
+					.getSubnetworkConnectionParams(sncList.value[i]));
+		}
 
-			boolean exitWhile = false;
-			if (sncIterator.value != null) {
-				try {
-					boolean hasMoreData = true;
-					while (hasMoreData) {
-						hasMoreData = sncIterator.value.next_n(HOW_MANY,
-								sncList);
-						for (int i = 0; i < sncList.value.length; i++) {
-							sncNames.add(handler.getValueByName(
-									sncList.value[i].name,
-									CorbaConstants.SUBNETWORK_CONNECTION_STR));
-							handler.printStructure(helper
-									.getSubnetworkConnectionParams(sncList.value[i]));
-						}
-					}
-					exitWhile = true;
-				} finally {
-					if (!exitWhile) {
-						sncIterator.value.destroy();
+		boolean exitWhile = false;
+		if (sncIterator.value != null) {
+			try {
+				boolean hasMoreData = true;
+				while (hasMoreData) {
+					hasMoreData = sncIterator.value.next_n(HOW_MANY, sncList);
+					for (int i = 0; i < sncList.value.length; i++) {
+						sncNames.add(handler.getValueByName(
+								sncList.value[i].name,
+								CorbaConstants.SUBNETWORK_CONNECTION_STR));
+						handler.printStructure(helper
+								.getSubnetworkConnectionParams(sncList.value[i]));
 					}
 				}
+				exitWhile = true;
+			} finally {
+				if (!exitWhile) {
+					sncIterator.value.destroy();
+				}
 			}
-
-			if (LOG.isInfoEnabled()) {
-				LOG.info("getAllSubnetworkConnections() complete.");
-			}
-
-			return sncNames;
-		} catch (ProcessingFailureException prf) {
-			LOG.error("Alcatel OMS 1350>> getAllSubnetworkConnections:"
-					+ CorbaErrorProcessor.printError(prf));
-			throw prf;
 		}
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info("getAllSubnetworkConnections() complete.");
+		}
+
+		return sncNames;
 	}
 
 	public void getRoute() throws Exception {
@@ -859,30 +773,240 @@ public class CorbaCommands {
 							sncNameArray[2].value));
 				}
 			} catch (ProcessingFailureException ex) {
-				CorbaErrorProcessor err = new CorbaErrorProcessor(ex);
-				if (err.getPriority() == CorbaErrorDescriptions.PRIORITY.MAJOR) {
-					LOG.error(
-							"Alcatel OMS 1350>> getRoute: SNC = "
-									+ sncNameArray[2].value
-									+ ";  "
-									+ err.printError()
-									+ " It is a major error. Stop interaction with server",
-							ex);
-					throw ex;
-				} else {
-					LOG.warn(
-							"Alcatel OMS 1350>> getRoute: SNC = "
-									+ sncNameArray[2].value
-									+ ";  "
-									+ err.printError()
-									+ " It is a minor error. Continue interaction with server",
-							ex);
-				}
+				handleProcessingFailureException(ex, "getRoute. SNC: "
+						+ sncNameArray[2].value);
 			}
 		}
 
 		if (LOG.isInfoEnabled()) {
 			LOG.info("getRoute() complete.");
+		}
+	}
+
+	public void getAllProtectionGroups() throws ProcessingFailureException,
+			SAXException {
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info("getAllProtectionGroups() start.");
+		}
+
+		if (neNames == null) {
+			neNames = getAllManagedElementNames();
+		}
+
+		if (!setManagerByName(PRT_MANAGER_NAME))
+			return;
+
+		NameAndStringValue_T[] nameAndStringValueArray = new NameAndStringValue_T[2];
+
+		nameAndStringValueArray[0] = new NameAndStringValue_T();
+		nameAndStringValueArray[0].name = CorbaConstants.EMS_STR;
+		nameAndStringValueArray[0].value = emsName;
+		nameAndStringValueArray[1] = new NameAndStringValue_T();
+		nameAndStringValueArray[1].name = CorbaConstants.MANAGED_ELEMENT_STR;
+
+		ProtectionGroupList_THolder protectionGroupList = new ProtectionGroupList_THolder();
+		ProtectionGroupIterator_IHolder protectionGroupIterator = new ProtectionGroupIterator_IHolder();
+
+		int counter = 0;
+		boolean exitwhile = false;
+		for (String n : neNames) {
+			try {
+				nameAndStringValueArray[1].value = n;
+				protectionMgr.getAllProtectionGroups(nameAndStringValueArray,
+						HOW_MANY, protectionGroupList, protectionGroupIterator);
+
+				if (LOG.isDebugEnabled()) {
+					LOG.debug("getAllProtectionGroups: got "
+							+ protectionGroupList.value.length
+							+ " pieces of ProtectionGroup for ME "
+							+ nameAndStringValueArray[1].value);
+				}
+
+				helper.printProtectionGroup(protectionGroupList.value);
+
+				exitwhile = false;
+				if (protectionGroupIterator.value != null) {
+					try {
+						boolean hasMoreData = true;
+						while (hasMoreData) {
+							hasMoreData = protectionGroupIterator.value.next_n(
+									HOW_MANY, protectionGroupList);
+
+							if (LOG.isDebugEnabled()) {
+								LOG.debug("getAllProtectionGroups: got next "
+										+ protectionGroupList.value.length
+										+ " pieces of ProtectionGroup for ME "
+										+ nameAndStringValueArray[1].value);
+							}
+
+							helper.printProtectionGroup(protectionGroupList.value);
+						}
+						exitwhile = true;
+					} finally {
+						if (!exitwhile) {
+							protectionGroupIterator.value.destroy();
+						}
+					}
+
+					counter++;
+
+					if (LOG.isDebugEnabled()) {
+						LOG.debug("getAllProtectionGroups: finished getProtectionGroup for ME "
+								+ nameAndStringValueArray[1].value
+								+ " Order number # " + counter);
+					}
+				}
+			} catch (ProcessingFailureException ex) {
+				handleProcessingFailureException(ex,
+						"getAllProtectionGroups. ME: " + n);
+			}
+		}
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info("getAllProtectionGroups() complete");
+		}
+	}
+
+	public void getAllFDFrs() throws ProcessingFailureException, SAXException {
+		if (LOG.isInfoEnabled()) {
+			LOG.info("getAllFDFrs() start.");
+		}
+
+		if (!setManagerByName(FLOW_DOMAIN_MANAGER))
+			return;
+
+		NameAndStringValue_T[] fdname = new NameAndStringValue_T[2];
+		fdname[0] = new NameAndStringValue_T(CorbaConstants.EMS_STR, emsName);
+		fdname[1] = new NameAndStringValue_T("FlowDomain", "ETS_0");
+
+		FDFrList_THolder listHolder = new FDFrList_THolder();
+		FDFrIterator_IHolder iteratorHolder = new FDFrIterator_IHolder();
+
+		FDFrIterator_I iterator = null;
+		short[] rateList = new short[0];
+
+		flowDomainMgr.getAllFDFrs(fdname, HOW_MANY, rateList, listHolder,
+				iteratorHolder);
+
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Got "
+					+ (listHolder.value != null ? listHolder.value.length : "0")
+					+ " FDFrs");
+		}
+
+		helper.printFDFrs(listHolder.value);
+
+		iterator = iteratorHolder.value;
+		if (iterator != null) {
+			if (LOG.isDebugEnabled()) {
+				LOG.debug("Getting more data...");
+			}
+
+			boolean hasMoreData = true;
+			boolean exitedWhile = false;
+
+			try {
+				while (hasMoreData) {
+					hasMoreData = iterator.next_n(HOW_MANY, listHolder);
+					if (LOG.isDebugEnabled()) {
+						LOG.debug("Got "
+								+ (listHolder.value != null ? listHolder.value.length
+										: "0") + " FDFrs");
+					}
+
+					helper.printFDFrs(listHolder.value);
+				}
+
+				exitedWhile = true;
+			} finally {
+				if (!exitedWhile) {
+					iterator.destroy();
+				}
+			}
+		}
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info("getAllFDFrs() end.");
+		}
+	}
+
+	public void getTopologicalLinksOfFDFr() throws ProcessingFailureException,
+			SAXException {
+		if (LOG.isInfoEnabled()) {
+			LOG.info("getTopologicalLinksOfFDFr() start.");
+		}
+
+		if (!setManagerByName(EXTEND_SERVICE_MANAGER))
+			return;
+
+		NameAndStringValue_T[] fdname = new NameAndStringValue_T[2];
+		fdname[0] = new NameAndStringValue_T(CorbaConstants.EMS_STR, emsName);
+		fdname[1] = new NameAndStringValue_T("FlowDomain", "ETS_0");
+
+		FDFrList_THolder listHolder = new FDFrList_THolder();
+		FDFrIterator_IHolder iteratorHolder = new FDFrIterator_IHolder();
+
+		short[] rateList = new short[0];
+
+		flowDomainMgr.getAllFDFrs(fdname, HOW_MANY, rateList, listHolder,
+				iteratorHolder);
+
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Got "
+					+ (listHolder.value != null ? listHolder.value.length : "0")
+					+ " FDFrs.");
+		}
+
+		TopologicalLinkList_THolder topologicalLinkList = new TopologicalLinkList_THolder();
+		TopologicalLinkIterator_IHolder topologicalLinkItr = new TopologicalLinkIterator_IHolder();
+
+		boolean exitWhile = false;
+
+		for (FlowDomainFragment_T fdfr : listHolder.value) {
+			try {
+				extendServiceMgr.getTopologicalLinksOfFDFr(fdfr.name, HOW_MANY,
+						topologicalLinkList, topologicalLinkItr);
+
+				if (LOG.isDebugEnabled()) {
+					LOG.debug("Got "
+							+ (topologicalLinkList.value != null ? topologicalLinkList.value.length
+									: "0") + " Transport link.");
+				}
+
+				helper.printTopologicalLinksOfFDFr(fdfr,
+						topologicalLinkList.value);
+
+				exitWhile = false;
+
+				if (topologicalLinkItr.value != null) {
+					try {
+						boolean hasMoreData = true;
+						while (hasMoreData) {
+							hasMoreData = topologicalLinkItr.value.next_n(
+									HOW_MANY, topologicalLinkList);
+
+							helper.printTopologicalLinksOfFDFr(fdfr,
+									topologicalLinkList.value);
+						}
+
+						exitWhile = true;
+					} finally {
+						if (!exitWhile)
+							topologicalLinkItr.value.destroy();
+					}
+				}
+			} catch (ProcessingFailureException ex) {
+				handleProcessingFailureException(
+						ex,
+						"getTopologicalLinksOfFDFr. FDFR: "
+								+ handler
+										.convertNameAndStringValueToString(fdfr.name));
+			}
+		}
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info("getTopologicalLinksOfFDFr() complete.");
 		}
 	}
 
@@ -961,5 +1085,22 @@ public class CorbaCommands {
 		}
 
 		return errorReason;
+	}
+
+	public void handleProcessingFailureException(
+			ProcessingFailureException pfe, String param)
+			throws ProcessingFailureException {
+		CorbaErrorProcessor err = new CorbaErrorProcessor(pfe);
+
+		if (err.getPriority() == CorbaErrorDescriptions.PRIORITY.MAJOR) {
+			LOG.error("Alcatel OMS 1350>> " + param + ", " + err.printError()
+					+ " It is a major error. Stop interaction with server", pfe);
+
+			throw pfe;
+		} else {
+			LOG.error("Alcatel OMS 1350>> " + param + err.printError()
+					+ " It is a minor error. Continue interaction with server",
+					pfe);
+		}
 	}
 }
