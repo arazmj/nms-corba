@@ -10,5 +10,6 @@
 	<classpathentry kind="lib" path="lib/dom4j-1.6.1.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-api.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-jdk14.jar"/>
+	<classpathentry kind="lib" path="lib/idl-ciena.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
