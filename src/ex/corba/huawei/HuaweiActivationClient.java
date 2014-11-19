@@ -41,14 +41,16 @@ public class HuaweiActivationClient extends HuaweiConnection {
 		try {
 			emsSession = main.openEmsSession(args);
 
-			// main.createPDHServiceE1();
-			// main.createPDHServiceE3();
+			// main.createE1();
+			// main.createE3();
 			// main.createE1WithVNE();
 			// main.createE1withNEtpInc();
 			// main.createE1withCCInc();
 			// main.createE4orVC4();
 			// main.createE4withProtection();
+
 			// main.createServerTrail();
+
 			// main.createVC4_16c();
 
 			// SDH Path for Ethernet service
@@ -73,7 +75,7 @@ public class HuaweiActivationClient extends HuaweiConnection {
 		}
 	}
 
-	public void createPDHServiceE1() throws ProcessingFailureException {
+	public void createE1() throws ProcessingFailureException {
 		String userLabel = "NISA-PDHService-E1-1";
 		String owner = "";
 
@@ -148,7 +150,7 @@ public class HuaweiActivationClient extends HuaweiConnection {
 				emsFreedomLevel, tpsToModify);
 	}
 
-	public void createPDHServiceE3() throws ProcessingFailureException {
+	public void createE3() throws ProcessingFailureException {
 		String userLabel = "NISA-PDHService-E3-1";
 		String owner = "";
 
@@ -1036,7 +1038,7 @@ public class HuaweiActivationClient extends HuaweiConnection {
 		aEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
 		aEnd[0][1] = new NameAndStringValue_T("ManagedElement", "3145729");
 
-		// VC12 Path
+		// VC3 Path
 		aEnd[0][2] = new NameAndStringValue_T("PTP",
 				"/rack=1/shelf=1/slot=5/domain=sdh/port=1");
 		aEnd[0][3] = new NameAndStringValue_T("CTP",
@@ -1047,7 +1049,7 @@ public class HuaweiActivationClient extends HuaweiConnection {
 		zEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
 		zEnd[0][1] = new NameAndStringValue_T("ManagedElement", "3145728");
 
-		// VC12 Path
+		// VC3 Path
 		zEnd[0][2] = new NameAndStringValue_T("PTP",
 				"/rack=1/shelf=1/slot=5/domain=sdh/port=1");
 		zEnd[0][3] = new NameAndStringValue_T("CTP",
@@ -1089,8 +1091,8 @@ public class HuaweiActivationClient extends HuaweiConnection {
 		createData.owner = owner;
 		createData.userLabel = userLabel;
 
-		GradesOfImpact_T tolerableImpact = GradesOfImpact_T.GOI_HITLESS;// GOI_HITLESS;
-		EMSFreedomLevel_T emsFreedomLevel = EMSFreedomLevel_T.EMSFL_CC_AT_SNC_LAYER;// EMSFL_CC_AT_SNC_LAYER;
+		GradesOfImpact_T tolerableImpact = GradesOfImpact_T.GOI_HITLESS;
+		EMSFreedomLevel_T emsFreedomLevel = EMSFreedomLevel_T.EMSFL_CC_AT_SNC_LAYER;
 
 		TPDataList_THolder tpsToModify = new TPDataList_THolder();
 		tpsToModify.value = new TPData_T[0];

@@ -40,8 +40,8 @@ public class AlcatelActivationClient extends AlcatelConnection {
 		try {
 			emsSession = main.openEmsSession(args);
 
-			// main.createPDHServiceE1();
-			// main.createPDHServiceDS3();
+			// main.createE1();
+			// main.createDS3();
 			// main.createE1WithConstraintsNE();
 			// main.createE1WithConstraintsST();
 			// main.createE1WithSNCP();
@@ -79,7 +79,7 @@ public class AlcatelActivationClient extends AlcatelConnection {
 		}
 	}
 
-	public void createPDHServiceE1() throws ProcessingFailureException {
+	public void createE1() throws ProcessingFailureException {
 		String sncID = "NISA-E1-Path-1";
 		String userLabel = "NISA-E1-Path-1";
 		String owner = "";
@@ -155,7 +155,7 @@ public class AlcatelActivationClient extends AlcatelConnection {
 				tpsToModify);
 	}
 
-	public void createPDHServiceDS3() throws ProcessingFailureException {
+	public void createDS3() throws ProcessingFailureException {
 		String sncID = "NISA-DS3-Path-1";
 		String userLabel = "NISA-DS3-Path-1";
 		String owner = "";
@@ -569,7 +569,7 @@ public class AlcatelActivationClient extends AlcatelConnection {
 				tpsToModify);
 	}
 
-	// This create one Path and 10 Trails (VC12)
+	// This create one Path and 5 Trails (VC12)
 	public void create10MPathForEVC() throws ProcessingFailureException {
 		String sncID = "NISA-EVC-10M-1";
 		String userLabel = "NISA-EVC-10M-1";
@@ -646,6 +646,7 @@ public class AlcatelActivationClient extends AlcatelConnection {
 
 	// Upgrade Ethernet service bandwidth
 	public void modifySNCUpgrade() throws ProcessingFailureException {
+		String sncID = "PATH_173";
 		String userLabel = "NISA-EVC-10M-1";
 		String owner = "";
 
@@ -655,8 +656,7 @@ public class AlcatelActivationClient extends AlcatelConnection {
 		NameAndStringValue_T[] sncName = new NameAndStringValue_T[3];
 		sncName[0] = new NameAndStringValue_T("EMS", this.realEMSName);
 		sncName[1] = new NameAndStringValue_T("MultiLayerSubnetwork", "SDH");
-		sncName[2] = new NameAndStringValue_T("SubnetworkConnection",
-				"PATH_173");
+		sncName[2] = new NameAndStringValue_T("SubnetworkConnection", sncID);
 
 		NameAndStringValue_T[][] aEnd = new NameAndStringValue_T[1][2];
 
@@ -675,8 +675,8 @@ public class AlcatelActivationClient extends AlcatelConnection {
 
 		NameAndStringValue_T[][] neTpInclusions = new NameAndStringValue_T[0][0];
 		NameAndStringValue_T[][] neTpExclusions = new NameAndStringValue_T[0][0];
-		RouteDescriptor_T[] addedOrNewRoute = new subnetworkConnection.RouteDescriptor_T[0];
-		RouteDescriptor_T[] removedRoute = new subnetworkConnection.RouteDescriptor_T[0];
+		RouteDescriptor_T[] addedOrNewRoute = new RouteDescriptor_T[0];
+		RouteDescriptor_T[] removedRoute = new RouteDescriptor_T[0];
 
 		Hashtable<String, String> additionalInfo = new Hashtable<String, String>();
 		// Add 2 more trails. Initial bandwidth 10M i.e. 5 VC12 trails. Final
@@ -685,14 +685,14 @@ public class AlcatelActivationClient extends AlcatelConnection {
 		additionalInfo.put("serverTrailState", "activated");
 		additionalInfo.put("protType", "None");
 
-		NameAndStringValue_T[] additionalCreationInfo = new NameAndStringValue_T[additionalInfo
+		NameAndStringValue_T[] additionalModifyInfo = new NameAndStringValue_T[additionalInfo
 				.size()];
 		Enumeration<String> keySet = additionalInfo.keys();
 
 		for (int i = 0; keySet.hasMoreElements(); i++) {
 			String name = (String) keySet.nextElement();
 			String value = (String) additionalInfo.get(name);
-			additionalCreationInfo[i] = new NameAndStringValue_T(name, value);
+			additionalModifyInfo[i] = new NameAndStringValue_T(name, value);
 		}
 
 		SNCModifyData_T modifyData = new SNCModifyData_T();
@@ -703,7 +703,7 @@ public class AlcatelActivationClient extends AlcatelConnection {
 		modifyData.retainOldSNC = false;
 		modifyData.addedOrNewRoute = addedOrNewRoute;
 		modifyData.removedRoute = removedRoute;
-		modifyData.additionalCreationInfo = additionalCreationInfo;
+		modifyData.additionalCreationInfo = additionalModifyInfo;
 		modifyData.neTpInclusions = neTpInclusions;
 		modifyData.neTpSncExclusions = neTpExclusions;
 		modifyData.forceUniqueness = true;
@@ -731,6 +731,7 @@ public class AlcatelActivationClient extends AlcatelConnection {
 
 	// Downgrade Ethernet service bandwidth
 	public void modifySNCDowngrade() throws ProcessingFailureException {
+		String sncID = "PATH_173";
 		String userLabel = "NISA-EVC-10M-1";
 		String owner = "";
 
@@ -740,8 +741,7 @@ public class AlcatelActivationClient extends AlcatelConnection {
 		NameAndStringValue_T[] sncName = new NameAndStringValue_T[3];
 		sncName[0] = new NameAndStringValue_T("EMS", this.realEMSName);
 		sncName[1] = new NameAndStringValue_T("MultiLayerSubnetwork", "SDH");
-		sncName[2] = new NameAndStringValue_T("SubnetworkConnection",
-				"PATH_173");
+		sncName[2] = new NameAndStringValue_T("SubnetworkConnection", sncID);
 
 		NameAndStringValue_T[][] aEnd = new NameAndStringValue_T[1][2];
 
@@ -760,8 +760,8 @@ public class AlcatelActivationClient extends AlcatelConnection {
 
 		NameAndStringValue_T[][] neTpInclusions = new NameAndStringValue_T[0][0];
 		NameAndStringValue_T[][] neTpExclusions = new NameAndStringValue_T[0][0];
-		RouteDescriptor_T[] addedOrNewRoute = new subnetworkConnection.RouteDescriptor_T[0];
-		RouteDescriptor_T[] removedRoute = new subnetworkConnection.RouteDescriptor_T[0];
+		RouteDescriptor_T[] addedOrNewRoute = new RouteDescriptor_T[0];
+		RouteDescriptor_T[] removedRoute = new RouteDescriptor_T[0];
 
 		Hashtable<String, String> additionalInfo = new Hashtable<String, String>();
 		// Decrease 2 trails. Initial bandwidth 14M i.e. 7 VC12 trails.
