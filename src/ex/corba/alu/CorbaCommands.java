@@ -284,7 +284,9 @@ public class CorbaCommands {
 
 	public void getAllEquipment() throws ProcessingFailureException,
 			SAXException {
-		LOG.info("getAllEquipment() start.");
+		if (LOG.isInfoEnabled()) {
+			LOG.info("getAllEquipment() start.");
+		}
 
 		if (neNames == null) {
 			neNames = getAllManagedElementNames();
@@ -363,6 +365,9 @@ public class CorbaCommands {
 		}
 
 		// printEquipmentHolderList(equipmentHolders);
+		if (LOG.isInfoEnabled()) {
+			LOG.info("getAllEquipment() complete.");
+		}
 	}
 
 	public void printEquipmentHolderList(List<EquipmentHolder> equipmentHolder)

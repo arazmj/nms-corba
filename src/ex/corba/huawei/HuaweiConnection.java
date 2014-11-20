@@ -34,6 +34,7 @@ public class HuaweiConnection {
 	protected String realEMSName;
 	protected ORB orb;
 	protected POA rootPOA;
+	protected Properties props;
 
 	public static void main(String args[]) {
 		HuaweiConnection main = new HuaweiConnection();
@@ -167,8 +168,8 @@ public class HuaweiConnection {
 	}
 
 	public Properties getConnectionParams() throws Exception {
-		Properties props = new Properties();
-		props.load(new FileInputStream(new File("corba.properties")));
+		props = new Properties();
+		props.load(new FileInputStream(new File("huawei.properties")));
 
 		corbaConnect = "corbaloc:iiop:" + props.getProperty("host") + ":"
 				+ props.getProperty("port") + "/"

@@ -34,6 +34,7 @@ public class CienaConnection {
 	protected String realEMSName;
 	protected ORB orb;
 	protected POA rootPOA;
+	protected Properties props;
 
 	public static void main(String args[]) {
 		CienaConnection main = new CienaConnection();
@@ -62,7 +63,7 @@ public class CienaConnection {
 
 		// Resolve the reference to EMSSessionFactory
 		NameComponent name[] = rootContext
-				.to_name("TMF_MTNM.Class/HUAWEI.Vendor/" + emsName
+				.to_name("TMF_MTNM.Class/CIENA.Vendor/" + emsName
 						+ ".EmsInstance/2\\.0.Version");
 
 		NamingContextExt subContext = NamingContextExtHelper.narrow(rootContext
@@ -100,7 +101,7 @@ public class CienaConnection {
 		System.out.println("ORB.init called.");
 
 		// read stringified object to file (IOR file)
-		FileReader fr = new FileReader("huawei-lab.ior");
+		FileReader fr = new FileReader("ciena-lab.ior");
 		BufferedReader br = new BufferedReader(fr);
 		String ior = br.readLine();
 		br.close();
@@ -167,8 +168,8 @@ public class CienaConnection {
 	}
 
 	public Properties getConnectionParams() throws Exception {
-		Properties props = new Properties();
-		props.load(new FileInputStream(new File("corba.properties")));
+		props = new Properties();
+		props.load(new FileInputStream(new File("ciena.properties")));
 
 		corbaConnect = "corbaloc:iiop:" + props.getProperty("host") + ":"
 				+ props.getProperty("port") + "/"

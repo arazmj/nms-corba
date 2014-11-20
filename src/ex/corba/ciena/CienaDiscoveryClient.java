@@ -1,4 +1,4 @@
-package ex.corba.alu;
+package ex.corba.ciena;
 
 import java.io.FileOutputStream;
 
@@ -7,19 +7,20 @@ import org.dom4j.io.XMLWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import emsSession.EmsSession_I;
-import ex.corba.alu.error.CorbaErrorProcessor;
-import ex.corba.alu.transform.sax.Corba2XMLHandler;
-import globaldefs.ProcessingFailureException;
+import com.netcracker.ciena.oncenter.v11.emsSession.EmsSession_I;
+import com.netcracker.ciena.oncenter.v11.globaldefs.ProcessingFailureException;
 
-public class AlcatelDiscoveryClient extends AlcatelConnection {
+import ex.corba.ciena.error.CorbaErrorProcessor;
+import ex.corba.ciena.transform.sax.Corba2XMLHandler;
+
+public class CienaDiscoveryClient extends CienaConnection {
 	public static final Logger LOG = LoggerFactory
-			.getLogger(AlcatelDiscoveryClient.class);
+			.getLogger(CienaDiscoveryClient.class);
 
 	protected static Corba2XMLHandler handler;
 
 	public static void main(String args[]) {
-		AlcatelDiscoveryClient main = new AlcatelDiscoveryClient();
+		CienaDiscoveryClient main = new CienaDiscoveryClient();
 		EmsSession_I emsSession = null;
 
 		try {
@@ -66,45 +67,6 @@ public class AlcatelDiscoveryClient extends AlcatelConnection {
 		if (props.getProperty("getAllEquipment") != null
 				&& props.getProperty("getAllEquipment").equalsIgnoreCase("yes")) {
 			cmd.getAllEquipment();
-		}
-
-		if (props.getProperty("getAllPTPs") != null
-				&& props.getProperty("getAllPTPs").equalsIgnoreCase("yes")) {
-			cmd.getAllPTPs();
-		}
-
-		if (props.getProperty("getAllTopologicalLinks") != null
-				&& props.getProperty("getAllTopologicalLinks")
-						.equalsIgnoreCase("yes")) {
-			cmd.getAllTopologicalLinks();
-		}
-
-		if (props.getProperty("getAllSubnetworkConnections") != null
-				&& props.getProperty("getAllSubnetworkConnections")
-						.equalsIgnoreCase("yes")) {
-			cmd.getAllSubnetworkConnections();
-		}
-
-		if (props.getProperty("getRoute") != null
-				&& props.getProperty("getRoute").equalsIgnoreCase("yes")) {
-			cmd.getRoute();
-		}
-
-		if (props.getProperty("getAllProtectionGroups") != null
-				&& props.getProperty("getAllProtectionGroups")
-						.equalsIgnoreCase("yes")) {
-			cmd.getAllProtectionGroups();
-		}
-
-		if (props.getProperty("getAllFDFrs") != null
-				&& props.getProperty("getAllFDFrs").equalsIgnoreCase("yes")) {
-			cmd.getAllFDFrs();
-		}
-
-		if (props.getProperty("getTopologicalLinksOfFDFr") != null
-				&& props.getProperty("getTopologicalLinksOfFDFr")
-						.equalsIgnoreCase("yes")) {
-			cmd.getTopologicalLinksOfFDFr();
 		}
 
 		handler.handlerBuilderEnd();

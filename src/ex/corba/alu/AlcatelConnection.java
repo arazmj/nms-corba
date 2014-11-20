@@ -40,6 +40,7 @@ public class AlcatelConnection {
 	protected String realEMSName;
 	protected ORB orb;
 	protected POA rootPOA;
+	protected Properties props;
 
 	// protected EmsSession_I emsSession;
 
@@ -187,8 +188,8 @@ public class AlcatelConnection {
 	}
 
 	public Properties getConnectionParams() throws Exception {
-		Properties props = new Properties();
-		props.load(new FileInputStream(new File("corba.properties")));
+		props = new Properties();
+		props.load(new FileInputStream(new File("alu.properties")));
 
 		corbaConnect = "corbaloc:iiop:" + props.getProperty("host") + ":"
 				+ props.getProperty("port") + "/"

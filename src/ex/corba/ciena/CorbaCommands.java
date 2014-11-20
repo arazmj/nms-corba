@@ -6,6 +6,7 @@ import java.util.List;
 import org.omg.CORBA.StringHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 import com.netcracker.ciena.oncenter.v11.common.Common_IHolder;
@@ -14,10 +15,15 @@ import com.netcracker.ciena.oncenter.v11.emsMgr.EMSMgr_IHelper;
 import com.netcracker.ciena.oncenter.v11.emsSession.EmsSession_I;
 import com.netcracker.ciena.oncenter.v11.equipment.EquipmentInventoryMgr_I;
 import com.netcracker.ciena.oncenter.v11.equipment.EquipmentInventoryMgr_IHelper;
+import com.netcracker.ciena.oncenter.v11.equipment.EquipmentOrHolderIterator_IHolder;
+import com.netcracker.ciena.oncenter.v11.equipment.EquipmentOrHolderList_THolder;
 import com.netcracker.ciena.oncenter.v11.globaldefs.NameAndStringValue_T;
 import com.netcracker.ciena.oncenter.v11.globaldefs.NamingAttributesIterator_IHolder;
 import com.netcracker.ciena.oncenter.v11.globaldefs.NamingAttributesList_THolder;
 import com.netcracker.ciena.oncenter.v11.globaldefs.ProcessingFailureException;
+import com.netcracker.ciena.oncenter.v11.managedElement.ManagedElementIterator_IHolder;
+import com.netcracker.ciena.oncenter.v11.managedElement.ManagedElementList_THolder;
+import com.netcracker.ciena.oncenter.v11.managedElement.ManagedElement_T;
 import com.netcracker.ciena.oncenter.v11.managedElementManager.ManagedElementMgr_I;
 import com.netcracker.ciena.oncenter.v11.managedElementManager.ManagedElementMgr_IHelper;
 import com.netcracker.ciena.oncenter.v11.multiLayerSubnetwork.EMSFreedomLevel_T;
@@ -27,6 +33,11 @@ import com.netcracker.ciena.oncenter.v11.subnetworkConnection.GradesOfImpact_T;
 import com.netcracker.ciena.oncenter.v11.subnetworkConnection.SNCCreateData_T;
 import com.netcracker.ciena.oncenter.v11.subnetworkConnection.SubnetworkConnection_THolder;
 import com.netcracker.ciena.oncenter.v11.subnetworkConnection.TPDataList_THolder;
+
+import ex.corba.ciena.error.CorbaErrorDescriptions;
+import ex.corba.ciena.error.CorbaErrorProcessor;
+import ex.corba.ciena.transform.sax.Corba2XMLHandler;
+import ex.corba.ciena.transform.sax.Corba2XMLHelper;
 
 public class CorbaCommands {
 	public static final String ME_MANAGER_NAME = "ManagedElement";
@@ -41,6 +52,8 @@ public class CorbaCommands {
 
 	private EmsSession_I emsSession;
 	private String emsName;
+	private Corba2XMLHandler handler;
+	private Corba2XMLHelper helper;
 
 	private Common_IHolder managerInterface;
 	private ManagedElementMgr_I meManager;
@@ -54,6 +67,14 @@ public class CorbaCommands {
 	public CorbaCommands(EmsSession_I emsSession, String emsName) {
 		this.emsSession = emsSession;
 		this.emsName = emsName;
+	}
+
+	public CorbaCommands(EmsSession_I emsSession, String emsName,
+			ContentHandler contentHandler) {
+		this.emsSession = emsSession;
+		this.emsName = emsName;
+		this.handler = new Corba2XMLHandler(contentHandler);
+		this.helper = new Corba2XMLHelper(handler);
 	}
 
 	public boolean setManagerByName(final String managerName)
@@ -134,6 +155,133 @@ public class CorbaCommands {
 		return neNames;
 	}
 
+	public void getAllManagedElements() throws Exception {
+		LOG.info("getAllManagedElements() start.");
+
+		if (!setManagerByName(ME_MANAGER_NAME)) {
+			return;
+		}
+
+		ManagedElementList_THolder meList = new ManagedElementList_THolder();
+		ManagedElementIterator_IHolder meItr = new ManagedElementIterator_IHolder();
+
+		this.meManager.getAllManagedElements(HOW_MANY, meList, meItr);
+		neNames = new ArrayList<String>();
+
+		ManagedElement_T[] mes = meList.value;
+		if (LOG.isDebugEnabled())
+			LOG.debug("getAllManagedElements: got " + mes.length + " MEs ");
+
+		for (ManagedElement_T me : mes) {
+			handler.printStructure(helper.getManagedElementParams(me));
+			neNames.add(handler.getValueByName(me.name, "ManagedElement"));
+		}
+
+		boolean exitWhile = false;
+
+		if (meItr.value != null)
+			try {
+				boolean hasMoreData = true;
+				while (hasMoreData) {
+					hasMoreData = meItr.value.next_n(HOW_MANY, meList);
+					mes = meList.value;
+					if (LOG.isDebugEnabled())
+						LOG.debug("getAllManagedElements: got " + mes.length
+								+ " MEs ");
+
+					for (ManagedElement_T me : mes) {
+						handler.printStructure(helper
+								.getManagedElementParams(me));
+						neNames.add(handler.getValueByName(me.name,
+								"ManagedElement"));
+					}
+				}
+
+				exitWhile = true;
+			} finally {
+				if (!exitWhile)
+					meItr.value.destroy();
+			}
+
+		LOG.info("getAllManagedElements() complete.");
+	}
+
+	public void getAllEquipment() throws ProcessingFailureException,
+			SAXException {
+		if (LOG.isInfoEnabled()) {
+			LOG.info("getAllEquipment() start.");
+		}
+
+		if (neNames == null) {
+			neNames = getAllManagedElementNames();
+		}
+
+		if (!setManagerByName(EI_MANAGER_NAME))
+			return;
+
+		NameAndStringValue_T[] ne = new NameAndStringValue_T[2];
+
+		ne[0] = new NameAndStringValue_T("EMS", emsName);
+		ne[1] = new NameAndStringValue_T();
+		ne[1].name = "ManagedElement";
+
+		EquipmentOrHolderList_THolder equipOrHolderList = new EquipmentOrHolderList_THolder();
+		EquipmentOrHolderIterator_IHolder equipOrHolderItr = new EquipmentOrHolderIterator_IHolder();
+
+		int meCounter = 0;
+		boolean exitWhile = false;
+
+		for (String neName : neNames) {
+			try {
+				ne[1].value = neName;
+				eiManager.getAllEquipment(ne, HOW_MANY, equipOrHolderList,
+						equipOrHolderItr);
+
+				System.out.println("getAllEquipment: got "
+						+ equipOrHolderList.value.length
+						+ " equipments for ME " + ne[1].value);
+
+				for (int i = 0; i < equipOrHolderList.value.length; i++) {
+					helper.printEquipmentOrHolder(equipOrHolderList.value[i]);
+				}
+
+				exitWhile = false;
+
+				if (equipOrHolderItr.value != null) {
+					try {
+						boolean hasMoreData = true;
+						while (hasMoreData) {
+							hasMoreData = equipOrHolderItr.value.next_n(
+									HOW_MANY, equipOrHolderList);
+
+							for (int i = 0; i < equipOrHolderList.value.length; i++) {
+								helper.printEquipmentOrHolder(equipOrHolderList.value[i]);
+							}
+						}
+
+						exitWhile = true;
+					} finally {
+						if (!exitWhile)
+							equipOrHolderItr.value.destroy();
+					}
+				}
+
+				meCounter++;
+
+				System.out
+						.println("getAllEquipment: finished getEquipment for ME "
+								+ ne[1].value + " Order number # " + meCounter);
+			} catch (ProcessingFailureException ex) {
+				handleProcessingFailureException(ex, "getAllEquipment. ME: "
+						+ neName);
+			}
+		}
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info("getAllEquipment() complete.");
+		}
+	}
+
 	public StringHolder createAndActivateSNC(SNCCreateData_T createData,
 			GradesOfImpact_T tolerableImpact,
 			EMSFreedomLevel_T emsFreedomLevel, TPDataList_THolder tpsToModify)
@@ -182,5 +330,22 @@ public class CorbaCommands {
 		}
 
 		return errorReason;
+	}
+
+	public void handleProcessingFailureException(
+			ProcessingFailureException pfe, String param)
+			throws ProcessingFailureException {
+		CorbaErrorProcessor err = new CorbaErrorProcessor(pfe);
+
+		if (err.getPriority() == CorbaErrorDescriptions.PRIORITY.MAJOR) {
+			LOG.error("Alcatel OMS 1350>> " + param + ", " + err.printError()
+					+ " It is a major error. Stop interaction with server", pfe);
+
+			throw pfe;
+		} else {
+			LOG.error("Alcatel OMS 1350>> " + param + err.printError()
+					+ " It is a minor error. Continue interaction with server",
+					pfe);
+		}
 	}
 }
