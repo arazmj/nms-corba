@@ -2,20 +2,20 @@ package ex.corba.ciena.transform.sax;
 
 import org.xml.sax.SAXException;
 
-import com.netcracker.ciena.oncenter.v11.equipment.EquipmentHolder_T;
-import com.netcracker.ciena.oncenter.v11.equipment.EquipmentOrHolder_T;
-import com.netcracker.ciena.oncenter.v11.equipment.Equipment_T;
-import com.netcracker.ciena.oncenter.v11.equipment.HolderState_T;
-import com.netcracker.ciena.oncenter.v11.globaldefs.NameAndStringValue_T;
-import com.netcracker.ciena.oncenter.v11.globaldefs.ProcessingFailureException;
-import com.netcracker.ciena.oncenter.v11.managedElement.ManagedElement_T;
-import com.netcracker.ciena.oncenter.v11.subnetworkConnection.SubnetworkConnection_T;
-import com.netcracker.ciena.oncenter.v11.terminationPoint.Directionality_T;
-import com.netcracker.ciena.oncenter.v11.terminationPoint.TPConnectionState_T;
-import com.netcracker.ciena.oncenter.v11.terminationPoint.TPProtectionAssociation_T;
-import com.netcracker.ciena.oncenter.v11.terminationPoint.TPType_T;
-import com.netcracker.ciena.oncenter.v11.terminationPoint.TerminationMode_T;
-import com.netcracker.ciena.oncenter.v11.terminationPoint.TerminationPoint_T;
+import com.ciena.oc.equipment.EquipmentHolder_T;
+import com.ciena.oc.equipment.EquipmentOrHolder_T;
+import com.ciena.oc.equipment.Equipment_T;
+import com.ciena.oc.equipment.HolderState_T;
+import com.ciena.oc.globaldefs.NameAndStringValue_T;
+import com.ciena.oc.globaldefs.ProcessingFailureException;
+import com.ciena.oc.managedElement.ManagedElement_T;
+import com.ciena.oc.subnetworkConnection.SubnetworkConnection_T;
+import com.ciena.oc.terminationPoint.Directionality_T;
+import com.ciena.oc.terminationPoint.TPConnectionState_T;
+import com.ciena.oc.terminationPoint.TPProtectionAssociation_T;
+import com.ciena.oc.terminationPoint.TPType_T;
+import com.ciena.oc.terminationPoint.TerminationMode_T;
+import com.ciena.oc.terminationPoint.TerminationPoint_T;
 
 import ex.corba.CorbaConstants;
 

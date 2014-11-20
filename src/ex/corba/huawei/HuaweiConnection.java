@@ -18,13 +18,13 @@ import org.omg.CosNaming.NamingContextExtHelper;
 import org.omg.PortableServer.POA;
 import org.omg.PortableServer.POAHelper;
 
-import com.netcracker.huawei.t2000.v200r002c01.emsSession.EmsSession_I;
-import com.netcracker.huawei.t2000.v200r002c01.emsSession.EmsSession_IHolder;
-import com.netcracker.huawei.t2000.v200r002c01.emsSessionFactory.EmsSessionFactory_I;
-import com.netcracker.huawei.t2000.v200r002c01.emsSessionFactory.EmsSessionFactory_IHelper;
-import com.netcracker.huawei.t2000.v200r002c01.nmsSession.NmsSession_I;
-import com.netcracker.huawei.t2000.v200r002c01.nmsSession.NmsSession_IHelper;
-import com.netcracker.huawei.t2000.v200r002c01.nmsSession.NmsSession_IPOATie;
+import com.huawei.u2000.emsSession.EmsSession_I;
+import com.huawei.u2000.emsSession.EmsSession_IHolder;
+import com.huawei.u2000.emsSessionFactory.EmsSessionFactory_I;
+import com.huawei.u2000.emsSessionFactory.EmsSessionFactory_IHelper;
+import com.huawei.u2000.nmsSession.NmsSession_I;
+import com.huawei.u2000.nmsSession.NmsSession_IHelper;
+import com.huawei.u2000.nmsSession.NmsSession_IPOATie;
 
 public class HuaweiConnection {
 	protected String corbaConnect;

@@ -7,26 +7,26 @@ import org.omg.CORBA.StringHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.netcracker.huawei.t2000.v200r002c01.HW_mstpService.HW_EthServiceCreateData_T;
-import com.netcracker.huawei.t2000.v200r002c01.HW_mstpService.HW_EthServiceTP_T;
-import com.netcracker.huawei.t2000.v200r002c01.HW_mstpService.HW_EthServiceType_T;
-import com.netcracker.huawei.t2000.v200r002c01.emsSession.EmsSession_I;
-import com.netcracker.huawei.t2000.v200r002c01.globaldefs.ConnectionDirection_T;
-import com.netcracker.huawei.t2000.v200r002c01.globaldefs.NameAndStringValue_T;
-import com.netcracker.huawei.t2000.v200r002c01.globaldefs.ProcessingFailureException;
-import com.netcracker.huawei.t2000.v200r002c01.multiLayerSubnetwork.EMSFreedomLevel_T;
-import com.netcracker.huawei.t2000.v200r002c01.subnetworkConnection.CrossConnect_T;
-import com.netcracker.huawei.t2000.v200r002c01.subnetworkConnection.GradesOfImpact_T;
-import com.netcracker.huawei.t2000.v200r002c01.subnetworkConnection.NetworkRouted_T;
-import com.netcracker.huawei.t2000.v200r002c01.subnetworkConnection.ProtectionEffort_T;
-import com.netcracker.huawei.t2000.v200r002c01.subnetworkConnection.Reroute_T;
-import com.netcracker.huawei.t2000.v200r002c01.subnetworkConnection.SNCCreateData_T;
-import com.netcracker.huawei.t2000.v200r002c01.subnetworkConnection.SNCType_T;
-import com.netcracker.huawei.t2000.v200r002c01.subnetworkConnection.StaticProtectionLevel_T;
-import com.netcracker.huawei.t2000.v200r002c01.subnetworkConnection.TPDataList_THolder;
-import com.netcracker.huawei.t2000.v200r002c01.subnetworkConnection.TPData_T;
-import com.netcracker.huawei.t2000.v200r002c01.terminationPoint.Directionality_T;
-import com.netcracker.huawei.t2000.v200r002c01.transmissionParameters.LayeredParameters_T;
+import com.huawei.u2000.HW_mstpService.HW_EthServiceCreateData_T;
+import com.huawei.u2000.HW_mstpService.HW_EthServiceTP_T;
+import com.huawei.u2000.HW_mstpService.HW_EthServiceType_T;
+import com.huawei.u2000.emsSession.EmsSession_I;
+import com.huawei.u2000.globaldefs.ConnectionDirection_T;
+import com.huawei.u2000.globaldefs.NameAndStringValue_T;
+import com.huawei.u2000.globaldefs.ProcessingFailureException;
+import com.huawei.u2000.multiLayerSubnetwork.EMSFreedomLevel_T;
+import com.huawei.u2000.subnetworkConnection.CrossConnect_T;
+import com.huawei.u2000.subnetworkConnection.GradesOfImpact_T;
+import com.huawei.u2000.subnetworkConnection.NetworkRouted_T;
+import com.huawei.u2000.subnetworkConnection.ProtectionEffort_T;
+import com.huawei.u2000.subnetworkConnection.Reroute_T;
+import com.huawei.u2000.subnetworkConnection.SNCCreateData_T;
+import com.huawei.u2000.subnetworkConnection.SNCType_T;
+import com.huawei.u2000.subnetworkConnection.StaticProtectionLevel_T;
+import com.huawei.u2000.subnetworkConnection.TPDataList_THolder;
+import com.huawei.u2000.subnetworkConnection.TPData_T;
+import com.huawei.u2000.terminationPoint.Directionality_T;
+import com.huawei.u2000.transmissionParameters.LayeredParameters_T;
 
 public class HuaweiActivationClient extends HuaweiConnection {
 	public static final Logger LOG = LoggerFactory

@@ -1,6 +1,6 @@
 package ex.corba.ciena.error;
 
-import com.netcracker.ciena.oncenter.v11.globaldefs.ProcessingFailureException;
+import com.ciena.oc.globaldefs.ProcessingFailureException;
 
 public class CorbaErrorProcessor {
 	private ProcessingFailureException prf;

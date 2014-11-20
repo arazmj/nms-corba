@@ -1,7 +1,7 @@
 package ex.corba.huawei;
 
-import com.netcracker.huawei.t2000.v200r002c01.nmsSession.NmsSession_IPOA;
-import com.netcracker.huawei.t2000.v200r002c01.session.Session_I;
+import com.huawei.u2000.nmsSession.NmsSession_IPOA;
+import com.huawei.u2000.session.Session_I;
 
 public class NmsSessionImpl extends NmsSession_IPOA {
 

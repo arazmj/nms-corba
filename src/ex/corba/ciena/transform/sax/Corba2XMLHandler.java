@@ -5,9 +5,9 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
-import com.netcracker.ciena.oncenter.v11.globaldefs.NameAndStringValue_T;
-import com.netcracker.ciena.oncenter.v11.subnetworkConnection.TPData_T;
-import com.netcracker.ciena.oncenter.v11.transmissionParameters.LayeredParameters_T;
+import com.ciena.oc.globaldefs.NameAndStringValue_T;
+import com.ciena.oc.subnetworkConnection.TPData_T;
+import com.ciena.oc.transmissionParameters.LayeredParameters_T;
 
 public class Corba2XMLHandler {
 	public static final String XML_ROOT_TAG = "main";

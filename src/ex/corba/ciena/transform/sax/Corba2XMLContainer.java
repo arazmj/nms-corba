@@ -3,8 +3,8 @@ package ex.corba.ciena.transform.sax;
 import java.util.Hashtable;
 import java.util.Map;
 
-import com.netcracker.ciena.oncenter.v11.globaldefs.ExceptionType_T;
-import com.netcracker.ciena.oncenter.v11.globaldefs.ProcessingFailureException;
+import com.ciena.oc.globaldefs.ExceptionType_T;
+import com.ciena.oc.globaldefs.ProcessingFailureException;
 
 public class Corba2XMLContainer {
 	private Corba2XMLStructure structure;

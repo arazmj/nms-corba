@@ -3,8 +3,8 @@ package ex.corba.ciena;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.netcracker.ciena.oncenter.v11.nmsSession.NmsSession_IPOA;
-import com.netcracker.ciena.oncenter.v11.session.Session_I;
+import com.ciena.oc.nmsSession.NmsSession_IPOA;
+import com.ciena.oc.session.Session_I;
 
 public class NmsSessionImpl extends NmsSession_IPOA {
 

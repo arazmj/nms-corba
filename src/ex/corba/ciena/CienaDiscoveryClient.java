@@ -7,8 +7,8 @@ import org.dom4j.io.XMLWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.netcracker.ciena.oncenter.v11.emsSession.EmsSession_I;
-import com.netcracker.ciena.oncenter.v11.globaldefs.ProcessingFailureException;
+import com.ciena.oc.emsSession.EmsSession_I;
+import com.ciena.oc.globaldefs.ProcessingFailureException;
 
 import ex.corba.ciena.error.CorbaErrorProcessor;
 import ex.corba.ciena.transform.sax.Corba2XMLHandler;

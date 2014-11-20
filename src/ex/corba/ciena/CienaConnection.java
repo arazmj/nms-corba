@@ -18,13 +18,13 @@ import org.omg.CosNaming.NamingContextExtHelper;
 import org.omg.PortableServer.POA;
 import org.omg.PortableServer.POAHelper;
 
-import com.netcracker.ciena.oncenter.v11.emsSession.EmsSession_I;
-import com.netcracker.ciena.oncenter.v11.emsSession.EmsSession_IHolder;
-import com.netcracker.ciena.oncenter.v11.emsSessionFactory.EmsSessionFactory_I;
-import com.netcracker.ciena.oncenter.v11.emsSessionFactory.EmsSessionFactory_IHelper;
-import com.netcracker.ciena.oncenter.v11.nmsSession.NmsSession_I;
-import com.netcracker.ciena.oncenter.v11.nmsSession.NmsSession_IHelper;
-import com.netcracker.ciena.oncenter.v11.nmsSession.NmsSession_IPOATie;
+import com.ciena.oc.emsSession.EmsSession_I;
+import com.ciena.oc.emsSession.EmsSession_IHolder;
+import com.ciena.oc.emsSessionFactory.EmsSessionFactory_I;
+import com.ciena.oc.emsSessionFactory.EmsSessionFactory_IHelper;
+import com.ciena.oc.nmsSession.NmsSession_I;
+import com.ciena.oc.nmsSession.NmsSession_IHelper;
+import com.ciena.oc.nmsSession.NmsSession_IPOATie;
 
 public class CienaConnection {
 	protected String corbaConnect;

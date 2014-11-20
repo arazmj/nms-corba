@@ -4,6 +4,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.Properties;
 
+import nmsSession.NmsSession_I;
+import nmsSession.NmsSession_IHelper;
+import nmsSession.NmsSession_IPOATie;
+
 import org.omg.BiDirPolicy.BIDIRECTIONAL_POLICY_TYPE;
 import org.omg.BiDirPolicy.BOTH;
 import org.omg.BiDirPolicy.BidirectionalPolicyValueHelper;
@@ -16,13 +20,10 @@ import org.omg.CosNaming.NamingContextExtHelper;
 import org.omg.PortableServer.POA;
 import org.omg.PortableServer.POAHelper;
 
-import com.netcracker.huawei.t2000.v200r002c01.emsSession.EmsSession_I;
-import com.netcracker.huawei.t2000.v200r002c01.emsSession.EmsSession_IHolder;
-import com.netcracker.huawei.t2000.v200r002c01.emsSessionFactory.EmsSessionFactory_I;
-import com.netcracker.huawei.t2000.v200r002c01.emsSessionFactory.EmsSessionFactory_IHelper;
-import com.netcracker.huawei.t2000.v200r002c01.nmsSession.NmsSession_I;
-import com.netcracker.huawei.t2000.v200r002c01.nmsSession.NmsSession_IHelper;
-import com.netcracker.huawei.t2000.v200r002c01.nmsSession.NmsSession_IPOATie;
+import emsSession.EmsSession_I;
+import emsSession.EmsSession_IHolder;
+import emsSessionFactory.EmsSessionFactory_I;
+import emsSessionFactory.EmsSessionFactory_IHelper;
 
 public class CiscoClient {
 	private String corbaConnect;

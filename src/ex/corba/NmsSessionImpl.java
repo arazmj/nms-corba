@@ -1,10 +1,11 @@
 package ex.corba;
 
+import nmsSession.NmsSession_IPOA;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.netcracker.huawei.t2000.v200r002c01.nmsSession.NmsSession_IPOA;
-import com.netcracker.huawei.t2000.v200r002c01.session.Session_I;
+import session.Session_I;
 
 public class NmsSessionImpl extends NmsSession_IPOA {
 
@@ -52,6 +53,12 @@ public class NmsSessionImpl extends NmsSession_IPOA {
 		if (LOG.isDebugEnabled()) {
 			LOG.debug("Ping");
 		}
+	}
+
+	@Override
+	public void alarmLossOccurred(String arg0, String arg1) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

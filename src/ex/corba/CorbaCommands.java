@@ -3,32 +3,35 @@ package ex.corba;
 import java.util.ArrayList;
 import java.util.List;
 
+import managedElementManager.ManagedElementMgr_I;
+import managedElementManager.ManagedElementMgr_IHelper;
+import multiLayerSubnetwork.EMSFreedomLevel_T;
+import multiLayerSubnetwork.MultiLayerSubnetworkMgr_I;
+import multiLayerSubnetwork.MultiLayerSubnetworkMgr_IHelper;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.omg.CORBA.StringHolder;
 
-import com.netcracker.huawei.t2000.v200r002c01.common.Common_IHolder;
-import com.netcracker.huawei.t2000.v200r002c01.emsSession.EmsSession_I;
-import com.netcracker.huawei.t2000.v200r002c01.equipment.EquipmentHolder_T;
-import com.netcracker.huawei.t2000.v200r002c01.equipment.EquipmentInventoryMgr_I;
-import com.netcracker.huawei.t2000.v200r002c01.equipment.EquipmentInventoryMgr_IHelper;
-import com.netcracker.huawei.t2000.v200r002c01.equipment.EquipmentOrHolderIterator_IHolder;
-import com.netcracker.huawei.t2000.v200r002c01.equipment.EquipmentOrHolderList_THolder;
-import com.netcracker.huawei.t2000.v200r002c01.equipment.EquipmentOrHolder_T;
-import com.netcracker.huawei.t2000.v200r002c01.equipment.Equipment_T;
-import com.netcracker.huawei.t2000.v200r002c01.globaldefs.NameAndStringValue_T;
-import com.netcracker.huawei.t2000.v200r002c01.globaldefs.NamingAttributesIterator_IHolder;
-import com.netcracker.huawei.t2000.v200r002c01.globaldefs.NamingAttributesList_THolder;
-import com.netcracker.huawei.t2000.v200r002c01.globaldefs.ProcessingFailureException;
-import com.netcracker.huawei.t2000.v200r002c01.managedElementManager.ManagedElementMgr_I;
-import com.netcracker.huawei.t2000.v200r002c01.managedElementManager.ManagedElementMgr_IHelper;
-import com.netcracker.huawei.t2000.v200r002c01.multiLayerSubnetwork.EMSFreedomLevel_T;
-import com.netcracker.huawei.t2000.v200r002c01.multiLayerSubnetwork.MultiLayerSubnetworkMgr_I;
-import com.netcracker.huawei.t2000.v200r002c01.multiLayerSubnetwork.MultiLayerSubnetworkMgr_IHelper;
-import com.netcracker.huawei.t2000.v200r002c01.subnetworkConnection.GradesOfImpact_T;
-import com.netcracker.huawei.t2000.v200r002c01.subnetworkConnection.SNCCreateData_T;
-import com.netcracker.huawei.t2000.v200r002c01.subnetworkConnection.SubnetworkConnection_THolder;
-import com.netcracker.huawei.t2000.v200r002c01.subnetworkConnection.TPDataList_THolder;
+import subnetworkConnection.GradesOfImpact_T;
+import subnetworkConnection.SNCCreateData_T;
+import subnetworkConnection.SubnetworkConnection_THolder;
+import subnetworkConnection.TPDataList_THolder;
+
+import common.Common_IHolder;
+
+import emsSession.EmsSession_I;
+import equipment.EquipmentHolder_T;
+import equipment.EquipmentInventoryMgr_I;
+import equipment.EquipmentInventoryMgr_IHelper;
+import equipment.EquipmentOrHolderIterator_IHolder;
+import equipment.EquipmentOrHolderList_THolder;
+import equipment.EquipmentOrHolder_T;
+import equipment.Equipment_T;
+import globaldefs.NameAndStringValue_T;
+import globaldefs.NamingAttributesIterator_IHolder;
+import globaldefs.NamingAttributesList_THolder;
+import globaldefs.ProcessingFailureException;
 
 public class CorbaCommands {
 	public static final String ME_MANAGER_NAME = "ManagedElement";
