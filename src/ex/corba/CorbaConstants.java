@@ -164,5 +164,6 @@ public class CorbaConstants {
 	public static final String AEND_STR = "AEND";
 	public static final String ZEND_STR = "ZEND";
 	public static final String LINK_TYPE_STR = "LINK_TYPE";
-	public static final String MULTILAYERSUBNETWORKMGR = "MultiLayerSubnetworkMgr_I";
+	public static final String VCTRUNK_NE_STR = "VCTRUNK_NE";
+	public static final String VCTRUNK_PTP_STR = "VCTRUNK_PTP";
 }

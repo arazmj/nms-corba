@@ -50,8 +50,10 @@ public class NmsSessionImpl extends NmsSession_IPOA {
 
 	@Override
 	public void ping() {
-		if (LOG.isDebugEnabled()) {
-			LOG.debug("Ping");
+		myAssociatedSession.ping();
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info("Ping.");
 		}
 	}
 

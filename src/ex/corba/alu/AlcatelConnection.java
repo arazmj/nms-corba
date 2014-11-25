@@ -42,7 +42,8 @@ public class AlcatelConnection {
 	protected POA rootPOA;
 	protected Properties props;
 
-	// protected EmsSession_I emsSession;
+	protected NmsSessionImpl nmsSessionImpl;
+	protected PingThread pingThread;
 
 	public static void main(String args[]) {
 		AlcatelConnection main = new AlcatelConnection();
@@ -97,6 +98,9 @@ public class AlcatelConnection {
 
 			return null;
 		}
+
+		nmsSessionImpl.setAssociatedSession(emsSession);
+		pingThread = new PingThread(nmsSession, emsSession);
 
 		LOG.info("Authentication successful!!! emsSession: {}.", emsSession);
 
@@ -164,8 +168,9 @@ public class AlcatelConnection {
 		rootPOA.the_POAManager().activate();
 
 		// Create NMS Session
-		NmsSessionImpl nms = new NmsSessionImpl();
-		NmsSession_IPOATie tieobj = new NmsSession_IPOATie(nms, rootPOA);
+		nmsSessionImpl = new NmsSessionImpl();
+		NmsSession_IPOATie tieobj = new NmsSession_IPOATie(nmsSessionImpl,
+				rootPOA);
 		rootPOA.activate_object(tieobj);
 		NmsSession_I nmsSession = NmsSession_IHelper.narrow(tieobj._this());
 
@@ -174,6 +179,7 @@ public class AlcatelConnection {
 
 	public void closeEmsSession(EmsSession_I emsSession) {
 		if (emsSession != null) {
+			// pingThread.stopPing();
 			emsSession.endSession();
 		}
 
@@ -218,6 +224,7 @@ public class AlcatelConnection {
 		props.setProperty("org.omg.CORBA.ORBClass", "org.jacorb.orb.ORB");
 		props.setProperty("org.omg.CORBA.ORBSingletonClass",
 				"org.jacorb.orb.ORBSingleton");
+		props.put("jacorb.connection.client.keepalive", "on");
 
 		props.setProperty("ORBInitRef.NameService", corbaConnect);
 
@@ -226,14 +233,6 @@ public class AlcatelConnection {
 		props.setProperty(
 				"jacorb.connection.client.timeout_ignores_pending_messages",
 				"on");
-
-		// Proxy address in IOR
-		String iorProxy = props.getProperty("jacorb.ior_proxy_address");
-		System.out.println("iorProxy: " + iorProxy);
-
-		if (iorProxy != null && !iorProxy.trim().equals("")) {
-			props.setProperty("jacorb.ior_proxy_address", iorProxy);
-		}
 
 		return props;
 	}

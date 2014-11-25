@@ -107,6 +107,7 @@ public class CorbaCommands {
 
 	// Cache list
 	private List<String> neNames;
+	private List<String> neNamesWithoutVNE;
 	private List<String> sncNames;
 	private List<String> subnetworkNames;
 
@@ -174,7 +175,9 @@ public class CorbaCommands {
 
 	public List<String> getAllManagedElementNames()
 			throws ProcessingFailureException, SAXException {
-		System.out.println("getAllManagedElementNames...");
+		if (LOG.isInfoEnabled()) {
+			LOG.info("getAllManagedElementNames() start.");
+		}
 
 		if (!setManagerByName(ME_MANAGER_NAME)) {
 			return null;
@@ -188,12 +191,11 @@ public class CorbaCommands {
 
 		neNames = new ArrayList<String>();
 
-		for (int i = 0; i < meNameList.value.length; i++)
-			for (int j = 0; j < meNameList.value[i].length; j++)
-				if (meNameList.value[i][j].name.equals("ManagedElement")) {
-					neNames.add(meNameList.value[i][j].value);
-					System.out.println("NE: " + meNameList.value[i][j].value);
-				}
+		NameAndStringValue_T[][] mes = meNameList.value;
+
+		for (NameAndStringValue_T[] me : mes) {
+			neNames.add(handler.getValueByName(me, "ManagedElement"));
+		}
 
 		boolean exitwhile = false;
 
@@ -202,11 +204,12 @@ public class CorbaCommands {
 				boolean hasMoreData = true;
 				while (hasMoreData) {
 					hasMoreData = meNameItr.value.next_n(HOW_MANY, meNameList);
-					for (int i = 0; i < meNameList.value.length; i++)
-						for (int j = 0; j < meNameList.value[i].length; j++)
-							if (meNameList.value[i][j].name
-									.equals("ManagedElement"))
-								neNames.add(meNameList.value[i][j].value);
+					mes = meNameList.value;
+
+					for (NameAndStringValue_T[] me : mes) {
+						neNames.add(handler
+								.getValueByName(me, "ManagedElement"));
+					}
 				}
 
 				exitwhile = true;
@@ -215,11 +218,18 @@ public class CorbaCommands {
 					meNameItr.value.destroy();
 			}
 
+		if (LOG.isInfoEnabled()) {
+			LOG.info("getAllManagedElementNames() complete.");
+		}
+
 		return neNames;
 	}
 
-	public void getAllManagedElements() throws Exception {
-		LOG.info("getAllManagedElements() start.");
+	public void getAllManagedElements() throws ProcessingFailureException,
+			SAXException {
+		if (LOG.isInfoEnabled()) {
+			LOG.info("getAllManagedElements() start.");
+		}
 
 		if (!setManagerByName(ME_MANAGER_NAME)) {
 			return;
@@ -230,6 +240,7 @@ public class CorbaCommands {
 
 		this.meManager.getAllManagedElements(HOW_MANY, meList, meItr);
 		neNames = new ArrayList<String>();
+		neNamesWithoutVNE = new ArrayList<String>();
 
 		ManagedElement_T[] mes = meList.value;
 		if (LOG.isDebugEnabled())
@@ -239,8 +250,15 @@ public class CorbaCommands {
 
 		for (ManagedElement_T me : mes) {
 			handler.printStructure(helper.getManagedElementParams(me));
-			managedElements.add(Corba2Object.getManagedElement(me));
+			// managedElements.add(Corba2Object.getManagedElement(me));
 			neNames.add(handler.getValueByName(me.name, "ManagedElement"));
+
+			// Cache actual NE without VNE
+			if (!me.productName.equals("External Network")
+					&& !me.productName.equals("None")) {
+				neNamesWithoutVNE.add(handler.getValueByName(me.name,
+						"ManagedElement"));
+			}
 			// jaxbOutputHandler.printManagedElementContentHandler(Corba2Object
 			// .getManagedElement(me));
 		}
@@ -263,6 +281,14 @@ public class CorbaCommands {
 						managedElements.add(Corba2Object.getManagedElement(me));
 						neNames.add(handler.getValueByName(me.name,
 								"ManagedElement"));
+
+						// Cache actual NE without VNE or ENE
+						if (!me.productName.equals("External Network")
+								&& !me.productName.equals("None")
+								&& !me.productName.startsWith("ISA_ES")) {
+							neNamesWithoutVNE.add(handler.getValueByName(
+									me.name, "ManagedElement"));
+						}
 					}
 				}
 
@@ -273,13 +299,15 @@ public class CorbaCommands {
 			}
 
 		// Specific to JAXB XML output: Start
-		JaxbOutputHandler out = new JaxbOutputHandler("managedelement.xml");
-		NmsObjects nmsObjects = new NmsObjects();
-		nmsObjects.setManagedElements(managedElements);
-		out.print(nmsObjects);
+		// JaxbOutputHandler out = new JaxbOutputHandler("managedelement.xml");
+		// NmsObjects nmsObjects = new NmsObjects();
+		// nmsObjects.setManagedElements(managedElements);
+		// out.print(nmsObjects);
 		// Specific to JAXB XML output: End
 
-		LOG.info("getAllManagedElements() complete.");
+		if (LOG.isInfoEnabled()) {
+			LOG.info("getAllManagedElements() complete.");
+		}
 	}
 
 	public void getAllEquipment() throws ProcessingFailureException,
@@ -288,8 +316,8 @@ public class CorbaCommands {
 			LOG.info("getAllEquipment() start.");
 		}
 
-		if (neNames == null) {
-			neNames = getAllManagedElementNames();
+		if (neNamesWithoutVNE == null) {
+			getAllManagedElements();
 		}
 
 		if (!setManagerByName(EI_MANAGER_NAME))
@@ -310,13 +338,13 @@ public class CorbaCommands {
 		// List<EquipmentHolder> equipmentHolders = new
 		// ArrayList<EquipmentHolder>();
 
-		for (String neName : neNames) {
+		for (String neName : neNamesWithoutVNE) {
 			try {
 				ne[1].value = neName;
 				eiManager.getAllEquipment(ne, HOW_MANY, equipOrHolderList,
 						equipOrHolderItr);
 
-				System.out.println("getAllEquipment: got "
+				LOG.info("getAllEquipment: got "
 						+ equipOrHolderList.value.length
 						+ " equipments for ME " + ne[1].value);
 
@@ -384,7 +412,7 @@ public class CorbaCommands {
 		}
 
 		if (neNames == null) {
-			neNames = getAllManagedElementNames();
+			getAllManagedElements();
 		}
 
 		if (!setManagerByName(ME_MANAGER_NAME)) {
@@ -795,8 +823,8 @@ public class CorbaCommands {
 			LOG.info("getAllProtectionGroups() start.");
 		}
 
-		if (neNames == null) {
-			neNames = getAllManagedElementNames();
+		if (neNamesWithoutVNE == null) {
+			getAllManagedElements();
 		}
 
 		if (!setManagerByName(PRT_MANAGER_NAME))
@@ -815,7 +843,7 @@ public class CorbaCommands {
 
 		int counter = 0;
 		boolean exitwhile = false;
-		for (String n : neNames) {
+		for (String n : neNamesWithoutVNE) {
 			try {
 				nameAndStringValueArray[1].value = n;
 				protectionMgr.getAllProtectionGroups(nameAndStringValueArray,

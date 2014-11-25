@@ -1,1 +1,1 @@
-"%JAVA_HOME%/bin/java.exe" -Xmx512m -cp ".;./bin;lib/jacorb.jar;lib/slf4j-api.jar;lib/slf4j-jdk14.jar;lib/commons-logging.jar;lib/huawei-idl.jar" ex.corba.HuaweiClient
+"%JAVA_HOME%/bin/java.exe" -Xmx512m -cp ".;./bin;lib/jacorb.jar;lib/idl-huawei.jar;lib/slf4j-api.jar;lib/slf4j-jdk14.jar;lib/commons-logging.jar;lib/dom4j-1.6.1.jar" ex.corba.HuaweiDiscoveryClient
