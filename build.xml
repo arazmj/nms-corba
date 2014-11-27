@@ -1,129 +1,93 @@
 <?xml version="1.0"?>
 
 <!-- ======================================================================= -->
-<!-- EJB build file                                          -->
+<!-- build file                                          -->
 <!-- ======================================================================= -->
 
-<project name="hellobean" default="deploy" basedir=".">
+<project name="nms-corba" default="jar" basedir=".">
+
+	<!-- ======================================================================= -->
+	<!-- Sets up property variables. Can be thought of as constants in script.   -->
+	<!-- ======================================================================= -->
+
+	<property environment="env" />
+	<property name="src.dir" value="${basedir}/src/" />
+	<property name="lib.dir" value="${basedir}/lib/" />
+	<property name="build.dir" value="${basedir}/bin" />
+	<property name="build.classes.dir" value="${build.dir}" />
+	<property name="jarfile" value="nms-corba.jar" />
+	<property name="dist.dir" value="${basedir}/dist" />
+	<property name="dist.file" value="nms-corba.zip" />
+
+	<!-- Build classpath -->
+
+	<path id="classpath">
+		<pathelement location="${build.classes.dir}" />
+		
+		<fileset dir="${lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<property name="build.classpath" refid="classpath" />
 
 
-  <!-- ======================================================================= -->
-  <!-- Sets up property variables. Can be thought of as constants in script.   -->
-  <!-- ======================================================================= -->
+	<!-- =================================================================== -->
+	<!-- Prepares the build directory                                        -->
+	<!-- =================================================================== -->
 
-  <property environment="env"/>
-  <property name="src.dir" value="${basedir}/gensrc/"/>
-  <property name="build.dir" value="${basedir}/build/"/>
-  <property name="build.classes.dir" value="${build.dir}/classes"/>
-  <property name="doc.dir" value="${basedir}/doc"/>  
-  <property name="resource" value="${basedir}/resource"/>
-  <property name="java.lib" value="${env.JAVA_LIB}"/>
-  <property name="jarfile" value="radidl.jar"/>
-  
-  <!-- Build classpath -->
-
-  <path id="classpath">
-	<!-- So that we can get jndi.properties for InitialContext -->
- 	<pathelement location="${build.classes.dir}"/>
-  </path>
-
-  <property name="build.classpath" refid="classpath"/>
+	<target name="prepare" description="Creates build directories">
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${build.classes.dir}" />
+		<mkdir dir="${dist.dir}" />
+	</target>
 
 
-  <!-- =================================================================== -->
-  <!-- Prepares the build directory                                        -->
-  <!-- =================================================================== -->
+	<!-- =================================================================== -->
+	<!-- Compiles the source code                                            -->
+	<!-- =================================================================== -->
 
-  <target name="prepare" description="Creates build directories">
-    <mkdir dir="${build.dir}"/>
-    <mkdir dir="${build.classes.dir}"/>
-    <mkdir dir="${doc.dir}"/>
-  </target>
-
-
-  <!-- =================================================================== -->
-  <!-- Compiles the source code                                            -->
-  <!-- =================================================================== -->
-
-  <target name="compile" depends="prepare" description="Compiles source code to build directory">
-    <javac srcdir="${src.dir}"
-           destdir="${build.classes.dir}"
-           debug="on"
-           deprecation="on"
-           optimize="off"
-           includes="**">
-           <classpath refid="classpath"/>            
-    </javac>
-  </target>
+	<target name="compile" depends="prepare" description="Compiles source code to build directory">
+		<javac srcdir="${src.dir}" destdir="${build.classes.dir}" debug="on" deprecation="on" optimize="off" includes="**">
+			<classpath refid="classpath" />
+		</javac>
+	</target>
 
 
-  <!-- ======================================================================= -->
-  <!-- Creates jar files, ready for deployment                                 -->
-  <!-- ======================================================================= -->
+	<!-- ======================================================================= -->
+	<!-- Creates jar files, ready for deployment                                 -->
+	<!-- ======================================================================= -->
 
-  <target name="jar" depends="compile" description="Creates deployable jar file">
-    <jar jarfile="build/${jarfile}">
-      <fileset dir="${build.classes.dir}">
-      	  <include name="**/*.class"/>
-      </fileset>
-     </jar>
-  </target>
-
-
-  <!-- ======================================================================= -->
-  <!-- Deploys application to server                                           -->
-  <!-- ======================================================================= -->
-
-  <target name="deploy" depends="jar" description="Deploys application to server">
-     <copy file="build/${jarfile}" todir="${jboss.home}/server/default/deploy"/>
-  </target>
+	<target name="jar" depends="compile" description="Creates deployable jar file">
+		<jar jarfile="${dist.dir}/${jarfile}">
+			<fileset dir="${build.classes.dir}">
+				<include name="**/*.class" />
+			</fileset>
+		</jar>
+	</target>
 
 
-  <!-- ======================================================================= -->
-  <!-- Runs the a client to test the setup.                                    -->
-  <!-- ======================================================================= -->
+	<!-- ======================================================================= -->
+	<!-- Deploys application to server                                           -->
+	<!-- ======================================================================= -->
 
-  <target name="run" description="Runs the client">
-    <java classname="org.acme.HelloClient" fork="yes" dir=".">
-      <classpath refid="classpath"/>
-    </java>
-  </target>
-	
-
-  <!-- =================================================================== -->
-  <!-- Cleans up generated stuff                                           -->
-  <!-- =================================================================== -->
-
-  <target name="clean" description="Cleans build output, also undeploys application">
-    <delete dir="${build.dir}"/>
-    <delete dir="${doc.dir}"/>
-  </target>
+	<target name="package" depends="jar" description="Create package to distribute">
+		<delete file="${dist.dir}/${dist.file}" />
+		
+		<zip destfile="${dist.dir}/${dist.file}">
+			<zipfileset dir="${basedir}" excludes=".git/, src/, dist/"/>
+		</zip>
+	</target>
 
 
-  <!-- =================================================================== -->
-  <!-- Creates javadoc from source files                                   -->
-  <!-- =================================================================== -->
+	<!-- =================================================================== -->
+	<!-- Cleans up generated stuff                                           -->
+	<!-- =================================================================== -->
 
-  <target name="javadoc" depends="prepare" description="Creates javadoc documentation">
-   	<javadoc sourcepath="${src.dir}" destdir="${doc.dir}" packagenames="*">
-  		<classpath refid="classpath"/>
-  	</javadoc>
-  </target>
-
-
-  <!-- =================================================================== -->
-  <!-- Displays help information about ant usage                           -->
-  <!-- =================================================================== -->
-  
-  <target name="help" description="Gives a short usage of ant file">
-	<echo>ant usage:</echo>
-	<echo>ant clean: Removes all created directories</echo>
-	<echo>ant compile: Compiles all the classes in diplom project </echo>
-	<echo>ant deploy: Deploy the war file to JBOSS deploy dir</echo>
-	<echo>ant jar: Creates a ready to deploy jar-file</echo>	
-	<echo>ant prepare: Create build directories</echo>
-	<echo>ant run: Run the client to test application</echo>
-  </target>
+	<target name="clean" description="Cleans build output, also undeploys application">
+		<delete dir="${build.dir}" />
+		<delete dir="${dist.dir}" />
+	</target>
 
 </project>
 
