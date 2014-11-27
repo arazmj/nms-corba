@@ -24,8 +24,8 @@ public class NmsSessionImpl extends NmsSession_IPOA {
 
 	@Override
 	public void eventLossCleared(String endTime) {
-		if (LOG.isDebugEnabled()) {
-			LOG.debug(endTime + " - eventLossCleared");
+		if (LOG.isInfoEnabled()) {
+			LOG.info(endTime + " - eventLossCleared");
 		}
 	}
 
@@ -43,8 +43,8 @@ public class NmsSessionImpl extends NmsSession_IPOA {
 
 	@Override
 	public void endSession() {
-		if (LOG.isDebugEnabled()) {
-			LOG.debug("End session");
+		if (LOG.isInfoEnabled()) {
+			LOG.info("End session.");
 		}
 	}
 
@@ -59,8 +59,9 @@ public class NmsSessionImpl extends NmsSession_IPOA {
 
 	@Override
 	public void alarmLossOccurred(String arg0, String arg1) {
-		// TODO Auto-generated method stub
-
+		if (LOG.isInfoEnabled()) {
+			LOG.info("Alarm Loss Occurred.");
+		}
 	}
 
 }

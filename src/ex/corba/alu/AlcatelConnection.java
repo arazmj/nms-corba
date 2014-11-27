@@ -8,14 +8,8 @@ import java.util.Properties;
 
 import nmsSession.NmsSession_I;
 import nmsSession.NmsSession_IHelper;
-import nmsSession.NmsSession_IPOATie;
 
-import org.omg.BiDirPolicy.BIDIRECTIONAL_POLICY_TYPE;
-import org.omg.BiDirPolicy.BOTH;
-import org.omg.BiDirPolicy.BidirectionalPolicyValueHelper;
-import org.omg.CORBA.Any;
 import org.omg.CORBA.ORB;
-import org.omg.CORBA.Policy;
 import org.omg.CosNaming.NameComponent;
 import org.omg.CosNaming.NamingContextExt;
 import org.omg.CosNaming.NamingContextExtHelper;
@@ -43,7 +37,6 @@ public class AlcatelConnection {
 	protected Properties props;
 
 	protected NmsSessionImpl nmsSessionImpl;
-	protected PingThread pingThread;
 
 	public static void main(String args[]) {
 		AlcatelConnection main = new AlcatelConnection();
@@ -63,22 +56,34 @@ public class AlcatelConnection {
 
 		// create and initialize the ORB
 		orb = ORB.init(args, props);
-		System.out.println("ORB.init called.");
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info("ORB.init called.");
+		}
 
 		// Get the root naming context
 		NamingContextExt rootContext = NamingContextExtHelper.narrow(orb
 				.resolve_initial_references("NameService"));
-		System.out.println("NameService found.");
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info("NameService found.");
+		}
 
 		NameComponent[] name = rootContext
 				.to_name("alu/nbi/EmsSessionFactory_I");
 
 		org.omg.CORBA.Object ems = rootContext.resolve(name);
-		System.out.println("ems:" + ems);
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info("ems: " + ems);
+		}
 
 		EmsSessionFactory_I sessionFactory = EmsSessionFactory_IHelper
 				.narrow(ems);
-		System.out.println("\nEmsSessionFactory: " + sessionFactory);
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info("EmsSessionFactory: " + sessionFactory);
+		}
 
 		// Create NMS Session
 		NmsSession_I nmsSession = createNmsSession();
@@ -100,9 +105,11 @@ public class AlcatelConnection {
 		}
 
 		nmsSessionImpl.setAssociatedSession(emsSession);
-		pingThread = new PingThread(nmsSession, emsSession);
+		// pingThread = new PingThread(nmsSession, emsSession);
 
-		LOG.info("Authentication successful!!! emsSession: {}.", emsSession);
+		if (LOG.isInfoEnabled()) {
+			LOG.info("Authentication successful!!! emsSession: {}.", emsSession);
+		}
 
 		return emsSession;
 	}
@@ -112,7 +119,10 @@ public class AlcatelConnection {
 
 		// create and initialize the ORB
 		orb = ORB.init(args, props);
-		System.out.println("ORB.init called.");
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info("ORB.init called.");
+		}
 
 		// read stringified object to file (IOR file)
 		FileReader fr = new FileReader("alu-lab.ior");
@@ -123,11 +133,16 @@ public class AlcatelConnection {
 		// Obtaining reference to SessionFactory
 		org.omg.CORBA.Object ems = orb.string_to_object(ior);
 
-		System.out.println("ems: " + ems);
+		if (LOG.isInfoEnabled()) {
+			LOG.info("ems: " + ems);
+		}
 
 		EmsSessionFactory_I sessionFactory = EmsSessionFactory_IHelper
 				.narrow(ems);
-		System.out.println("\nEmsSessionFactory: " + sessionFactory);
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info("EmsSessionFactory: " + sessionFactory);
+		}
 
 		// Create NMS Session
 		NmsSession_I nmsSession = createNmsSession();
@@ -148,31 +163,33 @@ public class AlcatelConnection {
 			return null;
 		}
 
-		LOG.info("Authentication successful!!! emsSession: {}.", emsSession);
+		if (LOG.isInfoEnabled()) {
+			LOG.info("Authentication successful!!! emsSession: {}.", emsSession);
+		}
 
 		return emsSession;
 	}
 
 	public NmsSession_I createNmsSession() throws Exception {
-		// Create policy
-		Any any = orb.create_any();
-		BidirectionalPolicyValueHelper.insert(any, BOTH.value);
-		Policy biDirPolicy = orb.create_policy(BIDIRECTIONAL_POLICY_TYPE.value,
-				any);
-		Policy[] policy = new Policy[] { biDirPolicy };
-		System.out.println("policy: " + policy);
-
-		// Activate policy
-		POA rootPOA = POAHelper.narrow(orb
-				.resolve_initial_references("RootPOA"));
+		rootPOA = POAHelper.narrow(orb.resolve_initial_references("RootPOA"));
 		rootPOA.the_POAManager().activate();
 
 		// Create NMS Session
 		nmsSessionImpl = new NmsSessionImpl();
-		NmsSession_IPOATie tieobj = new NmsSession_IPOATie(nmsSessionImpl,
-				rootPOA);
-		rootPOA.activate_object(tieobj);
-		NmsSession_I nmsSession = NmsSession_IHelper.narrow(tieobj._this());
+
+		org.omg.CORBA.Object corbaObj = rootPOA
+				.servant_to_reference(nmsSessionImpl);
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info("rootPOA corbaObj:" + corbaObj);
+		}
+
+		NmsSession_I nmsSession = NmsSession_IHelper.narrow(corbaObj);
+
+		// NmsSession_IPOATie tieobj = new NmsSession_IPOATie(nmsSessionImpl,
+		// rootPOA);
+		// rootPOA.activate_object(tieobj);
+		// NmsSession_I nmsSession = NmsSession_IHelper.narrow(tieobj._this());
 
 		return nmsSession;
 	}
