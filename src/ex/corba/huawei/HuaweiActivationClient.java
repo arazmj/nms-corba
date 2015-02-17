@@ -41,7 +41,7 @@ public class HuaweiActivationClient extends HuaweiConnection {
 		try {
 			emsSession = main.openEmsSession(args);
 
-			// main.createE1();
+			main.createE1();
 			// main.createE3();
 			// main.createE1WithVNE();
 			// main.createE1withNEtpInc();
@@ -62,7 +62,7 @@ public class HuaweiActivationClient extends HuaweiConnection {
 			// main.createEthService();
 			// main.addBindingPathVC12();
 			// main.addBindingPathVC3();
-			main.addBindingPathVC12for4M();
+			// main.addBindingPathVC12for4M();
 			// main.configureEthernetPort();
 			// main.configureVCTRUNKPort();
 		} catch (ProcessingFailureException pfe) {
@@ -326,9 +326,9 @@ public class HuaweiActivationClient extends HuaweiConnection {
 				"/rack=1/shelf=1/slot=3/domain=sdh/port=5");
 		zEnd[0][3] = new NameAndStringValue_T("CTP", "/vt2_tu12=1");
 
+		// NE TP Inclusions
 		NameAndStringValue_T[][] neTpInclusions = new NameAndStringValue_T[2][4];
 
-		// NE TP Inclusions
 		neTpInclusions[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
 		neTpInclusions[0][1] = new NameAndStringValue_T("ManagedElement",
 				"3145729");
@@ -1289,7 +1289,7 @@ public class HuaweiActivationClient extends HuaweiConnection {
 	}
 
 	public void deactivateAndDeleteSNC() throws ProcessingFailureException {
-		String sncID = "2014-11-11 13:20:55 - 61-sdh";
+		String sncID = "2014-11-11 12:24:24 - 59-sdh";
 
 		NameAndStringValue_T[] sncName = new NameAndStringValue_T[3];
 		sncName[0] = new NameAndStringValue_T("EMS", this.realEMSName);

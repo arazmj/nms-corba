@@ -40,7 +40,7 @@ public class AlcatelActivationClient extends AlcatelConnection {
 		try {
 			emsSession = main.openEmsSession(args);
 
-			// main.createE1();
+			main.createE1();
 			// main.createDS3();
 			// main.createE1WithConstraintsNE();
 			// main.createE1WithConstraintsST();
@@ -61,7 +61,7 @@ public class AlcatelActivationClient extends AlcatelConnection {
 			// main.create10MPathForEVC();
 
 			// main.modifySNCUpgrade();
-			main.modifySNCDowngrade();
+			// main.modifySNCDowngrade();
 
 			// main.createServerTrail();
 			// main.createServerTrailWithConstraintsPort();
@@ -1228,9 +1228,8 @@ public class AlcatelActivationClient extends AlcatelConnection {
 		// 16 = LR_STS12c_and_VC4_4c
 		short layerRate = 16;
 
-		NameAndStringValue_T[][] aEnd = new NameAndStringValue_T[1][2];
-
 		// A-End - ENE
+		NameAndStringValue_T[][] aEnd = new NameAndStringValue_T[1][2];
 		aEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
 		aEnd[0][1] = new NameAndStringValue_T("ManagedElement", "9000/44");
 
@@ -1277,8 +1276,8 @@ public class AlcatelActivationClient extends AlcatelConnection {
 		createData.owner = owner;
 		createData.userLabel = userLabel;
 
-		GradesOfImpact_T tolerableImpact = GradesOfImpact_T.GOI_HITLESS;// GOI_HITLESS;
-		EMSFreedomLevel_T emsFreedomLevel = EMSFreedomLevel_T.EMSFL_RECONFIGURATION;// EMSFL_CC_AT_SNC_LAYER;
+		GradesOfImpact_T tolerableImpact = GradesOfImpact_T.GOI_HITLESS;
+		EMSFreedomLevel_T emsFreedomLevel = EMSFreedomLevel_T.EMSFL_RECONFIGURATION;
 
 		TPDataList_THolder tpsToModify = new TPDataList_THolder();
 		tpsToModify.value = new TPData_T[0];
@@ -1295,9 +1294,8 @@ public class AlcatelActivationClient extends AlcatelConnection {
 
 		short layerRate = 15;
 
-		NameAndStringValue_T[][] aEnd = new NameAndStringValue_T[1][4];
-
 		// A-End
+		NameAndStringValue_T[][] aEnd = new NameAndStringValue_T[1][4];
 		aEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
 		aEnd[0][1] = new NameAndStringValue_T("ManagedElement", "101/1");
 
@@ -1315,7 +1313,6 @@ public class AlcatelActivationClient extends AlcatelConnection {
 		zEnd[0][3] = new NameAndStringValue_T("CTP", "NISA_CC1/r01s1b25p001 05");
 
 		NameAndStringValue_T[][] neTpInclusions = new NameAndStringValue_T[0][0];
-
 		NameAndStringValue_T[][] neTpSncExclusions = new NameAndStringValue_T[0][0];
 		CrossConnect_T[] ccInclusions = new CrossConnect_T[0];
 

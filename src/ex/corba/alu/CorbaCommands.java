@@ -167,8 +167,9 @@ public class CorbaCommands {
 				this.extendServiceMgr = ExtendServiceMgr_IHelper
 						.narrow(managerInterface.value);
 			}
-		} else
+		} else {
 			return false;
+		}
 
 		return true;
 	}
@@ -199,7 +200,7 @@ public class CorbaCommands {
 
 		boolean exitwhile = false;
 
-		if (meNameItr.value != null)
+		if (meNameItr.value != null) {
 			try {
 				boolean hasMoreData = true;
 				while (hasMoreData) {
@@ -217,6 +218,7 @@ public class CorbaCommands {
 				if (!exitwhile)
 					meNameItr.value.destroy();
 			}
+		}
 
 		if (LOG.isInfoEnabled()) {
 			LOG.info("getAllManagedElementNames() complete.");
@@ -243,8 +245,10 @@ public class CorbaCommands {
 		neNamesWithoutVNE = new ArrayList<String>();
 
 		ManagedElement_T[] mes = meList.value;
-		if (LOG.isDebugEnabled())
+
+		if (LOG.isDebugEnabled()) {
 			LOG.debug("getAllManagedElements: got " + mes.length + " MEs ");
+		}
 
 		List<ManagedElement> managedElements = new ArrayList<ManagedElement>();
 
@@ -265,7 +269,7 @@ public class CorbaCommands {
 
 		boolean exitWhile = false;
 
-		if (meItr.value != null)
+		if (meItr.value != null) {
 			try {
 				boolean hasMoreData = true;
 				while (hasMoreData) {
@@ -297,7 +301,8 @@ public class CorbaCommands {
 				if (!exitWhile)
 					meItr.value.destroy();
 			}
-
+		}
+		
 		// Specific to JAXB XML output: Start
 		// JaxbOutputHandler out = new JaxbOutputHandler("managedelement.xml");
 		// NmsObjects nmsObjects = new NmsObjects();
