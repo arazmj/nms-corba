@@ -41,11 +41,12 @@ public class HuaweiActivationClient extends HuaweiConnection {
 		try {
 			emsSession = main.openEmsSession(args);
 
-			main.createE1();
+			// main.createE1();
 			// main.createE3();
 			// main.createE1WithVNE();
 			// main.createE1withNEtpInc();
 			// main.createE1withCCInc();
+			main.createE3withCCInc();
 			// main.createE4orVC4();
 			// main.createE4withProtection();
 
@@ -527,6 +528,139 @@ public class HuaweiActivationClient extends HuaweiConnection {
 				emsFreedomLevel, tpsToModify);
 	}
 
+	// Slot 8 has SLQ4A board: 4xSTM-4 Optical Interface Board
+	// Slot 2 has N2PQ3 board: 12xE3/T3 service processing board
+	public void createE3withCCInc() throws ProcessingFailureException {
+		String userLabel = "NISA-PDHService-E3-3";
+		String owner = "";
+
+		// 7 = LR_E3_34M
+		short layerRate = 7;
+
+		NameAndStringValue_T[][] aEnd = new NameAndStringValue_T[1][4];
+
+		// A-End
+		aEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		aEnd[0][1] = new NameAndStringValue_T("ManagedElement", "3145729");
+		aEnd[0][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=1/slot=2/domain=sdh/port=6");
+		aEnd[0][3] = new NameAndStringValue_T("CTP", "/tu3_vc3=1");
+
+		// Z-End
+		NameAndStringValue_T[][] zEnd = new NameAndStringValue_T[1][4];
+		zEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		zEnd[0][1] = new NameAndStringValue_T("ManagedElement", "3145728");
+		zEnd[0][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=1/slot=2/domain=sdh/port=6");
+		zEnd[0][3] = new NameAndStringValue_T("CTP", "/tu3_vc3=1");
+
+		// CC Inclusions
+		CrossConnect_T[] ccInclusions = new CrossConnect_T[2];
+		ccInclusions[0] = new CrossConnect_T();
+		ccInclusions[0].active = false;
+		ccInclusions[0].direction = ConnectionDirection_T.CD_BI;
+		ccInclusions[0].ccType = SNCType_T.ST_SIMPLE;
+
+		// NE 1 cross-connects
+		NameAndStringValue_T[][] aEndCCList0 = new NameAndStringValue_T[1][4];
+		aEndCCList0[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		aEndCCList0[0][1] = new NameAndStringValue_T("ManagedElement",
+				"3145729");
+		aEndCCList0[0][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=1/slot=8/domain=sdh/port=1");
+		aEndCCList0[0][3] = new NameAndStringValue_T("CTP",
+				"/sts3c_au4-j=4/tu3_vc3-k=2");
+
+		NameAndStringValue_T[][] zEndCCList0 = new NameAndStringValue_T[1][4];
+		zEndCCList0[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		zEndCCList0[0][1] = new NameAndStringValue_T("ManagedElement",
+				"3145729");
+		zEndCCList0[0][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=1/slot=2/domain=sdh/port=6");
+		zEndCCList0[0][3] = new NameAndStringValue_T("CTP", "/tu3_vc3=1");
+
+		ccInclusions[0].aEndNameList = aEndCCList0;
+		ccInclusions[0].zEndNameList = zEndCCList0;
+		ccInclusions[0].additionalInfo = new NameAndStringValue_T[1];
+		ccInclusions[0].additionalInfo[0] = new NameAndStringValue_T(
+				"ProtectionRole", "Work");
+
+		// NE 2 cross-connects
+		ccInclusions[1] = new CrossConnect_T();
+		ccInclusions[1].active = false;
+		ccInclusions[1].direction = ConnectionDirection_T.CD_BI;
+		ccInclusions[1].ccType = SNCType_T.ST_SIMPLE;
+
+		NameAndStringValue_T[][] aEndCCList1 = new NameAndStringValue_T[1][4];
+		aEndCCList1[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		aEndCCList1[0][1] = new NameAndStringValue_T("ManagedElement",
+				"3145728");
+		aEndCCList1[0][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=1/slot=8/domain=sdh/port=1");
+		aEndCCList1[0][3] = new NameAndStringValue_T("CTP",
+				"/sts3c_au4-j=4/tu3_vc3-k=2");
+
+		NameAndStringValue_T[][] zEndCCList1 = new NameAndStringValue_T[1][4];
+		zEndCCList1[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		zEndCCList1[0][1] = new NameAndStringValue_T("ManagedElement",
+				"3145728");
+		zEndCCList1[0][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=1/slot=2/domain=sdh/port=6");
+		zEndCCList1[0][3] = new NameAndStringValue_T("CTP", "/tu3_vc3=1");
+
+		ccInclusions[1].aEndNameList = aEndCCList1;
+		ccInclusions[1].zEndNameList = zEndCCList1;
+		ccInclusions[1].additionalInfo = new NameAndStringValue_T[1];
+		ccInclusions[1].additionalInfo[0] = new NameAndStringValue_T(
+				"ProtectionRole", "Work");
+
+		NameAndStringValue_T[][] neTpInclusions = new NameAndStringValue_T[0][0];
+		NameAndStringValue_T[][] neTpExclusions = new NameAndStringValue_T[0][0];
+
+		Hashtable<String, String> additionalInfo = new Hashtable<String, String>();
+
+		NameAndStringValue_T[] additionalCreationInfo = new NameAndStringValue_T[additionalInfo
+				.size()];
+		Enumeration<String> keySet = additionalInfo.keys();
+
+		for (int i = 0; keySet.hasMoreElements(); i++) {
+			String name = (String) keySet.nextElement();
+			String value = (String) additionalInfo.get(name);
+			additionalCreationInfo[i] = new NameAndStringValue_T(name, value);
+		}
+
+		SNCCreateData_T createData = new SNCCreateData_T();
+
+		createData.aEnd = aEnd;
+		createData.zEnd = zEnd;
+		createData.additionalCreationInfo = additionalCreationInfo;
+		createData.neTpInclusions = neTpInclusions;
+		createData.neTpSncExclusions = neTpExclusions;
+		createData.ccInclusions = ccInclusions;
+		createData.forceUniqueness = false;
+		// fullRoute should be true for ccInclusions
+		createData.fullRoute = true;
+		createData.layerRate = layerRate;
+		createData.networkRouted = NetworkRouted_T.NR_NA;
+		createData.rerouteAllowed = Reroute_T.RR_NA;
+		createData.direction = ConnectionDirection_T.CD_BI;
+		createData.sncType = SNCType_T.ST_SIMPLE;
+		createData.staticProtectionLevel = StaticProtectionLevel_T.UNPROTECTED;
+		createData.protectionEffort = ProtectionEffort_T.EFFORT_WHATEVER;
+		createData.owner = owner;
+		createData.userLabel = userLabel;
+
+		GradesOfImpact_T tolerableImpact = GradesOfImpact_T.GOI_HITLESS;
+		EMSFreedomLevel_T emsFreedomLevel = EMSFreedomLevel_T.EMSFL_CC_AT_SNC_LAYER;
+
+		TPDataList_THolder tpsToModify = new TPDataList_THolder();
+		tpsToModify.value = new TPData_T[0];
+
+		CorbaCommands cmd = new CorbaCommands(emsSession, this.realEMSName);
+		errorReason = cmd.createAndActivateSNC(createData, tolerableImpact,
+				emsFreedomLevel, tpsToModify);
+	}
+
 	// E4 path between Ethernet card (N3EFS4) SDH ports
 	public void createE4orVC4() throws ProcessingFailureException {
 		String userLabel = "NISA-E4-1";
@@ -636,7 +770,7 @@ public class HuaweiActivationClient extends HuaweiConnection {
 		// CC Inclusions
 		CrossConnect_T[] ccInclusions = new CrossConnect_T[4];
 
-		// Node 1 cross-connects
+		// NE 1 cross-connects
 		ccInclusions[0] = new CrossConnect_T();
 		ccInclusions[0].active = false;
 		ccInclusions[0].direction = ConnectionDirection_T.CD_BI;
@@ -664,7 +798,7 @@ public class HuaweiActivationClient extends HuaweiConnection {
 		ccInclusions[0].additionalInfo[0] = new NameAndStringValue_T(
 				"ProtectionRole", "Work");
 
-		// Node 2 cross-connects
+		// NE 2 cross-connects
 		ccInclusions[1] = new CrossConnect_T();
 		ccInclusions[1].active = false;
 		ccInclusions[1].direction = ConnectionDirection_T.CD_BI;
@@ -692,7 +826,7 @@ public class HuaweiActivationClient extends HuaweiConnection {
 		ccInclusions[1].additionalInfo[0] = new NameAndStringValue_T(
 				"ProtectionRole", "Work");
 
-		// Protection Path: Node 1 cross-connects
+		// Protection Path: NE 1 cross-connects
 		ccInclusions[2] = new CrossConnect_T();
 		ccInclusions[2].active = false;
 		ccInclusions[2].direction = ConnectionDirection_T.CD_BI;
@@ -720,7 +854,7 @@ public class HuaweiActivationClient extends HuaweiConnection {
 		ccInclusions[2].additionalInfo[0] = new NameAndStringValue_T(
 				"ProtectionRole", "Protection");
 
-		// Protection Path: Node 2 cross-connects
+		// Protection Path: NE 2 cross-connects
 		ccInclusions[3] = new CrossConnect_T();
 		ccInclusions[3].active = false;
 		ccInclusions[3].direction = ConnectionDirection_T.CD_BI;
@@ -797,7 +931,7 @@ public class HuaweiActivationClient extends HuaweiConnection {
 
 	// Server trail (VC4)
 	public void createServerTrail() throws ProcessingFailureException {
-		String userLabel = "NISA-ServerTrail-1";
+		String userLabel = "NISA-Server Trail-2";
 		String owner = "";
 
 		short layerRate = 15;
@@ -811,7 +945,7 @@ public class HuaweiActivationClient extends HuaweiConnection {
 		// Server Trail
 		aEnd[0][2] = new NameAndStringValue_T("PTP",
 				"/rack=1/shelf=1/slot=8/domain=sdh/port=3");
-		aEnd[0][3] = new NameAndStringValue_T("CTP", "/sts3c_au4-j=3");
+		aEnd[0][3] = new NameAndStringValue_T("CTP", "/sts3c_au4-j=2");
 
 		// Z-End
 		NameAndStringValue_T[][] zEnd = new NameAndStringValue_T[1][4];
@@ -821,7 +955,7 @@ public class HuaweiActivationClient extends HuaweiConnection {
 		// Server Trail
 		zEnd[0][2] = new NameAndStringValue_T("PTP",
 				"/rack=1/shelf=1/slot=8/domain=sdh/port=3");
-		zEnd[0][3] = new NameAndStringValue_T("CTP", "/sts3c_au4-j=3");
+		zEnd[0][3] = new NameAndStringValue_T("CTP", "/sts3c_au4-j=2");
 
 		NameAndStringValue_T[][] neTpInclusions = new NameAndStringValue_T[0][0];
 		NameAndStringValue_T[][] neTpExclusions = new NameAndStringValue_T[0][0];
@@ -1289,7 +1423,7 @@ public class HuaweiActivationClient extends HuaweiConnection {
 	}
 
 	public void deactivateAndDeleteSNC() throws ProcessingFailureException {
-		String sncID = "2014-11-11 12:24:24 - 59-sdh";
+		String sncID = "2014-11-11 12:48:22 - 60-sdh";
 
 		NameAndStringValue_T[] sncName = new NameAndStringValue_T[3];
 		sncName[0] = new NameAndStringValue_T("EMS", this.realEMSName);
