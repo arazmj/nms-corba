@@ -1,5 +1,8 @@
 package ex.corba.ciena.transform.sax;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
@@ -282,5 +285,68 @@ public class Corba2XMLHandler {
 				.append('}');
 
 		return stBuf.toString();
+	}
+
+	/**
+	 * Parses NameAndStringValue_T structure into String excluding EMS Name and
+	 * Managed Element
+	 * 
+	 * @param nameAndValue
+	 *            - array of NameAndStringValue_T
+	 * @return String
+	 */
+	public String convertNameAndStringValueToStringExcludingEMS(
+			NameAndStringValue_T[] nameAndValue) {
+		if (nameAndValue == null) {
+			return "";
+		}
+
+		StringBuffer nameAndValuesList = new StringBuffer();
+
+		for (NameAndStringValue_T nv : nameAndValue) {
+
+			if (!"EMS".equals(nv.name) && !"ManagedElement".equals(nv.name)) {
+				nameAndValuesList.append(nv.name).append("=").append(nv.value)
+						.append(";");
+			}
+		}
+
+		return nameAndValuesList.toString();
+	}
+
+	/**
+	 * Parses NameAndStringValue_T structure into String excluding EMS Name and
+	 * Managed Element
+	 * 
+	 * @param nameAndValuesArray
+	 *            - array of NameAndStringValue_T
+	 * @return String
+	 */
+	public String convertNameAndStringValuesToStringExcludingEMS(
+			NameAndStringValue_T[][] nameAndValuesArray) {
+		if (nameAndValuesArray == null) {
+			return "";
+		}
+
+		StringBuffer nameAndValuesList = new StringBuffer();
+
+		for (NameAndStringValue_T[] nv : nameAndValuesArray) {
+			nameAndValuesList.append("{")
+					.append(convertNameAndStringValueToStringExcludingEMS(nv))
+					.append("}");
+		}
+
+		return nameAndValuesList.toString();
+	}
+
+	/**
+	 * Convert the current DateTime into String
+	 * 
+	 * @return String
+	 */
+	public String convertSystemTimeToString() {
+		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+		String date = sdf.format(new Date());
+		return date;
 	}
 }

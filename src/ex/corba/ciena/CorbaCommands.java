@@ -33,6 +33,10 @@ import com.ciena.oc.subnetworkConnection.GradesOfImpact_T;
 import com.ciena.oc.subnetworkConnection.SNCCreateData_T;
 import com.ciena.oc.subnetworkConnection.SubnetworkConnection_THolder;
 import com.ciena.oc.subnetworkConnection.TPDataList_THolder;
+import com.ciena.oc.terminationPoint.GTPEffort_T;
+import com.ciena.oc.terminationPoint.GTP_THolder;
+import com.ciena.oc.terminationPoint.GTPiterator_IHolder;
+import com.ciena.oc.terminationPoint.GTPlist_THolder;
 
 import ex.corba.ciena.error.CorbaErrorDescriptions;
 import ex.corba.ciena.error.CorbaErrorProcessor;
@@ -237,7 +241,7 @@ public class CorbaCommands {
 				eiManager.getAllEquipment(ne, HOW_MANY, equipOrHolderList,
 						equipOrHolderItr);
 
-				System.out.println("getAllEquipment: got "
+				LOG.info("getAllEquipment: got "
 						+ equipOrHolderList.value.length
 						+ " equipments for ME " + ne[1].value);
 
@@ -268,9 +272,10 @@ public class CorbaCommands {
 
 				meCounter++;
 
-				System.out
-						.println("getAllEquipment: finished getEquipment for ME "
-								+ ne[1].value + " Order number # " + meCounter);
+				if (LOG.isInfoEnabled()) {
+					LOG.info("getAllEquipment: finished getEquipment for ME "
+							+ ne[1].value + " Order number # " + meCounter);
+				}
 			} catch (ProcessingFailureException ex) {
 				handleProcessingFailureException(ex, "getAllEquipment. ME: "
 						+ neName);
@@ -279,6 +284,89 @@ public class CorbaCommands {
 
 		if (LOG.isInfoEnabled()) {
 			LOG.info("getAllEquipment() complete.");
+		}
+	}
+
+	public void getAllGTPs() throws ProcessingFailureException, SAXException {
+		try {
+			LOG.info("getAllGTPs() start");
+
+			List<String> neNames = getAllManagedElementNames();
+
+			if (!setManagerByName(ME_MANAGER_NAME)) {
+				return;
+			}
+
+			NameAndStringValue_T[] ne = new NameAndStringValue_T[2];
+
+			ne[0] = new NameAndStringValue_T("EMS", emsName);
+			ne[1] = new NameAndStringValue_T();
+			ne[1].name = "ManagedElement";
+
+			GTPlist_THolder th = new GTPlist_THolder();
+			GTPiterator_IHolder ith = new GTPiterator_IHolder();
+			short[] tpLayerRateList = new short[0];
+
+			int counter = 0;
+			boolean exitwhile = false;
+
+			for (String n : neNames) {
+				try {
+					ne[1].value = n;
+					this.meManager.getAllGTPs(ne, tpLayerRateList, HOW_MANY,
+							th, ith);
+
+					if (LOG.isInfoEnabled()) {
+						LOG.info("getAllGTPs: got " + th.value.length
+								+ " pieces of GTP for ME " + ne[1].value);
+					}
+
+					for (int i = 0; i < th.value.length; i++) {
+						helper.printGTP(th.value[i]);
+					}
+
+					exitwhile = false;
+
+					if (ith.value != null)
+						try {
+							boolean hasMoreData = true;
+							while (hasMoreData) {
+								hasMoreData = ith.value.next_n(HOW_MANY, th);
+
+								if (LOG.isInfoEnabled()) {
+									LOG.info("getAllGTPs: got next "
+											+ th.value.length
+											+ " pieces of GTP for ME "
+											+ ne[1].value);
+								}
+
+								for (int i = 0; i < th.value.length; i++)
+									helper.printGTP(th.value[i]);
+							}
+							exitwhile = true;
+						} finally {
+							if (!exitwhile)
+								ith.value.destroy();
+						}
+
+					counter++;
+
+					if (LOG.isInfoEnabled()) {
+						LOG.info("getAllGTPs: finished getGTP for ME "
+								+ ne[1].value + " Order number # " + counter);
+					}
+				} catch (ProcessingFailureException e) {
+					handleProcessingFailureException(e, "getAllGTPs. ME");
+				}
+			}
+
+			if (LOG.isInfoEnabled()) {
+				LOG.info("getAllGTPs() complete.");
+			}
+		} catch (ProcessingFailureException prf) {
+			LOG.error("Ciena ON-Center>> getAllGTPs:"
+					+ CorbaErrorProcessor.printError(prf));
+			throw prf;
 		}
 	}
 
@@ -326,10 +414,52 @@ public class CorbaCommands {
 				emsFreedomLevel, tpsToModify, theSNC, errorReason);
 
 		if (LOG.isInfoEnabled()) {
-			LOG.info(" deactivateAndDeleteSNC() complete.");
+			LOG.info("deactivateAndDeleteSNC() complete.");
 		}
 
 		return errorReason;
+	}
+
+	public GTP_THolder createGTP(String userLabel, boolean forceUniqueness,
+			String owner, NameAndStringValue_T[][] listOfTPs,
+			NameAndStringValue_T[] initialCTPname, int numberOfCTPs,
+			GTPEffort_T gtpEffort, NameAndStringValue_T[] additionalCreationInfo)
+			throws ProcessingFailureException {
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info("createGTP() start.");
+		}
+
+		if (!setManagerByName(ME_MANAGER_NAME))
+			return null;
+
+		GTP_THolder theGTP = new GTP_THolder();
+
+		this.meManager.createGTP(userLabel, forceUniqueness, owner, listOfTPs,
+				initialCTPname, numberOfCTPs, gtpEffort,
+				additionalCreationInfo, theGTP);
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info("createGTP() complete.");
+		}
+
+		return theGTP;
+	}
+
+	public void deleteGTP(NameAndStringValue_T[] gtpName)
+			throws ProcessingFailureException {
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info("deleteGTP() start.");
+		}
+
+		setManagerByName(ME_MANAGER_NAME);
+
+		this.meManager.deleteGTP(gtpName);
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info("deleteGTP() complete.");
+		}
 	}
 
 	public void handleProcessingFailureException(

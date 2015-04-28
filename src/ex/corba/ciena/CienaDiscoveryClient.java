@@ -29,8 +29,7 @@ public class CienaDiscoveryClient extends CienaConnection {
 			// main.executeCommands(emsSession);
 			main.executeCommandsXmlOutput(emsSession);
 		} catch (ProcessingFailureException prf) {
-			LOG.error("Alcatel OMS 1350: "
-					+ CorbaErrorProcessor.printError(prf));
+			LOG.error("Ciena ON-Center: " + CorbaErrorProcessor.printError(prf));
 		} catch (Exception ex) {
 			LOG.error(ex.getMessage());
 			ex.printStackTrace();
@@ -67,6 +66,11 @@ public class CienaDiscoveryClient extends CienaConnection {
 		if (props.getProperty("getAllEquipment") != null
 				&& props.getProperty("getAllEquipment").equalsIgnoreCase("yes")) {
 			cmd.getAllEquipment();
+		}
+
+		if (props.getProperty("getAllGTPs") != null
+				&& props.getProperty("getAllGTPs").equalsIgnoreCase("yes")) {
+			cmd.getAllGTPs();
 		}
 
 		handler.handlerBuilderEnd();

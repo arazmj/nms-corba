@@ -206,10 +206,11 @@ public class CienaConnection {
 
 		// Proxy address in IOR
 		String iorProxy = props.getProperty("jacorb.ior_proxy_address");
-		System.out.println("iorProxy: " + iorProxy);
 
 		if (iorProxy != null && !iorProxy.trim().equals("")) {
 			props.setProperty("jacorb.ior_proxy_address", iorProxy);
+
+			System.out.println("iorProxy: " + iorProxy);
 		}
 
 		return props;

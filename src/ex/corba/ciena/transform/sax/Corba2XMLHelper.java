@@ -11,6 +11,7 @@ import com.ciena.oc.globaldefs.ProcessingFailureException;
 import com.ciena.oc.managedElement.ManagedElement_T;
 import com.ciena.oc.subnetworkConnection.SubnetworkConnection_T;
 import com.ciena.oc.terminationPoint.Directionality_T;
+import com.ciena.oc.terminationPoint.GTP_T;
 import com.ciena.oc.terminationPoint.TPConnectionState_T;
 import com.ciena.oc.terminationPoint.TPProtectionAssociation_T;
 import com.ciena.oc.terminationPoint.TPType_T;
@@ -335,6 +336,51 @@ public class Corba2XMLHelper {
 		return container;
 	}
 
+	public void printGTP(GTP_T gtp_T) throws ProcessingFailureException,
+			SAXException {
+		handler.printStructure(getGTPParams(gtp_T));
+	}
+
+	public Corba2XMLContainer getGTPParams(GTP_T tp)
+			throws ProcessingFailureException {
+
+		String connectionState = null;
+		switch (tp.gtpConnectionState.value()) {
+		case TPConnectionState_T._TPCS_NA:
+			connectionState = "TPCS_NA";
+			break;
+		case TPConnectionState_T._TPCS_BI_CONNECTED:
+			connectionState = "TPCS_BI_CONNECTED";
+			break;
+		case TPConnectionState_T._TPCS_NOT_CONNECTED:
+			connectionState = "TPCS_NOT_CONNECTED";
+			break;
+		case TPConnectionState_T._TPCS_SINK_CONNECTED:
+			connectionState = "TPCS_SINK_CONNECTED";
+			break;
+		case TPConnectionState_T._TPCS_SOURCE_CONNECTED:
+			connectionState = "TPCS_SOURCE_CONNECTED";
+			break;
+		}
+
+		Corba2XMLContainer container = new Corba2XMLContainer(
+				Corba2XMLStructure.GTPS);
+		container.setFieldValue("NE_ID",
+				handler.getValueByName(tp.name, "ManagedElement"));
+		container.setFieldValue("NATIVE_EMS_NAME", tp.nativeEMSName);
+
+		container.setFieldValue("GTP", handler.getValueByName(tp.name, "GTP"));
+		container.setFieldValue("TP", handler
+				.convertNameAndStringValuesToStringExcludingEMS(tp.listOfTPs));
+
+		container.setFieldValue("CONNECTION_STATE", connectionState);
+		container.setFieldValue("ADDITIONAL_INFO",
+				handler.convertNameAndStringValueToString(tp.additionalInfo));
+		container.setFieldValue("SOURCE_TIME_STAMP",
+				handler.convertSystemTimeToString());
+		return container;
+	}
+
 	public Corba2XMLContainer getSubnetworkConnectionParams(
 			SubnetworkConnection_T snc) throws ProcessingFailureException {
 		Corba2XMLContainer container = new Corba2XMLContainer(
@@ -426,5 +472,4 @@ public class Corba2XMLHelper {
 
 		return container;
 	}
-
 }

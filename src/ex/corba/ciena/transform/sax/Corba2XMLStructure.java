@@ -83,6 +83,19 @@ public enum Corba2XMLStructure {
             CorbaConstants.EDGE_POINT_STR,
             CorbaConstants.ADDITIONAL_INFO_STR
     }),    
+
+    /**
+     * Corba entity: GTP_T
+     */
+    GTPS("GTPS", new String[]{
+            "NE_ID",
+            "NATIVE_EMS_NAME",
+            "GTP",
+            "TP",
+            "CONNECTION_STATE",
+            "ADDITIONAL_INFO",
+            "SOURCE_TIME_STAMP"
+    }),
     
     /**
      * CORBA entity: TopologicalLink_T

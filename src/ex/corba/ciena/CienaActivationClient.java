@@ -26,6 +26,8 @@ import com.ciena.oc.subnetworkConnection.SNCType_T;
 import com.ciena.oc.subnetworkConnection.StaticProtectionLevel_T;
 import com.ciena.oc.subnetworkConnection.TPDataList_THolder;
 import com.ciena.oc.subnetworkConnection.TPData_T;
+import com.ciena.oc.terminationPoint.GTPEffort_T;
+import com.ciena.oc.terminationPoint.GTP_THolder;
 import com.ciena.oc.terminationPoint.TerminationMode_T;
 import com.ciena.oc.transmissionParameters.LayeredParameters_T;
 
@@ -34,6 +36,26 @@ public class CienaActivationClient extends CienaConnection {
 			.getLogger(CienaActivationClient.class);
 
 	protected static EmsSession_I emsSession;
+
+	public static void main(String[] args) {
+		CienaActivationClient main = new CienaActivationClient();
+
+		try {
+			emsSession = main.openEmsSession(args);
+			main.createGTP();
+			// main.deleteGTP();
+			// main.createMultiNodeSDHServiceWithGTP();
+
+		} catch (ProcessingFailureException pfe) {
+			LOG.error("errorReason:" + pfe.errorReason);
+			LOG.error("message:" + pfe.getMessage());
+			pfe.printStackTrace();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			main.closeEmsSession(emsSession);
+		}
+	}
 
 	public void createMultiNodeSDHService() throws ProcessingFailureException {
 		String sncID = "NISA-MultiNodeSNC-SDHService-1+0-1";
@@ -113,21 +135,11 @@ public class CienaActivationClient extends CienaConnection {
 		additionalInfo.put("SNC_PRIORITY", "0");
 		additionalInfo.put("SNC_SNIC_ENABLED", "No");
 
-		NameAndStringValue_T[] additionalCreationInfo = new NameAndStringValue_T[additionalInfo
-				.size()];
-		Enumeration<String> keySet = additionalInfo.keys();
-
-		for (int i = 0; keySet.hasMoreElements(); i++) {
-			String name = (String) keySet.nextElement();
-			String value = (String) additionalInfo.get(name);
-			additionalCreationInfo[i] = new NameAndStringValue_T(name, value);
-		}
-
 		SNCCreateData_T createData = new SNCCreateData_T();
 
 		createData.aEnd = aEnd;
 		createData.zEnd = zEnd;
-		createData.additionalCreationInfo = additionalCreationInfo;
+		createData.additionalCreationInfo = getNameAndStringValues(additionalInfo);
 		createData.neTpInclusions = neTpInclusions;
 		createData.neTpSncExclusions = neTpSncExclusions;
 		createData.ccInclusions = ccInclusions;
@@ -232,21 +244,11 @@ public class CienaActivationClient extends CienaConnection {
 		additionalInfo.put("SNC_PRIORITY", "0");
 		additionalInfo.put("SNC_SNIC_ENABLED", "No");
 
-		NameAndStringValue_T[] additionalCreationInfo = new NameAndStringValue_T[additionalInfo
-				.size()];
-		Enumeration<String> keySet = additionalInfo.keys();
-
-		for (int i = 0; keySet.hasMoreElements(); i++) {
-			String name = (String) keySet.nextElement();
-			String value = (String) additionalInfo.get(name);
-			additionalCreationInfo[i] = new NameAndStringValue_T(name, value);
-		}
-
 		SNCCreateData_T createData = new SNCCreateData_T();
 
 		createData.aEnd = aEnd;
 		createData.zEnd = zEnd;
-		createData.additionalCreationInfo = additionalCreationInfo;
+		createData.additionalCreationInfo = getNameAndStringValues(additionalInfo);
 		createData.neTpInclusions = neTpInclusions;
 		createData.neTpSncExclusions = neTpSncExclusions;
 		createData.ccInclusions = ccInclusions;
@@ -274,7 +276,8 @@ public class CienaActivationClient extends CienaConnection {
 	}
 
 	/**
-	 * nisa 5_3
+	 * nisa 5_3 E-Line: SNCP (Call with single SNC) Ethernet Over SDH ETH-ETH
+	 * 10GE-10GE(sub)
 	 * 
 	 * @throws ProcessingFailureException
 	 */
@@ -326,21 +329,11 @@ public class CienaActivationClient extends CienaConnection {
 		// additionalInfo.put("SNC_SNCP_PEER", "CD03_CD01_PROTECT");
 		// additionalInfo.put("SNC_DTL_SET_NAME", "W+P");
 
-		NameAndStringValue_T[] additionalCreationInfo = new NameAndStringValue_T[additionalInfo
-				.size()];
-		Enumeration<String> keySet = additionalInfo.keys();
-
-		for (int i = 0; keySet.hasMoreElements(); i++) {
-			String name = (String) keySet.nextElement();
-			String value = (String) additionalInfo.get(name);
-			additionalCreationInfo[i] = new NameAndStringValue_T(name, value);
-		}
-
 		SNCCreateData_T createData = new SNCCreateData_T();
 
 		createData.aEnd = aEnd;
 		createData.zEnd = zEnd;
-		createData.additionalCreationInfo = additionalCreationInfo;
+		createData.additionalCreationInfo = getNameAndStringValues(additionalInfo);
 		createData.neTpInclusions = neTpInclusions;
 		createData.neTpSncExclusions = neTpSncExclusions;
 		createData.ccInclusions = ccInclusions;
@@ -521,21 +514,11 @@ public class CienaActivationClient extends CienaConnection {
 		// additionalInfo.put("SNC_SNCP_PEER", "CD03_CD01_PROTECT");
 		// additionalInfo.put("SNC_DTL_SET_NAME", "W+P");
 
-		NameAndStringValue_T[] additionalCreationInfo = new NameAndStringValue_T[additionalInfo
-				.size()];
-		Enumeration<String> keySet = additionalInfo.keys();
-
-		for (int i = 0; keySet.hasMoreElements(); i++) {
-			String name = (String) keySet.nextElement();
-			String value = (String) additionalInfo.get(name);
-			additionalCreationInfo[i] = new NameAndStringValue_T(name, value);
-		}
-
 		SNCCreateData_T createData = new SNCCreateData_T();
 
 		createData.aEnd = aEnd;
 		createData.zEnd = zEnd;
-		createData.additionalCreationInfo = additionalCreationInfo;
+		createData.additionalCreationInfo = getNameAndStringValues(additionalInfo);
 		createData.neTpInclusions = neTpInclusions;
 		createData.neTpSncExclusions = neTpSncExclusions;
 		createData.ccInclusions = ccInclusions;
@@ -735,22 +718,12 @@ public class CienaActivationClient extends CienaConnection {
 		additionalInfo.put("SNC_PRIORITY", "0");
 		additionalInfo.put("SNC_SNIC_ENABLED", "No");
 
-		NameAndStringValue_T[] additionalCreationInfo = new NameAndStringValue_T[additionalInfo
-				.size()];
-		Enumeration<String> keySet = additionalInfo.keys();
-
-		for (int i = 0; keySet.hasMoreElements(); i++) {
-			String name = (String) keySet.nextElement();
-			String value = (String) additionalInfo.get(name);
-			additionalCreationInfo[i] = new NameAndStringValue_T(name, value);
-		}
-
 		SNCCreateData_T createData = new SNCCreateData_T();
 
 		createData.aEnd = aEnd;
 		createData.zEnd = zEnd;
 		createData.layerRate = layerRate;
-		createData.additionalCreationInfo = additionalCreationInfo;
+		createData.additionalCreationInfo = getNameAndStringValues(additionalInfo);
 		createData.neTpInclusions = neTpInclusions;
 		createData.neTpSncExclusions = neTpSncExclusions;
 		createData.ccInclusions = ccInclusions;
@@ -929,22 +902,12 @@ public class CienaActivationClient extends CienaConnection {
 		additionalInfo.put("SNC_RETAIN_HOME_PATH", "Disabled");
 		additionalInfo.put("SNC_HOME_PATH_PREEMPTABILITY", "Disabled");
 
-		NameAndStringValue_T[] additionalCreationInfo = new NameAndStringValue_T[additionalInfo
-				.size()];
-		Enumeration<String> keySet = additionalInfo.keys();
-
-		for (int i = 0; keySet.hasMoreElements(); i++) {
-			String name = (String) keySet.nextElement();
-			String value = (String) additionalInfo.get(name);
-			additionalCreationInfo[i] = new NameAndStringValue_T(name, value);
-		}
-
 		SNCCreateData_T createData = new SNCCreateData_T();
 
 		createData.aEnd = aEnd;
 		createData.zEnd = zEnd;
 		createData.layerRate = layerRate;
-		createData.additionalCreationInfo = additionalCreationInfo;
+		createData.additionalCreationInfo = getNameAndStringValues(additionalInfo);
 		createData.neTpInclusions = neTpInclusions;
 		createData.neTpSncExclusions = neTpSncExclusions;
 		createData.ccInclusions = ccInclusions;
@@ -1082,22 +1045,12 @@ public class CienaActivationClient extends CienaConnection {
 		additionalInfo.put("SNC_RETAIN_HOME_PATH", "Disabled");
 		additionalInfo.put("SNC_HOME_PATH_PREEMPTABILITY", "Disabled");
 
-		NameAndStringValue_T[] additionalCreationInfo = new NameAndStringValue_T[additionalInfo
-				.size()];
-		Enumeration<String> keySet = additionalInfo.keys();
-
-		for (int i = 0; keySet.hasMoreElements(); i++) {
-			String name = (String) keySet.nextElement();
-			String value = (String) additionalInfo.get(name);
-			additionalCreationInfo[i] = new NameAndStringValue_T(name, value);
-		}
-
 		SNCCreateData_T createData = new SNCCreateData_T();
 
 		createData.aEnd = aEnd;
 		createData.zEnd = zEnd;
 		createData.layerRate = layerRate;
-		createData.additionalCreationInfo = additionalCreationInfo;
+		createData.additionalCreationInfo = getNameAndStringValues(additionalInfo);
 		createData.neTpInclusions = neTpInclusions;
 		createData.neTpSncExclusions = neTpSncExclusions;
 		createData.ccInclusions = ccInclusions;
@@ -1168,14 +1121,11 @@ public class CienaActivationClient extends CienaConnection {
 		// 15 = vc4; 16 = vc4_4c; 17 = vc4_16c; 18 = vc4_64c; 104 = OTU1
 		short layerRate = 17;
 
-		NameAndStringValue_T[][] aEnd = new NameAndStringValue_T[1][4];
-
 		// A-End
+		NameAndStringValue_T[][] aEnd = new NameAndStringValue_T[1][4];
 		aEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
 		aEnd[0][1] = new NameAndStringValue_T("ManagedElement",
 				"SNG-LAB1-ASON-CN-01");
-
-		// STM 16 port
 		aEnd[0][2] = new NameAndStringValue_T("PTP",
 				"/rack=1/shelf=2/slot=15/sub_slot=1/port=1");
 		aEnd[0][3] = new NameAndStringValue_T("CTP", "/sts48c_vc4_16c=1");
@@ -1185,8 +1135,6 @@ public class CienaActivationClient extends CienaConnection {
 		zEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
 		zEnd[0][1] = new NameAndStringValue_T("ManagedElement",
 				"SNG-LAB2-ASON-CN-01");
-
-		// STM 16 port
 		zEnd[0][2] = new NameAndStringValue_T("PTP",
 				"/rack=1/shelf=2/slot=15/sub_slot=1/port=1");
 		zEnd[0][3] = new NameAndStringValue_T("CTP", "/sts48c_vc4_16c=1");
@@ -1204,21 +1152,11 @@ public class CienaActivationClient extends CienaConnection {
 		additionalInfo.put("SNC_SNCP_PEER", sncID + " P");
 		// additionalInfo.put("SNC_DTL_SET_NAME", "W+P");
 
-		NameAndStringValue_T[] additionalCreationInfo = new NameAndStringValue_T[additionalInfo
-				.size()];
-		Enumeration<String> keySet = additionalInfo.keys();
-
-		for (int i = 0; keySet.hasMoreElements(); i++) {
-			String name = (String) keySet.nextElement();
-			String value = (String) additionalInfo.get(name);
-			additionalCreationInfo[i] = new NameAndStringValue_T(name, value);
-		}
-
 		SNCCreateData_T createData = new SNCCreateData_T();
 
 		createData.aEnd = aEnd;
 		createData.zEnd = zEnd;
-		createData.additionalCreationInfo = additionalCreationInfo;
+		createData.additionalCreationInfo = getNameAndStringValues(additionalInfo);
 		createData.neTpInclusions = neTpInclusions;
 		createData.neTpSncExclusions = neTpSncExclusions;
 		createData.ccInclusions = ccInclusions;
@@ -1248,21 +1186,11 @@ public class CienaActivationClient extends CienaConnection {
 		additionalInfo2.put("SNC_SNCP_PEER", sncID + " W");
 		// additionalInfo.put("SNC_DTL_SET_NAME", "W+P");
 
-		NameAndStringValue_T[] additionalCreationInfo2 = new NameAndStringValue_T[additionalInfo
-				.size()];
-		Enumeration<String> keySet2 = additionalInfo2.keys();
-
-		for (int i = 0; keySet2.hasMoreElements(); i++) {
-			String name = (String) keySet2.nextElement();
-			String value = (String) additionalInfo2.get(name);
-			additionalCreationInfo2[i] = new NameAndStringValue_T(name, value);
-		}
-
 		SNCCreateData_T createData2 = new SNCCreateData_T();
 
 		createData2.aEnd = aEnd;
 		createData2.zEnd = zEnd;
-		createData2.additionalCreationInfo = additionalCreationInfo2;
+		createData2.additionalCreationInfo = getNameAndStringValues(additionalInfo2);
 		createData2.neTpInclusions = neTpInclusions2;
 		createData2.neTpSncExclusions = neTpSncExclusions2;
 		createData2.ccInclusions = ccInclusions2;
@@ -1310,6 +1238,136 @@ public class CienaActivationClient extends CienaConnection {
 		// ccd, sncs, tpsToModify);
 	}
 
+	public void createGTP() throws ProcessingFailureException {
+		String userLabel = "TestGTP001";
+		boolean forceUniqueness = false;
+		String owner = ""; // Not used
+
+		String neName = "HKG-CH-ASON-CN-01";
+		String port = "/rack=1/shelf=2/slot=4/sub_slot=8/port=1";
+
+		NameAndStringValue_T[][] listOfTPs = new NameAndStringValue_T[3][4];
+		listOfTPs[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		listOfTPs[0][1] = new NameAndStringValue_T("ManagedElement", neName);
+		listOfTPs[0][2] = new NameAndStringValue_T("PTP", port);
+		listOfTPs[0][3] = new NameAndStringValue_T("CTP", "/sts3c_au4=10");
+
+		listOfTPs[1][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		listOfTPs[1][1] = new NameAndStringValue_T("ManagedElement", neName);
+		listOfTPs[1][2] = new NameAndStringValue_T("PTP", port);
+		listOfTPs[1][3] = new NameAndStringValue_T("CTP", "/sts3c_au4=13");
+
+		listOfTPs[2][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		listOfTPs[2][1] = new NameAndStringValue_T("ManagedElement", neName);
+		listOfTPs[2][2] = new NameAndStringValue_T("PTP", port);
+		listOfTPs[2][3] = new NameAndStringValue_T("CTP", "/sts3c_au4=16");
+
+		// In cases where the CTPs are contiguous and of the same layerRate,
+		// this parameter is used to indicate the first CTP in the group.
+		// This parameter is used in lieu of the listOfTPs parameter.
+		NameAndStringValue_T[] initialCTPname = new NameAndStringValue_T[0];
+
+		// This parameter is used in conjunction with the initialCTPname
+		// parameter.
+		// It indicates the number of contiguous CTPs that follow the initial
+		// CTP.
+		int numberOfCTPs = 0;
+
+		// Only EFFORT_SAME is supported by NBI
+		GTPEffort_T gtpEffort = GTPEffort_T.EFFORT_SAME;
+
+		Hashtable<String, String> additionalInfo = new Hashtable<String, String>();
+		// additionalInfo.put("GTP_NAME", userLabel);
+
+		CorbaCommands cmd = new CorbaCommands(emsSession, this.realEMSName);
+		GTP_THolder theGTP = cmd.createGTP(userLabel, forceUniqueness, owner,
+				listOfTPs, initialCTPname, numberOfCTPs, gtpEffort,
+				getNameAndStringValues(additionalInfo));
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info("GTP Name: "
+					+ convertNameAndStringValueToString(theGTP.value.name));
+			LOG.info("GTP nativeEMSName: " + theGTP.value.nativeEMSName);
+		}
+	}
+
+	public void deleteGTP() throws ProcessingFailureException {
+		NameAndStringValue_T[] gtpName = new NameAndStringValue_T[3];
+
+		gtpName[0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		gtpName[1] = new NameAndStringValue_T("ManagedElement",
+				"SNG-PPD-ASON-CN-01");
+		gtpName[2] = new NameAndStringValue_T("GTP", "GTP_1430206634809");
+
+		CorbaCommands cmd = new CorbaCommands(emsSession, this.realEMSName);
+		cmd.deleteGTP(gtpName);
+	}
+
+	public void createMultiNodeSDHServiceWithGTP()
+			throws ProcessingFailureException {
+		String sncID = "NISA-SDHServiceWithGTP-1+0-1";
+		String userLabel = "NISA-SDHServiceWithGTP-1+0-1";
+		String owner = new String("");
+
+		short layerRate = 1;
+
+		NameAndStringValue_T[][] aEnd = new NameAndStringValue_T[1][3];
+
+		// A-End
+		aEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		aEnd[0][1] = new NameAndStringValue_T("ManagedElement",
+				"SNG-PPD-ASON-CN-01");
+		aEnd[0][2] = new NameAndStringValue_T("GTP", "GTP_1430195806169");
+
+		// Z-End
+		NameAndStringValue_T[][] zEnd = new NameAndStringValue_T[1][3];
+		zEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		zEnd[0][1] = new NameAndStringValue_T("ManagedElement",
+				"HKG-CH-ASON-CN-01");
+		zEnd[0][2] = new NameAndStringValue_T("GTP", "GTP_1430196244883");
+
+		NameAndStringValue_T[][] neTpInclusions = new NameAndStringValue_T[0][0];
+		NameAndStringValue_T[][] neTpSncExclusions = new NameAndStringValue_T[0][0];
+		CrossConnect_T[] ccInclusions = new CrossConnect_T[0];
+
+		Hashtable<String, String> additionalInfo = new Hashtable<String, String>();
+		additionalInfo.put("SNC_NAME", sncID);
+		additionalInfo.put("SNC_REGROOM_ALLOWED", "No");
+		// additionalInfo.put("SNC_DTL_SET_NAME","M-C-W");
+		additionalInfo.put("SNC_PRIORITY", "0");
+		additionalInfo.put("SNC_SNIC_ENABLED", "No");
+
+		SNCCreateData_T createData = new SNCCreateData_T();
+
+		createData.aEnd = aEnd;
+		createData.zEnd = zEnd;
+		createData.additionalCreationInfo = getNameAndStringValues(additionalInfo);
+		createData.neTpInclusions = neTpInclusions;
+		createData.neTpSncExclusions = neTpSncExclusions;
+		createData.ccInclusions = ccInclusions;
+		createData.forceUniqueness = true;
+		createData.fullRoute = false;
+		createData.layerRate = layerRate;
+		createData.networkRouted = NetworkRouted_T.NR_YES;
+		createData.rerouteAllowed = Reroute_T.RR_NO;
+		createData.direction = ConnectionDirection_T.CD_BI;
+		createData.sncType = SNCType_T.ST_SIMPLE;
+		createData.staticProtectionLevel = StaticProtectionLevel_T.UNPROTECTED;
+		createData.protectionEffort = ProtectionEffort_T.EFFORT_SAME;
+		createData.owner = owner;
+		createData.userLabel = userLabel;
+
+		GradesOfImpact_T tolerableImpact = GradesOfImpact_T.GOI_HITLESS;// GOI_HITLESS;
+		EMSFreedomLevel_T emsFreedomLevel = EMSFreedomLevel_T.EMSFL_RECONFIGURATION;// EMSFL_CC_AT_SNC_LAYER;
+
+		TPDataList_THolder tpsToModify = new TPDataList_THolder();
+		tpsToModify.value = new TPData_T[0];
+
+		CorbaCommands cmd = new CorbaCommands(emsSession, this.realEMSName);
+		cmd.createAndActivateSNC(createData, tolerableImpact, emsFreedomLevel,
+				tpsToModify);
+	}
+
 	public void deactivateAndDeleteSNC() throws ProcessingFailureException {
 		// String sncID = "NISA-MultiNodeSNC-SDHService-1+0-1";
 		String sncID = "NISA-MN-SNC-EthService-WithoutVCG-1";
@@ -1343,4 +1401,43 @@ public class CienaActivationClient extends CienaConnection {
 		// ReleaseCallCommand cmd = new ReleaseCallCommand(callName,
 		// tpsToModify);
 	}
+
+	public NameAndStringValue_T[] getNameAndStringValues(
+			Hashtable<String, String> additionalInfo) {
+		NameAndStringValue_T[] additionalCreationInfo = new NameAndStringValue_T[additionalInfo
+				.size()];
+		Enumeration<String> keySet = additionalInfo.keys();
+
+		for (int i = 0; keySet.hasMoreElements(); i++) {
+			String name = (String) keySet.nextElement();
+			String value = (String) additionalInfo.get(name);
+			additionalCreationInfo[i] = new NameAndStringValue_T(name, value);
+		}
+
+		return additionalCreationInfo;
+	}
+
+	/**
+	 * Parses NameAndStringValue_T structure into String
+	 * 
+	 * @param nameAndValue
+	 *            - array of NameAndStringValue_T
+	 * @return String
+	 */
+	public String convertNameAndStringValueToString(
+			NameAndStringValue_T[] nameAndValue) {
+		if (nameAndValue == null) {
+			return "";
+		}
+
+		StringBuffer nameAndValuesList = new StringBuffer();
+
+		for (NameAndStringValue_T nv : nameAndValue) {
+			nameAndValuesList.append(nv.name).append('=').append(nv.value)
+					.append(';');
+		}
+
+		return nameAndValuesList.toString();
+	}
+
 }

@@ -1342,7 +1342,7 @@ public class AlcatelActivationClient extends AlcatelConnection {
 		createData.forceUniqueness = true;
 		createData.fullRoute = false;
 		createData.layerRate = layerRate;
-		createData.networkRouted = NetworkRouted_T.NR_YES;
+		createData.networkRouted = NetworkRouted_T.NR_NO;
 		createData.rerouteAllowed = Reroute_T.RR_NO;
 		createData.direction = ConnectionDirection_T.CD_BI;
 		createData.sncType = SNCType_T.ST_SIMPLE;
