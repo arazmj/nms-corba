@@ -132,6 +132,7 @@ public class Corba2XMLHandler {
 				return nasv[i].value;
 			}
 		}
+		
 		return "";
 	}
 
@@ -166,12 +167,14 @@ public class Corba2XMLHandler {
 	 */
 	public String convertShortArrayToString(short[] shorts, String delimiter) {
 		StringBuffer stringBuffer = new StringBuffer();
+		
 		for (int i = 0; i < shorts.length; i++) {
 			stringBuffer.append(String.valueOf(shorts[i]));
 			if (i != shorts.length - 1) {
 				stringBuffer.append(delimiter);
 			}
 		}
+		
 		return stringBuffer.toString();
 	}
 
@@ -183,6 +186,7 @@ public class Corba2XMLHandler {
 				stringBuffer.append(delimiter);
 			}
 		}
+		
 		return stringBuffer.toString();
 	}
 
@@ -192,11 +196,13 @@ public class Corba2XMLHandler {
 		if (transmissionParam == null) {
 			return "";
 		}
+		
 		StringBuffer stBuf = new StringBuffer();
 		stBuf.append("{transmissionParams=")
 				.append(convertNameAndStringValueToString(transmissionParam.transmissionParams))
 				.append('}');
 		stBuf.append("{layer=").append(transmissionParam.layer).append('}');
+		
 		return stBuf.toString();
 	}
 

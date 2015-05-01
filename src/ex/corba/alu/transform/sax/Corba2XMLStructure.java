@@ -106,7 +106,7 @@ public enum Corba2XMLStructure {
      * CORBA entity: SubnetworkConnection_T
      */
     SNCS("SNCS", new String[]{
-            CorbaConstants.SNS_ID_STR,
+            CorbaConstants.SNC_ID_STR,
             CorbaConstants.USER_LABEL_STR,
             CorbaConstants.NATIVE_EMS_NAME_STR,
             CorbaConstants.OWNER_STR,
@@ -131,8 +131,8 @@ public enum Corba2XMLStructure {
             CorbaConstants.Z2_TPNAME_PTP_STR,
             CorbaConstants.Z2_TPNAME_CTP_STR,
             CorbaConstants.Z2_TPMAPPING_MODE_STR,
-            CorbaConstants.REROUTEALLOWED_STR,
-            CorbaConstants.NETWORKREROUTED_STR,
+            CorbaConstants.REROUTE_ALLOWED_STR,
+            CorbaConstants.NETWORK_REROUTED_STR,
             CorbaConstants.FREQ_A_STR,
             CorbaConstants.FREQ_Z_STR,
             CorbaConstants.ADDITIONAL_INFO_STR
@@ -142,10 +142,10 @@ public enum Corba2XMLStructure {
      * CORBA entity: CrossConnect_T
      */
     ROUTES("ROUTES", new String[]{
-            CorbaConstants.SNS_ID_STR,
+            CorbaConstants.SNC_ID_STR,
             CorbaConstants.ACTIVE_STR,
             CorbaConstants.DIRECTION_STR,
-            CorbaConstants.CCTYPE_STR,
+            CorbaConstants.CC_TYPE_STR,
             CorbaConstants.AI_DIRECTION_STR,
             CorbaConstants.PRT_ROLE_STR,
             CorbaConstants.A1_NE_STR,
@@ -193,8 +193,8 @@ public enum Corba2XMLStructure {
 	        CorbaConstants.FLEXIBLE_STR,
 	        CorbaConstants.FDFR_TYPE_STR,
 	        CorbaConstants.FDFR_STATE_STR,
-			CorbaConstants.AEND_STR, 
-			CorbaConstants.ZEND_STR,
+			CorbaConstants.A_END_STR, 
+			CorbaConstants.Z_END_STR,
 	        CorbaConstants.TRANSMISSION_PARAMS_STR,
 	        CorbaConstants.ADDITIONAL_INFO_STR,	        
 	}),

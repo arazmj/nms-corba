@@ -385,7 +385,7 @@ public class Corba2XMLHelper {
 			SubnetworkConnection_T snc) throws ProcessingFailureException {
 		Corba2XMLContainer container = new Corba2XMLContainer(
 				Corba2XMLStructure.SNCS);
-		container.setFieldValue(CorbaConstants.SNS_ID_STR, handler
+		container.setFieldValue(CorbaConstants.SNC_ID_STR, handler
 				.getValueByName(snc.name,
 						CorbaConstants.SUBNETWORK_CONNECTION_STR));
 		container.setFieldValue(CorbaConstants.USER_LABEL_STR, snc.userLabel);
@@ -463,9 +463,9 @@ public class Corba2XMLHelper {
 			}
 		}
 
-		container.setFieldValue(CorbaConstants.REROUTEALLOWED_STR,
+		container.setFieldValue(CorbaConstants.REROUTE_ALLOWED_STR,
 				String.valueOf(snc.rerouteAllowed.value()));
-		container.setFieldValue(CorbaConstants.NETWORKREROUTED_STR,
+		container.setFieldValue(CorbaConstants.NETWORK_REROUTED_STR,
 				String.valueOf(snc.networkRouted.value()));
 		container.setFieldValue(CorbaConstants.ADDITIONAL_INFO_STR,
 				handler.convertNameAndStringValueToString(snc.additionalInfo));

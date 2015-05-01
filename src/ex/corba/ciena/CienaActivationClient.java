@@ -64,13 +64,9 @@ public class CienaActivationClient extends CienaConnection {
 	public void createMultiNodeSDHService() throws ProcessingFailureException {
 		String sncID = "NISA-MN-SDHService-1+0-3";
 		String userLabel = "NISA-MN-SDHService-1+0-1";
-		String owner = new String("");
+		String owner = "";
 
-		// 15 = vc4
-		// 16 = vc4_4c
-		// 17 = vc4_16c
-		// 18 = vc4_64c
-		// 104 = OTU1
+		// 15 = vc4; 16 = vc4_4c; 17 = vc4_16c; 18 = vc4_64c
 		short layerRate = 15;
 
 		NameAndStringValue_T[][] aEnd = new NameAndStringValue_T[1][4];
@@ -85,15 +81,6 @@ public class CienaActivationClient extends CienaConnection {
 				"/rack=1/shelf=2/slot=4/sub_slot=8/port=1");
 		aEnd[0][3] = new NameAndStringValue_T("CTP", "/sts3c_au4=7");
 
-		// SDH over OTN Service
-		// aEnd[0][2] = new NameAndStringValue_T();
-		// aEnd[0][2].name = new String("PTP");
-		// aEnd[0][2].value = new String(
-		// "/rack=1/shelf=2/slot=16/sub_slot=23/port=1");
-		// aEnd[0][3] = new NameAndStringValue_T();
-		// aEnd[0][3].name = new String("CTP");
-		// aEnd[0][3].value = new String("/encapsulation=1/odu1=1;tp=1");
-
 		// Z-End
 		NameAndStringValue_T[][] zEnd = new NameAndStringValue_T[1][4];
 		zEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
@@ -104,15 +91,6 @@ public class CienaActivationClient extends CienaConnection {
 		zEnd[0][2] = new NameAndStringValue_T("PTP",
 				"/rack=1/shelf=2/slot=4/sub_slot=8/port=1");
 		zEnd[0][3] = new NameAndStringValue_T("CTP", "/sts3c_au4=7");
-
-		// SDH over OTN Service
-		// zEnd[0][2] = new NameAndStringValue_T();
-		// zEnd[0][2].name = new String("PTP");
-		// zEnd[0][2].value = new String(
-		// "/rack=1/shelf=2/slot=15/sub_slot=26/port=1");
-		// zEnd[0][3] = new NameAndStringValue_T();
-		// zEnd[0][3].name = new String("CTP");
-		// zEnd[0][3].value = new String("/encapsulation=1/odu1=1;tp=1");
 
 		NameAndStringValue_T[][] neTpInclusions = new NameAndStringValue_T[0][0];
 		NameAndStringValue_T[][] neTpSncExclusions = new NameAndStringValue_T[0][0];
@@ -161,67 +139,31 @@ public class CienaActivationClient extends CienaConnection {
 		String sncID = "NISA-SN-SNC-SDHService-1+0-1";
 		String owner = new String("");
 
-		// 15 = vc4
-		// 16 = vc4_4c
-		// 17 = vc4_16c
-		// 18 = vc4_64c
-		// 104 = OTU1
+		// 15 = vc4; 16 = vc4_4c; 17 = vc4_16c; 18 = vc4_64c
 		short layerRate = 15;
 
 		NameAndStringValue_T[][] aEnd = new NameAndStringValue_T[1][4];
 
 		// A-End
-		aEnd[0][0] = new NameAndStringValue_T();
-		aEnd[0][0].name = new String("EMS");
-		aEnd[0][0].value = this.realEMSName;
-		aEnd[0][1] = new NameAndStringValue_T();
-		aEnd[0][1].name = new String("ManagedElement");
-		aEnd[0][1].value = new String("SNG-LAB1-ASON-CN-01");
+		aEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		aEnd[0][1] = new NameAndStringValue_T("ManagedElement",
+				"SNG-PPD-ASON-CN-01");
 
 		// SDH Service
-		aEnd[0][2] = new NameAndStringValue_T();
-		aEnd[0][2].name = new String("PTP");
-		aEnd[0][2].value = new String(
+		aEnd[0][2] = new NameAndStringValue_T("PTP",
 				"/rack=1/shelf=2/slot=4/sub_slot=5/port=1");
-		aEnd[0][3] = new NameAndStringValue_T();
-		aEnd[0][3].name = new String("CTP");
-		aEnd[0][3].value = new String("/sts3c_au4=1");
-
-		// SDH over OTN Service
-		// aEnd[0][2] = new NameAndStringValue_T();
-		// aEnd[0][2].name = new String("PTP");
-		// aEnd[0][2].value = new String(
-		// "/rack=1/shelf=2/slot=16/sub_slot=23/port=1");
-		// aEnd[0][3] = new NameAndStringValue_T();
-		// aEnd[0][3].name = new String("CTP");
-		// aEnd[0][3].value = new String("/encapsulation=1/odu1=1;tp=1");
+		aEnd[0][3] = new NameAndStringValue_T("CTP", "/sts3c_au4=1");
 
 		// Z-End
 		NameAndStringValue_T[][] zEnd = new NameAndStringValue_T[1][4];
-		zEnd[0][0] = new NameAndStringValue_T();
-		zEnd[0][0].name = new String("EMS");
-		zEnd[0][0].value = this.realEMSName;
-		zEnd[0][1] = new NameAndStringValue_T();
-		zEnd[0][1].name = new String("ManagedElement");
-		zEnd[0][1].value = new String("SNG-LAB1-ASON-CN-01");
+		zEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		zEnd[0][1] = new NameAndStringValue_T("ManagedElement",
+				"SNG-PPD-ASON-CN-01");
 
 		// SDH Service
-		zEnd[0][2] = new NameAndStringValue_T();
-		zEnd[0][2].name = new String("PTP");
-		zEnd[0][2].value = new String(
-				"/rack=1/shelf=2/slot=1/sub_slot=8/port=1");
-		zEnd[0][3] = new NameAndStringValue_T();
-		zEnd[0][3].name = new String("CTP");
-		zEnd[0][3].value = new String("/sts3c_au4=1");
-
-		// SDH over OTN Service
-		// zEnd[0][2] = new NameAndStringValue_T();
-		// zEnd[0][2].name = new String("PTP");
-		// zEnd[0][2].value = new String(
-		// "/rack=1/shelf=2/slot=15/sub_slot=26/port=1");
-		// zEnd[0][3] = new NameAndStringValue_T();
-		// zEnd[0][3].name = new String("CTP");
-		// zEnd[0][3].value = new String("/encapsulation=1/odu1=1;tp=1");
+		zEnd[0][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=2/slot=4/sub_slot=5/port=1");
+		zEnd[0][3] = new NameAndStringValue_T("CTP", "/sts3c_au4=1");
 
 		NameAndStringValue_T[][] neTpInclusions = new NameAndStringValue_T[0][0];
 		NameAndStringValue_T[][] neTpSncExclusions = new NameAndStringValue_T[0][0];
@@ -278,7 +220,7 @@ public class CienaActivationClient extends CienaConnection {
 		String userLabel = "NISA-SingleNodeSNC-EthService-1";
 		String owner = "";
 
-		// 15 = vc4
+		// 15 = vc4; 16 = vc4_4c; 17 = vc4_16c; 18 = vc4_64c
 		short layerRate = 15;
 
 		NameAndStringValue_T[][] aEnd = new NameAndStringValue_T[1][4];
@@ -383,7 +325,7 @@ public class CienaActivationClient extends CienaConnection {
 		tps.value[0].transmissionParams[2].transmissionParams[0] = new NameAndStringValue_T(
 				"TunnelEndPoint", "/rack=1/shelf=2/slot=1/sub_slot=7/port=1");
 
-		// A End
+		// Z End
 		tps.value[1] = new TPData_T();
 		tps.value[1].egressTrafficDescriptorName = new NameAndStringValue_T[0];
 		tps.value[1].ingressTrafficDescriptorName = new NameAndStringValue_T[0];
@@ -454,16 +396,12 @@ public class CienaActivationClient extends CienaConnection {
 
 	public void createMultiNodeEthernetServiceWithVCG()
 			throws ProcessingFailureException {
-		String callID = "NISA-MultiNodeSNC-EthService-1";
-		String sncID = "NISA-MultiNodeSNC-EthService-1";
-		String userLabel = "NISA-MultiNodeSNC-EthService-1";
+		String callID = "NISA-MN-EthService-1";
+		String sncID = "NISA-MN-EthService-1";
+		String userLabel = "NISA-MN-EthService-1";
 		String owner = new String("");
 
-		// 15 = vc4
-		// 16 = vc4_4c
-		// 17 = vc4_16c
-		// 18 = vc4_64c
-		// 104 = OTU1
+		// 15 = vc4; 16 = vc4_4c; 17 = vc4_16c; 18 = vc4_64c
 		short layerRate = 15;
 
 		NameAndStringValue_T[][] aEnd = new NameAndStringValue_T[1][4];
@@ -727,6 +665,15 @@ public class CienaActivationClient extends CienaConnection {
 		createData.protectionEffort = ProtectionEffort_T.EFFORT_SAME;
 		createData.owner = owner;
 		createData.userLabel = userLabel;
+
+		// The clientType parameter can be used to configure a termination point
+		// to process a particular type of client signal. When this parameter is
+		// set by an NMS (using the setTPData operation or through the
+		// tpsToModify parameter in a createAndActivateSNC operation) it may
+		// change the format (i.e. the layers modeled) of the termination point,
+		// these changes will be notified to the NMS via an attribute value
+		// change notification against the termination point transmissionParams
+		// attribute.
 
 		// TPs to Modify
 		TPDataList_THolder tpsToModify = new TPDataList_THolder();
@@ -1068,7 +1015,7 @@ public class CienaActivationClient extends CienaConnection {
 		tpsToModify.value[0].egressTrafficDescriptorName = new NameAndStringValue_T[0];
 		tpsToModify.value[0].ingressTrafficDescriptorName = new NameAndStringValue_T[0];
 		tpsToModify.value[0].tpMappingMode = TerminationMode_T.TM_TERMINATED_AND_AVAILABLE_FOR_MAPPING;
-		tpsToModify.value[0].tpName = aEnd[0]; // ethPort;
+		tpsToModify.value[0].tpName = aEnd[0];
 
 		tpsToModify.value[0].transmissionParams = new LayeredParameters_T[1];
 
@@ -1085,7 +1032,7 @@ public class CienaActivationClient extends CienaConnection {
 		tpsToModify.value[1].egressTrafficDescriptorName = new NameAndStringValue_T[0];
 		tpsToModify.value[1].ingressTrafficDescriptorName = new NameAndStringValue_T[0];
 		tpsToModify.value[1].tpMappingMode = TerminationMode_T.TM_TERMINATED_AND_AVAILABLE_FOR_MAPPING;
-		tpsToModify.value[1].tpName = zEnd[0]; // ethPort;
+		tpsToModify.value[1].tpName = zEnd[0];
 
 		tpsToModify.value[1].transmissionParams = new LayeredParameters_T[1];
 
@@ -1410,13 +1357,6 @@ public class CienaActivationClient extends CienaConnection {
 		return additionalCreationInfo;
 	}
 
-	/**
-	 * Parses NameAndStringValue_T structure into String
-	 * 
-	 * @param nameAndValue
-	 *            - array of NameAndStringValue_T
-	 * @return String
-	 */
 	public String convertNameAndStringValueToString(
 			NameAndStringValue_T[] nameAndValue) {
 		if (nameAndValue == null) {

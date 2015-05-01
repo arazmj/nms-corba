@@ -85,16 +85,16 @@ public enum Corba2XMLStructure {
     }),    
 
     /**
-     * Corba entity: GTP_T
+     * CORBA entity: GTP_T
      */
     GTPS("GTPS", new String[]{
-            "NE_ID",
-            "NATIVE_EMS_NAME",
-            "GTP",
-            "TP",
-            "CONNECTION_STATE",
-            "ADDITIONAL_INFO",
-            "SOURCE_TIME_STAMP"
+    		CorbaConstants.NE_ID_STR,
+    		CorbaConstants.NATIVE_EMS_NAME_STR,
+    		CorbaConstants.GTP_STR,
+    		CorbaConstants.TP_STR,
+            CorbaConstants.CONNECTION_STATE_STR,
+            CorbaConstants.ADDITIONAL_INFO_STR,
+            CorbaConstants.SOURCE_TIME_STAMP_STR
     }),
     
     /**
@@ -119,7 +119,7 @@ public enum Corba2XMLStructure {
      * CORBA entity: SubnetworkConnection_T
      */
     SNCS("SNCS", new String[]{
-            CorbaConstants.SNS_ID_STR,
+            CorbaConstants.SNC_ID_STR,
             CorbaConstants.USER_LABEL_STR,
             CorbaConstants.NATIVE_EMS_NAME_STR,
             CorbaConstants.OWNER_STR,
@@ -144,8 +144,8 @@ public enum Corba2XMLStructure {
             CorbaConstants.Z2_TPNAME_PTP_STR,
             CorbaConstants.Z2_TPNAME_CTP_STR,
             CorbaConstants.Z2_TPMAPPING_MODE_STR,
-            CorbaConstants.REROUTEALLOWED_STR,
-            CorbaConstants.NETWORKREROUTED_STR,
+            CorbaConstants.REROUTE_ALLOWED_STR,
+            CorbaConstants.NETWORK_REROUTED_STR,
             CorbaConstants.FREQ_A_STR,
             CorbaConstants.FREQ_Z_STR,
             CorbaConstants.ADDITIONAL_INFO_STR

@@ -1,0 +1,40 @@
+May 01, 2015 10:34:25 PM org.jacorb.config.JacORBConfiguration init
+WARNING: jacorb.home unset! Will use '.'
+May 01, 2015 10:34:25 PM org.jacorb.config.JacORBConfiguration init
+WARNING: File .\jacorb.properties for configuration jacorb not found
+May 01, 2015 10:34:25 PM org.jacorb.orb.ORB printVersion
+INFO: 
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	JacORB V 2.3.1, www.jacorb.org
+	(C) The JacORB project 27-May-2009
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+May 01, 2015 10:34:25 PM org.jacorb.orb.ORB initKnownReferencesMap
+INFO: Property "jacorb.hashtable_class" is set to: java.util.HashMap
+May 01, 2015 10:34:25 PM org.jacorb.orb.portableInterceptor.InterceptorManager <init>
+INFO: InterceptorManager started with 1 Server Interceptors, 1 Client Interceptors and 0 IOR Interceptors
+May 01, 2015 10:34:25 PM ex.corba.alu.AlcatelConnection openEmsSession
+INFO: ORB.init called.
+May 01, 2015 10:34:25 PM org.jacorb.orb.giop.CodeSet getTCSDefault
+WARNING: Warning - unknown codeset (Cp1252) - defaulting to ISO-8859-1
+May 01, 2015 10:34:25 PM org.jacorb.orb.giop.ClientConnectionManager getConnection
+INFO: ClientConnectionManager: created new ClientGIOPConnection to 172.28.40.5:5032 (1ae48504)
+May 01, 2015 10:34:46 PM org.jacorb.orb.iiop.ClientIIOPConnection connect
+INFO: Retrying to connect to 172.28.40.5:5032
+May 01, 2015 10:35:08 PM org.jacorb.orb.iiop.ClientIIOPConnection connect
+INFO: Retrying to connect to 172.28.40.5:5032
+May 01, 2015 10:35:29 PM org.jacorb.orb.iiop.ClientIIOPConnection connect
+INFO: Retrying to connect to 172.28.40.5:5032
+May 01, 2015 10:35:51 PM org.jacorb.orb.iiop.ClientIIOPConnection connect
+INFO: Retrying to connect to 172.28.40.5:5032
+May 01, 2015 10:36:12 PM org.jacorb.orb.iiop.ClientIIOPConnection connect
+INFO: Retrying to connect to 172.28.40.5:5032
+May 01, 2015 10:36:34 PM ex.corba.alu.AlcatelDiscoveryClient main
+SEVERE: Retries exceeded, couldn't reconnect to 172.28.40.5:5032
+May 01, 2015 10:36:34 PM org.jacorb.orb.ORB shutdown
+INFO: prepare ORB for shutdown...
+May 01, 2015 10:36:34 PM org.jacorb.orb.ORB shutdown
+INFO: ORB going down...
+May 01, 2015 10:36:34 PM org.jacorb.orb.ORB shutdown
+INFO: ORB shutdown complete
+May 01, 2015 10:36:34 PM org.jacorb.util.threadpool.ConsumerTie run
+INFO: ConsumerTie exited

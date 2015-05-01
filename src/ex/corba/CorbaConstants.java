@@ -2,33 +2,19 @@ package ex.corba;
 
 public class CorbaConstants {
 
-	// Common Constants
+	// Common Constants used in NameAndStringValue_T
+	public static final String EMS_STR = "EMS";
 	public static final String MANAGED_ELEMENT_STR = "ManagedElement";
 	public static final String MULTILAYER_SUBNETWORK_STR = "MultiLayerSubnetwork";
 	public static final String SUBNETWORK_CONNECTION_STR = "SubnetworkConnection";
-	public static final String MSTP_SVC_MANAGER = "CORBA_MSTP_SVC";
-	public static final String MSTP_INV_MANAGER = "CORBA_MSTP_INV";
+	public static final String UNKNOWN_STR = "UNKNOWN";
+
+	// ManagedElement_T
 	public static final String NE_ID_STR = "NE_ID";
 	public static final String USER_LABEL_STR = "USER_LABEL";
+	public static final String NATIVE_EMS_NAME_STR = "NATIVE_EMS_NAME";
 	public static final String NE_NAME_STR = "NE_NAME";
 	public static final String OWNER_STR = "OWNER";
-	public static final String NATIVE_EMS_NAME_STR = "NATIVE_EMS_NAME";
-	public static final String STATE_STR = "STATE";
-	public static final String TYPE_STR = "TYPE";
-	public static final String ADDITIONAL_INFO_STR = "ADDITIONAL_INFO";
-	public static final String DIRECTION_STR = "DIRECTION";
-	public static final String PTP_STR = "PTP";
-	public static final String FTP_STR = "FTP";
-	public static final String CTP_STR = "CTP";
-	public static final String RATE_STR = "RATE";
-	public static final String EMS_STR = "EMS";
-	public static final String UNKNOWN_STR = "UNKNOWN";
-	public static final String NAME_STR = "NAME";
-
-	// Other Constants
-	public static final String EQUIPMENT_HOLDER_STR = "EquipmentHolder";
-	public static final String HOLDER_STR = "HOLDER";
-	public static final String ALARM_REPORT_INDIC_STR = "ALARM_REPORT_INDIC";
 	public static final String LOCATION_STR = "LOCATION";
 	public static final String VERSION_STR = "VERSION";
 	public static final String PRODUCT_NAME_STR = "PRODUCT_NAME";
@@ -36,6 +22,12 @@ public class CorbaConstants {
 	public static final String EMS_INSYNC_STATE_STR = "EMS_INSYNC_STATE";
 	public static final String SUPPORTED_RATES_STR = "SUPPORTED_RATES";
 	public static final String GATEWAYS_STR = "GATEWAYS";
+	public static final String SOURCE_TIME_STAMP_STR = "SOURCE_TIME_STAMP";
+
+	// Equipment_T
+	public static final String EQUIPMENT_HOLDER_STR = "EquipmentHolder";
+	public static final String HOLDER_STR = "HOLDER";
+	public static final String ALARM_REPORT_INDIC_STR = "ALARM_REPORT_INDIC";
 	public static final String SLOT_N_STR = "SLOT_N";
 	public static final String SERVICE_STATE_STR = "SERVICE_STATE";
 	public static final String EXP_EQUIP_OBJ_TYPE_STR = "EXP_EQUIP_OBJ_TYPE";
@@ -43,31 +35,44 @@ public class CorbaConstants {
 	public static final String INST_PART_NUMBER_STR = "INST_PART_NUMBER";
 	public static final String INST_VERSION_STR = "INST_VERSION";
 	public static final String INST_SERIAL_NUMBER_STR = "INST_SERIAL_NUMBER";
+	public static final String ADDITIONAL_INFO_STR = "ADDITIONAL_INFO";
+
+	// EquipmentHolder_T
 	public static final String HOLDER_TYPE_STR = "HOLDER_TYPE";
 	public static final String EXP_INST_EQUIPMENT_STR = "EXP_INST_EQUIPMENT";
 	public static final String ACCEPT_EQUIPMENT_STR = "ACCEPT_EQUIPMENT";
+	public static final String STATE_STR = "STATE";
+
+	// TerminationPoint_T
 	public static final String IN_TRAFFIC_DES_NAME_STR = "IN_TRAFFIC_DES_NAME";
 	public static final String EG_TRAFFIC_DES_NAME_STR = "EG_TRAFFIC_DES_NAME";
+	public static final String DIRECTION_STR = "DIRECTION";
+	public static final String PTP_STR = "PTP";
+	public static final String FTP_STR = "FTP";
+	public static final String CTP_STR = "CTP";
+	public static final String TYPE_STR = "TYPE";
 	public static final String CONNECTION_STATE_STR = "CONNECTION_STATE";
 	public static final String TP_MAPPING_MODE_STR = "TP_MAPPING_MODE";
 	public static final String TRANSMISSION_PARAMS_STR = "TRANSMISSION_PARAMS";
 	public static final String TP_PROTECTION_ASSOCIATION_STR = "TP_PROTECTION_ASSOCIATION";
 	public static final String EDGE_POINT_STR = "EDGE_POINT";
-	public static final String PROTECTION_GROUP_TYPE_STR = "PROTECTION_GROUP_TYPE";
-	public static final String PROTECTION_SCHEMA_STATE_STR = "PROTECTION_SCHEMA_STATE";
-	public static final String REVERSION_MODE_STR = "REVERSION_MODE";
-	public static final String PGP_TP_LIST_STR = "PGP_TP_LIST";
-	public static final String PGP_PARAMETERS_STR = "PGP_PARAMETERS";
-	public static final String ALL_PATH_LIST_STR = "ALL_PATH_LIST";
-	public static final String USED_PATH_LIST_STR = "USED_PATH_LIST";
+
+	// GTP_T
+	public static final String GTP_STR = "GTP";
+	public static final String TP_STR = "TP";
+
+	// TopologicalLink_T
 	public static final String TL_ID_STR = "TL_ID";
+	public static final String RATE_STR = "RATE";
 	public static final String A_END_NE_STR = "A_END_NE";
 	public static final String A_END_TP_STR = "A_END_TP";
 	public static final String Z_END_TP_STR = "Z_END_TP";
 	public static final String Z_END_NE_STR = "Z_END_NE";
 	public static final String A_TRANSMISSION_PARAMS_STR = "A_TRANSMISSION_PARAMS";
 	public static final String Z_TRANSMISSION_PARAMS_STR = "Z_TRANSMISSION_PARAMS";
-	public static final String SNS_ID_STR = "SNS_ID";
+
+	// SubnetworkConnection_T
+	public static final String SNC_ID_STR = "SNC_ID";
 	public static final String SNC_STATE_STR = "SNC_STATE";
 	public static final String STATIC_PROTECTION_LEVEL_STR = "STATIC_PROTECTION_LEVEL";
 	public static final String SNC_TYPE_STR = "SNC_TYPE";
@@ -87,12 +92,14 @@ public class CorbaConstants {
 	public static final String Z2_TPNAME_PTP_STR = "Z2_TPNAME_PTP";
 	public static final String Z2_TPNAME_CTP_STR = "Z2_TPNAME_CTP";
 	public static final String Z2_TPMAPPING_MODE_STR = "Z2_TPMAPPING_MODE";
-	public static final String REROUTEALLOWED_STR = "REROUTEALLOWED";
-	public static final String NETWORKREROUTED_STR = "NETWORKREROUTED";
+	public static final String REROUTE_ALLOWED_STR = "REROUTE_ALLOWED";
+	public static final String NETWORK_REROUTED_STR = "NETWORK_REROUTED";
 	public static final String FREQ_A_STR = "FREQ_A";
 	public static final String FREQ_Z_STR = "FREQ_Z";
+
+	// CrossConnect_T
 	public static final String ACTIVE_STR = "ACTIVE";
-	public static final String CCTYPE_STR = "CCTYPE";
+	public static final String CC_TYPE_STR = "CCTYPE";
 	public static final String AI_DIRECTION_STR = "AI_DIRECTION";
 	public static final String PRT_ROLE_STR = "PRT_ROLE";
 	public static final String A1_NE_STR = "A1_NE";
@@ -107,31 +114,20 @@ public class CorbaConstants {
 	public static final String Z2_NE_STR = "Z2_NE";
 	public static final String Z2_PTP_STR = "Z2_PTP";
 	public static final String Z2_CTP_STR = "Z2_CTP";
-	public static final String PROTECTIONSUBNETWORK_STR = "PROTECTIONSUBNETWORK";
-	public static final String USERLABEL_STR = "USERLABEL";
-	public static final String NATIVEEMSNAME_STR = "NATIVEEMSNAME";
-	public static final String LAYERRATE_STR = "LAYERRATE";
-	public static final String PROTECTIONSUBNETWORKTYPE_STR = "PROTECTIONSUBNETWORKTYPE";
-	public static final String NEIDLIST_STR = "NEIDLIST";
-	public static final String VC4NUMBER_STR = "VC4NUMBER";
-	public static final String SNK_TP_EMS_STR = "SNK_TP_EMS";
-	public static final String SNK_TP_MANAGEDELEMENT_STR = "SNK_TP_MANAGEDELEMENT";
-	public static final String SNK_TP_PTP_STR = "SNK_TP_PTP";
-	public static final String SRC_TP_EMS_STR = "SRC_TP_EMS";
-	public static final String SRC_TP_MANAGEDELEMENT_STR = "SRC_TP_MANAGEDELEMENT";
-	public static final String SRC_TP_PTP_STR = "SRC_TP_PTP";
-	public static final String VC4_LIST_STR = "VC4_LIST";
-	public static final String VB_STR = "VB";
-	public static final String VLAN_ID_STR = "VLAN_ID";
-	public static final String PARALIST_STR = "PARALIST";
-	public static final String QOSRULENAMES_STR = "QOSRULENAMES";
-	public static final String MAINPORTNAME_STR = "MAINPORTNAME";
-	public static final String BRANCHPORTLIST_STR = "BRANCHPORTLIST";
-	public static final String NODEPARAMETERS_STR = "NODEPARAMETERS";
-	public static final String NODENO_STR = "NODENO";
-	public static final String PROTOCOLENABLED_STR = "PROTOCOLENABLED";
-	public static final String ACTIVESTATE_STR = "ACTIVESTATE";
-	public static final String SERVICETYPE_STR = "SERVICETYPE";
+
+	// ProtectionGroup_T
+	public static final String PROTECTION_GROUP_TYPE_STR = "PROTECTION_GROUP_TYPE";
+	public static final String PROTECTION_SCHEMA_STATE_STR = "PROTECTION_SCHEMA_STATE";
+	public static final String REVERSION_MODE_STR = "REVERSION_MODE";
+	public static final String PGP_TP_LIST_STR = "PGP_TP_LIST";
+	public static final String PGP_PARAMETERS_STR = "PGP_PARAMETERS";
+
+	// HW_MSTPEndPoint_T
+	public static final String NAME_STR = "NAME";
+
+	// HW_RPRNode_T
+	public static final String ACTIVE_STATE_STR = "ACTIVE_STATE";
+	public static final String SERVICE_TYPE_STR = "SERVICE_TYPE";
 	public static final String A_END_PTP_STR = "A_END_PTP";
 	public static final String Z_END_PTP_STR = "Z_END_PTP";
 	public static final String A_END_VLAN_STR = "A_END_VLAN";
@@ -140,30 +136,21 @@ public class CorbaConstants {
 	public static final String Z_END_VC_STR = "Z_END_VC";
 	public static final String A_END_TUNEL_STR = "A_END_TUNEL";
 	public static final String Z_END_TUNEL_STR = "Z_END_TUNEL";
-	public static final String LOGICALTPARRAY_STR = "LOGICALTPARRAY";
-	public static final String PROTECTTYPE_STR = "PROTECTTYPE";
-	public static final String SPREADTYPE_STR = "SPREADTYPE";
-	public static final String PROTECTROLE_STR = "PROTECTROLE";
-	public static final String A_END_BPC_STR = "A_END_BPC";
-	public static final String Z_END_BPC_STR = "Z_END_BPC";
+
+	// HW_MSTPBindingPath_T
+	public static final String VCTRUNK_NE_STR = "VCTRUNK_NE";
+	public static final String VCTRUNK_PTP_STR = "VCTRUNK_PTP";
+	public static final String ALL_PATH_LIST_STR = "ALL_PATH_LIST";
+	public static final String USED_PATH_LIST_STR = "USED_PATH_LIST";
+
+	// FlowDomainFragment_T
 	public static final String NETWORK_ACCESS_DOMAIN_STR = "NETWORK_ACCESS_DOMAIN";
-	public static final String FDCONNECTIVITYSTATE_STR = "FDCONNECTIVITYSTATE";
-	public static final String FDEDGECPTPS_STR = "FDEDGECPTPS";
-	public static final String MFDS_STR = "MFDS";
-	public static final String FDINTERNALCPTPS_STR = "FDINTERNALCPTPS";
-	public static final String FDTYPE_STR = "FDTYPE";
-	public static final String AENDNAMELIST_STR = "AENDNAMELIST";
-	public static final String ZENDNAMELIST_STR = "ZENDNAMELIST";
+	public static final String A_END_NAME_LIST_STR = "A_END_NAME_LIST";
+	public static final String Z_END_NAME_LIST_STR = "Z_END_NAME_LIST";
 	public static final String ADMINISTRATIVE_STATE_STR = "ADMINISTRATIVE_STATE";
 	public static final String FLEXIBLE_STR = "FLEXIBLE";
 	public static final String FDFR_TYPE_STR = "FDFR_TYPE";
 	public static final String FDFR_STATE_STR = "FDFR_STATE";
-	public static final String ENDTPS_STR = "ENDTPS";
-	public static final String MFDFRTYPE_STR = "MFDFRTYPE";
-	public static final String MULTIPOINTSERVICEATTR_STR = "MULTIPOINTSERVICEATTR";
-	public static final String AEND_STR = "AEND";
-	public static final String ZEND_STR = "ZEND";
-	public static final String LINK_TYPE_STR = "LINK_TYPE";
-	public static final String VCTRUNK_NE_STR = "VCTRUNK_NE";
-	public static final String VCTRUNK_PTP_STR = "VCTRUNK_PTP";
+	public static final String A_END_STR = "A_END";
+	public static final String Z_END_STR = "Z_END";
 }

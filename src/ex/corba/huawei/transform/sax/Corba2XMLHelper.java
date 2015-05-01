@@ -352,7 +352,7 @@ public class Corba2XMLHelper {
 			SubnetworkConnection_T snc) throws ProcessingFailureException {
 		Corba2XMLContainer container = new Corba2XMLContainer(
 				Corba2XMLStructure.SNCS);
-		container.setFieldValue(CorbaConstants.SNS_ID_STR, handler
+		container.setFieldValue(CorbaConstants.SNC_ID_STR, handler
 				.getValueByName(snc.name,
 						CorbaConstants.SUBNETWORK_CONNECTION_STR));
 		container.setFieldValue(CorbaConstants.USER_LABEL_STR, snc.userLabel);
@@ -430,9 +430,9 @@ public class Corba2XMLHelper {
 			}
 		}
 
-		container.setFieldValue(CorbaConstants.REROUTEALLOWED_STR,
+		container.setFieldValue(CorbaConstants.REROUTE_ALLOWED_STR,
 				String.valueOf(snc.rerouteAllowed.value()));
-		container.setFieldValue(CorbaConstants.NETWORKREROUTED_STR,
+		container.setFieldValue(CorbaConstants.NETWORK_REROUTED_STR,
 				String.valueOf(snc.networkRouted.value()));
 		container.setFieldValue(CorbaConstants.ADDITIONAL_INFO_STR,
 				handler.convertNameAndStringValueToString(snc.additionalInfo));
@@ -445,12 +445,12 @@ public class Corba2XMLHelper {
 		Corba2XMLContainer container = new Corba2XMLContainer(
 				Corba2XMLStructure.ROUTES);
 
-		container.setFieldValue(CorbaConstants.SNS_ID_STR, sncId);
+		container.setFieldValue(CorbaConstants.SNC_ID_STR, sncId);
 		container.setFieldValue(CorbaConstants.ACTIVE_STR,
 				String.valueOf(crossConnect.active));
 		container.setFieldValue(CorbaConstants.DIRECTION_STR,
 				String.valueOf(crossConnect.direction.value()));
-		container.setFieldValue(CorbaConstants.CCTYPE_STR,
+		container.setFieldValue(CorbaConstants.CC_TYPE_STR,
 				String.valueOf(crossConnect.ccType.value()));
 		container.setFieldValue(CorbaConstants.AI_DIRECTION_STR, handler
 				.getValueByName(crossConnect.additionalInfo, "Direction"));
@@ -678,9 +678,9 @@ public class Corba2XMLHelper {
 
 		container.setFieldValue(CorbaConstants.DIRECTION_STR,
 				String.valueOf(value.direction.value()));
-		container.setFieldValue(CorbaConstants.ACTIVESTATE_STR,
+		container.setFieldValue(CorbaConstants.ACTIVE_STATE_STR,
 				String.valueOf(value.activeState));
-		container.setFieldValue(CorbaConstants.SERVICETYPE_STR,
+		container.setFieldValue(CorbaConstants.SERVICE_TYPE_STR,
 				String.valueOf(value.serviceType.value()));
 
 		container.setFieldValue(CorbaConstants.A_END_NE_STR, handler
