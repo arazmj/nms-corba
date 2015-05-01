@@ -27,3 +27,4 @@ dist/
 bin/
 build/
 target/
+log/
