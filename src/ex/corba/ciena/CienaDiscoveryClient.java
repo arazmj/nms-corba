@@ -68,6 +68,23 @@ public class CienaDiscoveryClient extends CienaConnection {
 			cmd.getAllEquipment();
 		}
 
+		if (props.getProperty("getAllPTPs") != null
+				&& props.getProperty("getAllPTPs").equalsIgnoreCase("yes")) {
+			cmd.getAllPTPs();
+		}
+
+		if (props.getProperty("getAllTopologicalLinks") != null
+				&& props.getProperty("getAllTopologicalLinks")
+						.equalsIgnoreCase("yes")) {
+			cmd.getAllTopologicalLinks();
+		}
+
+		if (props.getProperty("getAllSubnetworkConnections") != null
+				&& props.getProperty("getAllSubnetworkConnections")
+						.equalsIgnoreCase("yes")) {
+			cmd.getAllSubnetworkConnections();
+		}
+
 		if (props.getProperty("getAllGTPs") != null
 				&& props.getProperty("getAllGTPs").equalsIgnoreCase("yes")) {
 			cmd.getAllGTPs();

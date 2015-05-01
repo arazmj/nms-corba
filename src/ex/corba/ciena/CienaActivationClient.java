@@ -42,9 +42,13 @@ public class CienaActivationClient extends CienaConnection {
 
 		try {
 			emsSession = main.openEmsSession(args);
-			main.createGTP();
-			// main.deleteGTP();
+			main.createMultiNodeSDHService();
+
+			// main.createGTP();
 			// main.createMultiNodeSDHServiceWithGTP();
+
+			// main.deactivateAndDeleteSNC();
+			// main.deleteGTP();
 
 		} catch (ProcessingFailureException pfe) {
 			LOG.error("errorReason:" + pfe.errorReason);
@@ -58,8 +62,8 @@ public class CienaActivationClient extends CienaConnection {
 	}
 
 	public void createMultiNodeSDHService() throws ProcessingFailureException {
-		String sncID = "NISA-MultiNodeSNC-SDHService-1+0-1";
-		String userLabel = "NISA-MultiNodeSNC-SDHService-1+0-1";
+		String sncID = "NISA-MN-SDHService-1+0-3";
+		String userLabel = "NISA-MN-SDHService-1+0-1";
 		String owner = new String("");
 
 		// 15 = vc4
@@ -72,21 +76,14 @@ public class CienaActivationClient extends CienaConnection {
 		NameAndStringValue_T[][] aEnd = new NameAndStringValue_T[1][4];
 
 		// A-End
-		aEnd[0][0] = new NameAndStringValue_T();
-		aEnd[0][0].name = new String("EMS");
-		aEnd[0][0].value = this.realEMSName;
-		aEnd[0][1] = new NameAndStringValue_T();
-		aEnd[0][1].name = new String("ManagedElement");
-		aEnd[0][1].value = new String("SNG-LAB2-ASON-CN-01");
+		aEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		aEnd[0][1] = new NameAndStringValue_T("ManagedElement",
+				"SNG-PPD-ASON-CN-01");
 
 		// SDH Service
-		aEnd[0][2] = new NameAndStringValue_T();
-		aEnd[0][2].name = new String("PTP");
-		aEnd[0][2].value = new String(
-				"/rack=1/shelf=2/slot=1/sub_slot=5/port=1");
-		aEnd[0][3] = new NameAndStringValue_T();
-		aEnd[0][3].name = new String("CTP");
-		aEnd[0][3].value = new String("/sts3c_au4=1");
+		aEnd[0][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=2/slot=4/sub_slot=8/port=1");
+		aEnd[0][3] = new NameAndStringValue_T("CTP", "/sts3c_au4=7");
 
 		// SDH over OTN Service
 		// aEnd[0][2] = new NameAndStringValue_T();
@@ -99,21 +96,14 @@ public class CienaActivationClient extends CienaConnection {
 
 		// Z-End
 		NameAndStringValue_T[][] zEnd = new NameAndStringValue_T[1][4];
-		zEnd[0][0] = new NameAndStringValue_T();
-		zEnd[0][0].name = new String("EMS");
-		zEnd[0][0].value = this.realEMSName;
-		zEnd[0][1] = new NameAndStringValue_T();
-		zEnd[0][1].name = new String("ManagedElement");
-		zEnd[0][1].value = new String("SNG-LAB1-ASON-CN-01");
+		zEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		zEnd[0][1] = new NameAndStringValue_T("ManagedElement",
+				"HKG-CH-ASON-CN-01");
 
 		// SDH Service
-		zEnd[0][2] = new NameAndStringValue_T();
-		zEnd[0][2].name = new String("PTP");
-		zEnd[0][2].value = new String(
-				"/rack=1/shelf=2/slot=1/sub_slot=1/port=1");
-		zEnd[0][3] = new NameAndStringValue_T();
-		zEnd[0][3].name = new String("CTP");
-		zEnd[0][3].value = new String("/sts3c_au4=1");
+		zEnd[0][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=2/slot=4/sub_slot=8/port=1");
+		zEnd[0][3] = new NameAndStringValue_T("CTP", "/sts3c_au4=7");
 
 		// SDH over OTN Service
 		// zEnd[0][2] = new NameAndStringValue_T();
@@ -147,7 +137,7 @@ public class CienaActivationClient extends CienaConnection {
 		createData.fullRoute = false;
 		createData.layerRate = layerRate;
 		createData.networkRouted = NetworkRouted_T.NR_YES;
-		createData.rerouteAllowed = Reroute_T.RR_NO;
+		createData.rerouteAllowed = Reroute_T.RR_NO; // yes for 1+r protection
 		createData.direction = ConnectionDirection_T.CD_BI;
 		createData.sncType = SNCType_T.ST_SIMPLE;
 		createData.staticProtectionLevel = StaticProtectionLevel_T.UNPROTECTED;
@@ -973,6 +963,9 @@ public class CienaActivationClient extends CienaConnection {
 	}
 
 	/**
+	 * Transparent SDH: Transparent SDH is mapping STM16/64 as client signal
+	 * into ODU1/ODU2 over OTN link.
+	 * 
 	 * This is SDH over OTN. i.e. STM frames are mapped to ODU. While creating
 	 * tunnel mapping type/frame mode needs to be specified as part of
 	 * tpsToModify in createAndActivateSNC. Mapping type is applicable for
@@ -1296,8 +1289,8 @@ public class CienaActivationClient extends CienaConnection {
 
 		gtpName[0] = new NameAndStringValue_T("EMS", this.realEMSName);
 		gtpName[1] = new NameAndStringValue_T("ManagedElement",
-				"SNG-PPD-ASON-CN-01");
-		gtpName[2] = new NameAndStringValue_T("GTP", "GTP_1430206634809");
+				"HKG-CH-ASON-CN-01");
+		gtpName[2] = new NameAndStringValue_T("GTP", "GTP_1430196244883");
 
 		CorbaCommands cmd = new CorbaCommands(emsSession, this.realEMSName);
 		cmd.deleteGTP(gtpName);
@@ -1370,7 +1363,7 @@ public class CienaActivationClient extends CienaConnection {
 
 	public void deactivateAndDeleteSNC() throws ProcessingFailureException {
 		// String sncID = "NISA-MultiNodeSNC-SDHService-1+0-1";
-		String sncID = "NISA-MN-SNC-EthService-WithoutVCG-1";
+		String sncID = "NISA-SDHServiceWithGTP-1+0-1";
 
 		NameAndStringValue_T[] sncName = new NameAndStringValue_T[3];
 		sncName[0] = new NameAndStringValue_T("EMS", this.realEMSName);
