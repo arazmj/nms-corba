@@ -302,7 +302,7 @@ public class CorbaCommands {
 					meItr.value.destroy();
 			}
 		}
-		
+
 		// Specific to JAXB XML output: Start
 		// JaxbOutputHandler out = new JaxbOutputHandler("managedelement.xml");
 		// NmsObjects nmsObjects = new NmsObjects();
@@ -672,6 +672,11 @@ public class CorbaCommands {
 				if (namingAttributesList.value[i][j].name
 						.equals(CorbaConstants.MULTILAYER_SUBNETWORK_STR)) {
 					arrayList.add(namingAttributesList.value[i][j].value);
+
+					if (LOG.isInfoEnabled()) {
+						LOG.info("Subnetwork Name: "
+								+ namingAttributesList.value[i][j].value);
+					}
 				}
 			}
 		}
@@ -689,6 +694,11 @@ public class CorbaCommands {
 									.equals(CorbaConstants.MULTILAYER_SUBNETWORK_STR)) {
 								arrayList
 										.add(namingAttributesList.value[i][j].value);
+
+								if (LOG.isInfoEnabled()) {
+									LOG.info("Subnetwork Name: "
+											+ namingAttributesList.value[i][j].value);
+								}
 							}
 						}
 					}
