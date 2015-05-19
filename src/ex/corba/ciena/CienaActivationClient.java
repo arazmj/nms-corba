@@ -42,7 +42,8 @@ public class CienaActivationClient extends CienaConnection {
 
 		try {
 			emsSession = main.openEmsSession(args);
-			main.createMultiNodeSDHService();
+			// main.createMultiNodeSDHService();
+			main.createMultiNodeSDHWithNEtpInc();
 
 			// main.createGTP();
 			// main.createMultiNodeSDHServiceWithGTP();
@@ -1302,6 +1303,156 @@ public class CienaActivationClient extends CienaConnection {
 
 		TPDataList_THolder tpsToModify = new TPDataList_THolder();
 		tpsToModify.value = new TPData_T[0];
+
+		CorbaCommands cmd = new CorbaCommands(emsSession, this.realEMSName);
+		cmd.createAndActivateSNC(createData, tolerableImpact, emsFreedomLevel,
+				tpsToModify);
+	}
+
+	public void createMultiNodeSDHWithNEtpInc()
+			throws ProcessingFailureException {
+		String sncID = "NISA-MN-SDHService_TPInc-1+0-3";
+		String userLabel = "NISA-MN-SDHService_TPInc-1+0-3";
+		String owner = "";
+
+		// 15 = vc4; 16 = vc4_4c; 17 = vc4_16c; 18 = vc4_64c
+		short layerRate = 15;
+
+		NameAndStringValue_T[][] aEnd = new NameAndStringValue_T[1][4];
+
+		// A-End
+		aEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		aEnd[0][1] = new NameAndStringValue_T("ManagedElement",
+				"SNG-PPD-ASON-CN-01");
+		aEnd[0][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=2/slot=4/sub_slot=8/port=1");
+		aEnd[0][3] = new NameAndStringValue_T("CTP", "/sts3c_au4=13");
+
+		// Z-End
+		NameAndStringValue_T[][] zEnd = new NameAndStringValue_T[1][4];
+		zEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		zEnd[0][1] = new NameAndStringValue_T("ManagedElement",
+				"HKG-CH-ASON-CN-01");
+		zEnd[0][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=2/slot=4/sub_slot=8/port=1");
+		zEnd[0][3] = new NameAndStringValue_T("CTP", "/sts3c_au4=13");
+
+		NameAndStringValue_T[][] neTpSncExclusions = new NameAndStringValue_T[0][0];
+		CrossConnect_T[] ccInclusions = new CrossConnect_T[0];
+
+		Hashtable<String, String> additionalInfo = new Hashtable<String, String>();
+		additionalInfo.put("SNC_NAME", sncID);
+		// additionalInfo.put("SNC_REGROOM_ALLOWED", "No");
+		// additionalInfo.put("SNC_DTL_SET_NAME","M-C-W");
+		additionalInfo.put("SNC_PRIORITY", "0");
+
+		// NE TP Inclusions
+		NameAndStringValue_T[][] neTpInclusions = new NameAndStringValue_T[4][3];
+
+		neTpInclusions[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		neTpInclusions[0][1] = new NameAndStringValue_T("ManagedElement",
+				"SNG-PPD-ASON-CN-01");
+		neTpInclusions[0][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=2/slot=4/sub_slot=8/port=1");
+
+		neTpInclusions[1][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		neTpInclusions[1][1] = new NameAndStringValue_T("ManagedElement",
+				"SNG-PPD-ASON-CN-01");
+		neTpInclusions[1][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=2/slot=1/sub_slot=8/port=1");
+
+		neTpInclusions[2][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		neTpInclusions[2][1] = new NameAndStringValue_T("ManagedElement",
+				"HKG-CH-ASON-CN-01");
+		neTpInclusions[2][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=2/slot=1/sub_slot=8/port=1");
+
+		neTpInclusions[3][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		neTpInclusions[3][1] = new NameAndStringValue_T("ManagedElement",
+				"HKG-CH-ASON-CN-01");
+		neTpInclusions[3][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=2/slot=4/sub_slot=8/port=1");
+
+		SNCCreateData_T createData = new SNCCreateData_T();
+
+		createData.aEnd = aEnd;
+		createData.zEnd = zEnd;
+		createData.additionalCreationInfo = getNameAndStringValues(additionalInfo);
+		createData.neTpInclusions = neTpInclusions;
+		createData.neTpSncExclusions = neTpSncExclusions;
+		createData.ccInclusions = ccInclusions;
+		createData.forceUniqueness = true;
+		createData.fullRoute = true;
+		createData.layerRate = layerRate;
+		createData.networkRouted = NetworkRouted_T.NR_NO;
+		createData.rerouteAllowed = Reroute_T.RR_NO; // yes for 1+r protection
+		createData.direction = ConnectionDirection_T.CD_BI;
+		createData.sncType = SNCType_T.ST_SIMPLE;
+		createData.staticProtectionLevel = StaticProtectionLevel_T.UNPROTECTED;
+		createData.protectionEffort = ProtectionEffort_T.EFFORT_SAME;
+		createData.owner = owner;
+		createData.userLabel = userLabel;
+
+		// TPs to Modify
+		TPDataList_THolder tpsToModify = new TPDataList_THolder();
+		tpsToModify.value = new TPData_T[2];
+		tpsToModify.value[0] = new TPData_T();
+		tpsToModify.value[1] = new TPData_T();
+
+		// A End
+		tpsToModify.value[0].egressTrafficDescriptorName = new NameAndStringValue_T[0];
+		tpsToModify.value[0].ingressTrafficDescriptorName = new NameAndStringValue_T[0];
+		tpsToModify.value[0].tpMappingMode = TerminationMode_T.TM_NEITHER_TERMINATED_NOR_AVAILABLE_FOR_MAPPING;
+
+		NameAndStringValue_T[] aTPName = new NameAndStringValue_T[3];
+
+		// A-End
+		aTPName[0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		aTPName[1] = new NameAndStringValue_T("ManagedElement",
+				"SNG-PPD-ASON-CN-01");
+
+		aTPName[2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=2/slot=4/sub_slot=8/port=1");
+		tpsToModify.value[0].tpName = aTPName;
+
+		tpsToModify.value[0].transmissionParams = new LayeredParameters_T[1];
+
+		tpsToModify.value[0].transmissionParams[0] = new LayeredParameters_T();
+		tpsToModify.value[0].transmissionParams[0].layer = 27;
+
+		tpsToModify.value[0].transmissionParams[0].transmissionParams = new NameAndStringValue_T[1];
+		tpsToModify.value[0].transmissionParams[0].transmissionParams[0] = new NameAndStringValue_T(
+				"SPRINGNodeIdIncoming", "1");
+
+		// Z End
+		tpsToModify.value[1].egressTrafficDescriptorName = new NameAndStringValue_T[0];
+		tpsToModify.value[1].ingressTrafficDescriptorName = new NameAndStringValue_T[0];
+		tpsToModify.value[1].tpMappingMode = TerminationMode_T.TM_NEITHER_TERMINATED_NOR_AVAILABLE_FOR_MAPPING;
+
+		NameAndStringValue_T[] zTPName = new NameAndStringValue_T[3];
+		zTPName[0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		zTPName[1] = new NameAndStringValue_T("ManagedElement",
+				"HKG-CH-ASON-CN-01");
+
+		zTPName[2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=2/slot=4/sub_slot=8/port=1");
+
+		tpsToModify.value[1].tpName = zTPName;
+
+		tpsToModify.value[1].transmissionParams = new LayeredParameters_T[1];
+
+		tpsToModify.value[1].transmissionParams[0] = new LayeredParameters_T();
+		tpsToModify.value[1].transmissionParams[0].layer = 27;
+
+		tpsToModify.value[1].transmissionParams[0].transmissionParams = new NameAndStringValue_T[1];
+		tpsToModify.value[1].transmissionParams[0].transmissionParams[0] = new NameAndStringValue_T(
+				"SPRINGNodeIdIncoming", "4");
+
+		GradesOfImpact_T tolerableImpact = GradesOfImpact_T.GOI_HITLESS;// GOI_HITLESS;
+		EMSFreedomLevel_T emsFreedomLevel = EMSFreedomLevel_T.EMSFL_RECONFIGURATION;// EMSFL_CC_AT_SNC_LAYER;
+
+		// TPDataList_THolder tpsToModify = new TPDataList_THolder();
+		// tpsToModify.value = new TPData_T[0];
 
 		CorbaCommands cmd = new CorbaCommands(emsSession, this.realEMSName);
 		cmd.createAndActivateSNC(createData, tolerableImpact, emsFreedomLevel,
