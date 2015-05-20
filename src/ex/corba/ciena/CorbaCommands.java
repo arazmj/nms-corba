@@ -1,10 +1,14 @@
 package ex.corba.ciena;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import org.omg.CORBA.StringHolder;
+import org.omg.CosNaming.NamingContextPackage.CannotProceed;
+import org.omg.CosNaming.NamingContextPackage.InvalidName;
+import org.omg.CosNaming.NamingContextPackage.NotFound;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
@@ -30,10 +34,13 @@ import com.ciena.oc.managedElementManager.ManagedElementMgr_IHelper;
 import com.ciena.oc.multiLayerSubnetwork.EMSFreedomLevel_T;
 import com.ciena.oc.multiLayerSubnetwork.MultiLayerSubnetworkMgr_I;
 import com.ciena.oc.multiLayerSubnetwork.MultiLayerSubnetworkMgr_IHelper;
+import com.ciena.oc.subnetworkConnection.CrossConnect_T;
 import com.ciena.oc.subnetworkConnection.GradesOfImpact_T;
+import com.ciena.oc.subnetworkConnection.Route_THolder;
 import com.ciena.oc.subnetworkConnection.SNCCreateData_T;
 import com.ciena.oc.subnetworkConnection.SNCIterator_IHolder;
 import com.ciena.oc.subnetworkConnection.SubnetworkConnectionList_THolder;
+import com.ciena.oc.subnetworkConnection.SubnetworkConnection_T;
 import com.ciena.oc.subnetworkConnection.SubnetworkConnection_THolder;
 import com.ciena.oc.subnetworkConnection.TPDataList_THolder;
 import com.ciena.oc.terminationPoint.GTPEffort_T;
@@ -642,8 +649,16 @@ public class CorbaCommands {
 		mlsnManager.getAllSubnetworkConnections(nameAndStringValueArray,
 				rateList, HOW_MANY, sncList, sncIterator);
 		sncNames = new ArrayList<String>();
+		
+		if (LOG.isInfoEnabled()) {
+			LOG.info("--------------------getAllSubnetworkConnections() SNC Names List Start--------------------.");
+		}
 
 		for (int i = 0; i < sncList.value.length; i++) {
+			if (LOG.isInfoEnabled()) {
+				LOG.info(handler.getValueByName(sncList.value[i].name,
+						CorbaConstants.SUBNETWORK_CONNECTION_STR));
+			}
 			sncNames.add(handler.getValueByName(sncList.value[i].name,
 					CorbaConstants.SUBNETWORK_CONNECTION_STR));
 			handler.printStructure(helper
@@ -657,6 +672,10 @@ public class CorbaCommands {
 				while (hasMoreData) {
 					hasMoreData = sncIterator.value.next_n(HOW_MANY, sncList);
 					for (int i = 0; i < sncList.value.length; i++) {
+						if (LOG.isInfoEnabled()) {
+							LOG.info(handler.getValueByName(sncList.value[i].name,
+									CorbaConstants.SUBNETWORK_CONNECTION_STR));
+						}
 						sncNames.add(handler.getValueByName(
 								sncList.value[i].name,
 								CorbaConstants.SUBNETWORK_CONNECTION_STR));
@@ -670,6 +689,10 @@ public class CorbaCommands {
 					sncIterator.value.destroy();
 				}
 			}
+		}
+		
+		if (LOG.isInfoEnabled()) {
+			LOG.info("--------------------getAllSubnetworkConnections() SNC Names List End--------------------.");
 		}
 
 		if (LOG.isInfoEnabled()) {
@@ -699,6 +722,29 @@ public class CorbaCommands {
 
 		if (LOG.isInfoEnabled()) {
 			LOG.info("createAndActivateSNC() complete.");
+			if (theSNC != null && theSNC.value != null) {
+				SubnetworkConnection_T createdSNC = theSNC.value;
+				LOG.info("createAndActivateSNC() SNC ID-User Label:"
+						+ createdSNC.userLabel);
+				LOG.info("createAndActivateSNC() SNC ID-Native EMS Name:"
+						+ createdSNC.nativeEMSName);
+
+				if (createdSNC.name != null && createdSNC.name.length > 0) {
+
+					for (int counter = 0; counter < createdSNC.name.length; counter++) {
+						LOG.info("createAndActivateSNC() SNC ID-Name:"
+								+ createdSNC.name[counter].name);
+						LOG.info("createAndActivateSNC() SNC ID-Value:"
+								+ createdSNC.name[counter].value);
+					}
+				}
+			}
+
+			if (errorReason != null && errorReason.value != null
+					&& !"".equals(errorReason.value)) {
+				LOG.info("createAndActivateSNC() Error Reason:"
+						+ errorReason.value);
+			}
 		}
 
 		return errorReason;
@@ -769,6 +815,237 @@ public class CorbaCommands {
 		if (LOG.isInfoEnabled()) {
 			LOG.info("deleteGTP() complete.");
 		}
+	}
+
+	public void getRoute() throws ProcessingFailureException, SAXException,
+			NotFound, InvalidName, CannotProceed,
+			org.omg.CORBA.ORBPackage.InvalidName {
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info(" getRoute() start");
+		}
+
+		if (!setManagerByName(MLS_MANAGER_NAME))
+			return;
+
+		NameAndStringValue_T[] sncNameAndStringValueArray = new NameAndStringValue_T[2];
+
+		sncNameAndStringValueArray[0] = new NameAndStringValue_T(
+				CorbaConstants.EMS_STR, emsName);
+		sncNameAndStringValueArray[1] = new NameAndStringValue_T(
+				CorbaConstants.MULTILAYER_SUBNETWORK_STR, "MLSN_1");
+
+		SubnetworkConnectionList_THolder sncList = new SubnetworkConnectionList_THolder();
+		SNCIterator_IHolder sncIterator = new SNCIterator_IHolder();
+		short[] rateList = new short[0];
+
+		mlsnManager.getAllSubnetworkConnections(sncNameAndStringValueArray,
+				rateList, HOW_MANY, sncList, sncIterator);
+		List<String> sncNames = new ArrayList<String>();
+
+		for (int i = 0; i < sncList.value.length; i++) {
+			sncNames.add(handler.getValueByName(sncList.value[i].name,
+					CorbaConstants.SUBNETWORK_CONNECTION_STR));
+		}
+
+		boolean exitWhile = false;
+		if (sncIterator.value != null) {
+			try {
+				boolean hasMoreData = true;
+				while (hasMoreData) {
+					hasMoreData = sncIterator.value.next_n(HOW_MANY, sncList);
+					for (int i = 0; i < sncList.value.length; i++) {
+						sncNames.add(handler.getValueByName(
+								sncList.value[i].name,
+								CorbaConstants.SUBNETWORK_CONNECTION_STR));
+					}
+				}
+				exitWhile = true;
+			} finally {
+				if (!exitWhile) {
+					sncIterator.value.destroy();
+				}
+			}
+		}
+
+		NameAndStringValue_T[] nameAndStringValueArray = new NameAndStringValue_T[3];
+
+		nameAndStringValueArray[0] = new NameAndStringValue_T();
+		nameAndStringValueArray[0].name = CorbaConstants.EMS_STR;
+		nameAndStringValueArray[0].value = emsName;
+		nameAndStringValueArray[1] = new NameAndStringValue_T();
+		nameAndStringValueArray[1].name = CorbaConstants.MULTILAYER_SUBNETWORK_STR;
+		nameAndStringValueArray[1].value = "MLSN_1";
+		nameAndStringValueArray[2] = new NameAndStringValue_T();
+		nameAndStringValueArray[2].name = CorbaConstants.SUBNETWORK_CONNECTION_STR;
+
+		Route_THolder routeHolder = new Route_THolder();
+		Iterator<String> iter = sncNames.iterator();
+		try {
+			while (iter.hasNext()) {
+				nameAndStringValueArray[2].value = iter.next();
+				try {
+					mlsnManager.getRoute(nameAndStringValueArray, true,
+							routeHolder);
+					for (CrossConnect_T crossConnect : routeHolder.value) {
+						handler.printStructure(getRouteParams(crossConnect,
+								nameAndStringValueArray[2].value));
+					}
+				} catch (ProcessingFailureException ex) {
+					CorbaErrorProcessor err = new CorbaErrorProcessor(ex);
+					if (err.getPriority() == CorbaErrorDescriptions.PRIORITY.MAJOR) {
+						if (LOG.isErrorEnabled()) {
+							LOG.error(
+									"Ciena ON-Center>> getRoute: ME = "
+											+ nameAndStringValueArray[2].value
+											+ ";  "
+											+ err.printError()
+											+ " It is a major error. Stop interaction with server",
+									ex);
+						}
+						throw ex;
+					} else {
+						if (LOG.isWarnEnabled()) {
+							LOG.warn(
+									"Ciena ON-Center>> getRoute: ME = "
+											+ nameAndStringValueArray[2].value
+											+ ";  "
+											+ err.printError()
+											+ " It is a minor error. Continue interaction with server",
+									ex);
+						}
+					}
+				}
+			}
+			if (LOG.isInfoEnabled()) {
+				LOG.info(" getRoute() complete");
+			}
+		} catch (org.omg.CORBA.SystemException se) {
+			if (se instanceof org.omg.CORBA.OBJECT_NOT_EXIST
+					|| se instanceof org.omg.CORBA.TRANSIENT
+					|| se instanceof org.omg.CORBA.COMM_FAILURE) {
+
+				if (LOG.isErrorEnabled()) {
+					LOG.error("Ciena ON-Center>> getRoute: CORBA Error >> "
+							+ se.getMessage());
+				}
+			}
+		} catch (ProcessingFailureException prf) {
+			if (LOG.isErrorEnabled()) {
+				LOG.error("Ciena ON-Center>> getRoute:"
+						+ CorbaErrorProcessor.printError(prf));
+			}
+			throw prf;
+		} catch (Exception e1) {
+			if (LOG.isErrorEnabled()) {
+				LOG.error("Ciena ON-Center>> getRoute: System Error >> "
+						+ e1.getMessage());
+			}
+		}
+	}
+
+	private Corba2XMLContainer getRouteParams(CrossConnect_T crossConnect,
+			String sncId) throws ProcessingFailureException {
+
+		Corba2XMLContainer container = new Corba2XMLContainer(
+				Corba2XMLStructure.ROUTES);
+		container.setFieldValue(CorbaConstants.SNS_ID_STR, sncId);
+		container.setFieldValue(CorbaConstants.ACTIVE_STR,
+				String.valueOf(crossConnect.active));
+		container.setFieldValue(CorbaConstants.DIRECTION_STR,
+				String.valueOf(crossConnect.direction.value()));
+		container.setFieldValue(CorbaConstants.CCTYPE_STR,
+				String.valueOf(crossConnect.ccType.value()));
+		container.setFieldValue(CorbaConstants.AI_DIRECTION_STR, handler
+				.getValueByName(crossConnect.additionalInfo, "Direction"));
+		container.setFieldValue(CorbaConstants.PRT_ROLE_STR, handler
+				.getValueByName(crossConnect.additionalInfo, "ProtectionRole"));
+		container.setFieldValue(CorbaConstants.A1_NE_STR, handler
+				.getValueByName(crossConnect.aEndNameList[0],
+						CorbaConstants.MANAGED_ELEMENT_STR));
+		container.setFieldValue(CorbaConstants.A1_PTP_STR, handler
+				.getValueByName(crossConnect.aEndNameList[0],
+						CorbaConstants.PTP_STR));
+		container.setFieldValue(CorbaConstants.A1_CTP_STR, handler
+				.getValueByName(crossConnect.aEndNameList[0],
+						CorbaConstants.CTP_STR));
+		container.setFieldValue(CorbaConstants.Z1_NE_STR, handler
+				.getValueByName(crossConnect.zEndNameList[0],
+						CorbaConstants.MANAGED_ELEMENT_STR));
+		container.setFieldValue(CorbaConstants.Z1_PTP_STR, handler
+				.getValueByName(crossConnect.zEndNameList[0],
+						CorbaConstants.PTP_STR));
+		container.setFieldValue(CorbaConstants.Z1_CTP_STR, handler
+				.getValueByName(crossConnect.zEndNameList[0],
+						CorbaConstants.CTP_STR));
+		if (crossConnect.aEndNameList.length > 1) {
+			container.setFieldValue(CorbaConstants.A2_NE_STR, handler
+					.getValueByName(crossConnect.aEndNameList[1],
+							CorbaConstants.MANAGED_ELEMENT_STR));
+			container.setFieldValue(CorbaConstants.A2_PTP_STR, handler
+					.getValueByName(crossConnect.aEndNameList[1],
+							CorbaConstants.PTP_STR));
+			container.setFieldValue(CorbaConstants.A2_CTP_STR, handler
+					.getValueByName(crossConnect.aEndNameList[1],
+							CorbaConstants.CTP_STR));
+		}
+
+		if (crossConnect.zEndNameList.length > 1) {
+			container.setFieldValue(CorbaConstants.Z2_NE_STR, handler
+					.getValueByName(crossConnect.zEndNameList[1],
+							CorbaConstants.MANAGED_ELEMENT_STR));
+			container.setFieldValue(CorbaConstants.Z2_PTP_STR, handler
+					.getValueByName(crossConnect.zEndNameList[1],
+							CorbaConstants.PTP_STR));
+			container.setFieldValue(CorbaConstants.Z2_CTP_STR, handler
+					.getValueByName(crossConnect.zEndNameList[1],
+							CorbaConstants.CTP_STR));
+		}
+		container.setFieldValue(CorbaConstants.SOURCE_TIME_STAMP_STR,
+				handler.convertSystemTimeToString());
+
+		return container;
+	}
+
+	public void getSNC(String sncName) throws ProcessingFailureException,
+			SAXException {
+		if (LOG.isInfoEnabled()) {
+			LOG.info("getSNC() start.");
+		}
+
+		if (!setManagerByName(MLS_MANAGER_NAME))
+			return;
+
+		NameAndStringValue_T[] nameAndStringValueArray = new NameAndStringValue_T[3];
+
+		nameAndStringValueArray[0] = new NameAndStringValue_T(
+				CorbaConstants.EMS_STR, emsName);
+		nameAndStringValueArray[1] = new NameAndStringValue_T(
+				CorbaConstants.MULTILAYER_SUBNETWORK_STR, "MLSN_1");
+		nameAndStringValueArray[2] = new NameAndStringValue_T(
+				CorbaConstants.SUBNETWORK_CONNECTION_STR, sncName);
+
+		SubnetworkConnection_THolder sncHolder = new SubnetworkConnection_THolder();
+
+		mlsnManager.getSNC(nameAndStringValueArray, sncHolder);
+
+		if (sncHolder != null && sncHolder.value != null) {
+			if (LOG.isInfoEnabled()) {
+				LOG.info("SNC Name:" + sncHolder.value.userLabel);
+				LOG.info("SNC State:" + sncHolder.value.sncState);
+			}
+			handler.printStructure(helper
+					.getSubnetworkConnectionParams(sncHolder.value));
+		} else {
+			if (LOG.isInfoEnabled()) {
+				LOG.info("No SNC Found for SNC Name:" + sncName);
+			}
+		}
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info("getSNC() complete.");
+		}
+
 	}
 
 	public void handleProcessingFailureException(

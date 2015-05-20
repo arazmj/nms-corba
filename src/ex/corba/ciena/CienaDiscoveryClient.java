@@ -89,6 +89,11 @@ public class CienaDiscoveryClient extends CienaConnection {
 				&& props.getProperty("getAllGTPs").equalsIgnoreCase("yes")) {
 			cmd.getAllGTPs();
 		}
+		
+		if (props.getProperty("getRoute") != null
+				&& props.getProperty("getRoute").equalsIgnoreCase("yes")) {
+			cmd.getRoute();
+		}
 
 		handler.handlerBuilderEnd();
 	}

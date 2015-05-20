@@ -153,4 +153,8 @@ public class CorbaConstants {
 	public static final String FDFR_STATE_STR = "FDFR_STATE";
 	public static final String A_END_STR = "A_END";
 	public static final String Z_END_STR = "Z_END";
+	
+	//Routes
+	public static final String SNS_ID_STR = "SNS_ID";
+	public static final String CCTYPE_STR = "CCTYPE"; 
 }
