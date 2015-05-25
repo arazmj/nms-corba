@@ -94,6 +94,11 @@ public class CienaDiscoveryClient extends CienaConnection {
 				&& props.getProperty("getRoute").equalsIgnoreCase("yes")) {
 			cmd.getRoute();
 		}
+		
+		if (props.getProperty("getAllFDFrs") != null
+				&& props.getProperty("getAllFDFrs").equalsIgnoreCase("yes")) {
+			cmd.getAllFDFrs();
+		}
 
 		handler.handlerBuilderEnd();
 	}

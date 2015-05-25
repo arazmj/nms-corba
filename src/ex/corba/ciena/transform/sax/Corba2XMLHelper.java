@@ -6,6 +6,7 @@ import com.ciena.oc.equipment.EquipmentHolder_T;
 import com.ciena.oc.equipment.EquipmentOrHolder_T;
 import com.ciena.oc.equipment.Equipment_T;
 import com.ciena.oc.equipment.HolderState_T;
+import com.ciena.oc.flowDomainFragment.FlowDomainFragment_T;
 import com.ciena.oc.globaldefs.NameAndStringValue_T;
 import com.ciena.oc.globaldefs.ProcessingFailureException;
 import com.ciena.oc.managedElement.ManagedElement_T;
@@ -369,7 +370,8 @@ public class Corba2XMLHelper {
 				handler.getValueByName(tp.name, "ManagedElement"));
 		container.setFieldValue("NATIVE_EMS_NAME", tp.nativeEMSName);
 
-		container.setFieldValue("GTP", handler.getValueByName(tp.name, "GTP"));
+		container.setFieldValue(CorbaConstants.GTP_STR,
+				handler.getValueByName(tp.name, CorbaConstants.GTP_STR));
 		container.setFieldValue("TP", handler
 				.convertNameAndStringValuesToStringExcludingEMS(tp.listOfTPs));
 
@@ -411,6 +413,26 @@ public class Corba2XMLHelper {
 					.setFieldValue(CorbaConstants.A1_TPNAME_PTP_STR, handler
 							.getValueByName(snc.aEnd[0].tpName,
 									CorbaConstants.PTP_STR));
+
+			if (handler.getValueByName(snc.aEnd[0].tpName,
+					CorbaConstants.FTP_STR) != null
+					&& !"".equals(handler.getValueByName(snc.aEnd[0].tpName,
+							CorbaConstants.FTP_STR).trim())) {
+
+				container.setFieldValue(CorbaConstants.A1_TPNAME_PTP_STR,
+						handler.getValueByName(snc.aEnd[0].tpName,
+								CorbaConstants.FTP_STR));
+
+			} else if (handler.getValueByName(snc.aEnd[0].tpName,
+					CorbaConstants.GTP_STR) != null
+					&& !"".equals(handler.getValueByName(snc.aEnd[0].tpName,
+							CorbaConstants.GTP_STR).trim())) {
+
+				container.setFieldValue(CorbaConstants.A1_TPNAME_PTP_STR,
+						handler.getValueByName(snc.aEnd[0].tpName,
+								CorbaConstants.GTP_STR));
+			}
+
 			container
 					.setFieldValue(CorbaConstants.A1_TPNAME_CTP_STR, handler
 							.getValueByName(snc.aEnd[0].tpName,
@@ -425,6 +447,28 @@ public class Corba2XMLHelper {
 				container.setFieldValue(CorbaConstants.A2_TPNAME_PTP_STR,
 						handler.getValueByName(snc.aEnd[1].tpName,
 								CorbaConstants.PTP_STR));
+
+				if (handler.getValueByName(snc.aEnd[1].tpName,
+						CorbaConstants.FTP_STR) != null
+						&& !"".equals(handler.getValueByName(
+								snc.aEnd[1].tpName, CorbaConstants.FTP_STR)
+								.trim())) {
+
+					container.setFieldValue(CorbaConstants.A2_TPNAME_PTP_STR,
+							handler.getValueByName(snc.aEnd[1].tpName,
+									CorbaConstants.FTP_STR));
+
+				} else if (handler.getValueByName(snc.aEnd[1].tpName,
+						CorbaConstants.GTP_STR) != null
+						&& !"".equals(handler.getValueByName(
+								snc.aEnd[1].tpName, CorbaConstants.GTP_STR)
+								.trim())) {
+
+					container.setFieldValue(CorbaConstants.A2_TPNAME_PTP_STR,
+							handler.getValueByName(snc.aEnd[1].tpName,
+									CorbaConstants.GTP_STR));
+				}
+
 				container.setFieldValue(CorbaConstants.A2_TPNAME_CTP_STR,
 						handler.getValueByName(snc.aEnd[1].tpName,
 								CorbaConstants.CTP_STR));
@@ -441,6 +485,26 @@ public class Corba2XMLHelper {
 					.setFieldValue(CorbaConstants.Z1_TPNAME_PTP_STR, handler
 							.getValueByName(snc.zEnd[0].tpName,
 									CorbaConstants.PTP_STR));
+
+			if (handler.getValueByName(snc.zEnd[0].tpName,
+					CorbaConstants.FTP_STR) != null
+					&& !"".equals(handler.getValueByName(snc.zEnd[0].tpName,
+							CorbaConstants.FTP_STR).trim())) {
+
+				container.setFieldValue(CorbaConstants.Z1_TPNAME_PTP_STR,
+						handler.getValueByName(snc.zEnd[0].tpName,
+								CorbaConstants.FTP_STR));
+
+			} else if (handler.getValueByName(snc.zEnd[0].tpName,
+					CorbaConstants.GTP_STR) != null
+					&& !"".equals(handler.getValueByName(snc.zEnd[0].tpName,
+							CorbaConstants.GTP_STR).trim())) {
+
+				container.setFieldValue(CorbaConstants.Z1_TPNAME_PTP_STR,
+						handler.getValueByName(snc.zEnd[0].tpName,
+								CorbaConstants.GTP_STR));
+			}
+
 			container
 					.setFieldValue(CorbaConstants.Z1_TPNAME_CTP_STR, handler
 							.getValueByName(snc.zEnd[0].tpName,
@@ -455,6 +519,28 @@ public class Corba2XMLHelper {
 				container.setFieldValue(CorbaConstants.Z2_TPNAME_PTP_STR,
 						handler.getValueByName(snc.zEnd[1].tpName,
 								CorbaConstants.PTP_STR));
+
+				if (handler.getValueByName(snc.zEnd[1].tpName,
+						CorbaConstants.FTP_STR) != null
+						&& !"".equals(handler.getValueByName(
+								snc.zEnd[1].tpName, CorbaConstants.FTP_STR)
+								.trim())) {
+
+					container.setFieldValue(CorbaConstants.Z2_TPNAME_PTP_STR,
+							handler.getValueByName(snc.zEnd[1].tpName,
+									CorbaConstants.FTP_STR));
+
+				} else if (handler.getValueByName(snc.zEnd[1].tpName,
+						CorbaConstants.GTP_STR) != null
+						&& !"".equals(handler.getValueByName(
+								snc.zEnd[1].tpName, CorbaConstants.GTP_STR)
+								.trim())) {
+
+					container.setFieldValue(CorbaConstants.Z2_TPNAME_PTP_STR,
+							handler.getValueByName(snc.zEnd[1].tpName,
+									CorbaConstants.GTP_STR));
+				}
+
 				container.setFieldValue(CorbaConstants.Z2_TPNAME_CTP_STR,
 						handler.getValueByName(snc.zEnd[1].tpName,
 								CorbaConstants.CTP_STR));
@@ -469,6 +555,59 @@ public class Corba2XMLHelper {
 				String.valueOf(snc.networkRouted.value()));
 		container.setFieldValue(CorbaConstants.ADDITIONAL_INFO_STR,
 				handler.convertNameAndStringValueToString(snc.additionalInfo));
+
+		return container;
+	}
+
+	public void printFDFrs(FlowDomainFragment_T[] fdfrList)
+			throws SAXException, ProcessingFailureException {
+		if (fdfrList == null) {
+			return;
+		}
+
+		for (FlowDomainFragment_T value : fdfrList) {
+			handler.printStructure(getFDFrsParams(value));
+		}
+	}
+
+	public Corba2XMLContainer getFDFrsParams(FlowDomainFragment_T value)
+			throws ProcessingFailureException {
+		Corba2XMLContainer container = new Corba2XMLContainer(
+				Corba2XMLStructure.FLOWDOMAIN_FRAGMENTS);
+
+		container.setFieldValue(CorbaConstants.USER_LABEL_STR, value.userLabel);
+		container.setFieldValue(CorbaConstants.NATIVE_EMS_NAME_STR,
+				value.nativeEMSName);
+		container.setFieldValue(CorbaConstants.OWNER_STR, value.owner);
+		container.setFieldValue(CorbaConstants.NAME_STR,
+				handler.convertNameAndStringValueToString(value.name));
+
+		container.setFieldValue(CorbaConstants.NETWORK_ACCESS_DOMAIN_STR,
+				String.valueOf(value.networkAccessDomain));
+		container.setFieldValue(CorbaConstants.ADMINISTRATIVE_STATE_STR,
+				String.valueOf(value.administrativeState.value()));
+		container.setFieldValue(CorbaConstants.DIRECTION_STR,
+				String.valueOf(value.direction.value()));
+		container.setFieldValue(CorbaConstants.FLEXIBLE_STR,
+				String.valueOf(value.flexible));
+		container.setFieldValue(CorbaConstants.FDFR_TYPE_STR,
+				String.valueOf(value.fdfrType.value()));
+		container.setFieldValue(CorbaConstants.FDFR_STATE_STR,
+				String.valueOf(value.fdfrState.value()));
+
+		container.setFieldValue(CorbaConstants.A_END_STR,
+				String.valueOf(handler
+						.convertNameAndStringValuesToString(value.aEnd)));
+		container.setFieldValue(CorbaConstants.Z_END_STR,
+				String.valueOf(handler
+						.convertNameAndStringValuesToString(value.zEnd)));
+
+		container.setFieldValue(CorbaConstants.TRANSMISSION_PARAMS_STR, handler
+				.convertLayeredParameterToString(value.transmissionParams));
+		container
+				.setFieldValue(
+						CorbaConstants.ADDITIONAL_INFO_STR,
+						handler.convertNameAndStringValueToString(value.additionalInfo));
 
 		return container;
 	}

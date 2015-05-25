@@ -14,6 +14,8 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
+import com.ciena.oc.callSNC.CallAndTopLevelConnections_THolder;
+import com.ciena.oc.callSNC.CallCreateData_T;
 import com.ciena.oc.common.Common_IHolder;
 import com.ciena.oc.emsMgr.EMSMgr_I;
 import com.ciena.oc.emsMgr.EMSMgr_IHelper;
@@ -22,6 +24,15 @@ import com.ciena.oc.equipment.EquipmentInventoryMgr_I;
 import com.ciena.oc.equipment.EquipmentInventoryMgr_IHelper;
 import com.ciena.oc.equipment.EquipmentOrHolderIterator_IHolder;
 import com.ciena.oc.equipment.EquipmentOrHolderList_THolder;
+import com.ciena.oc.flowDomain.ConnectivityRequirement_T;
+import com.ciena.oc.flowDomain.FlowDomainMgr_I;
+import com.ciena.oc.flowDomain.FlowDomainMgr_IHelper;
+import com.ciena.oc.flowDomainFragment.FDFrCreateData_T;
+import com.ciena.oc.flowDomainFragment.FDFrIterator_I;
+import com.ciena.oc.flowDomainFragment.FDFrIterator_IHolder;
+import com.ciena.oc.flowDomainFragment.FDFrList_THolder;
+import com.ciena.oc.flowDomainFragment.FlowDomainFragment_THolder;
+import com.ciena.oc.flowDomainFragment.MatrixFlowDomainFragmentList_THolder;
 import com.ciena.oc.globaldefs.NameAndStringValue_T;
 import com.ciena.oc.globaldefs.NamingAttributesIterator_IHolder;
 import com.ciena.oc.globaldefs.NamingAttributesList_THolder;
@@ -68,6 +79,7 @@ public class CorbaCommands {
 	public static final String EI_MANAGER_NAME = "EquipmentInventory";
 	public static final String MLS_MANAGER_NAME = "MultiLayerSubnetwork";
 	public static final String EMS_MANAGER_NAME = "EMS";
+	public static final String FD_MANAGER_NAME = "FlowDomain";
 
 	public static final int HOW_MANY = 100;
 
@@ -84,6 +96,7 @@ public class CorbaCommands {
 	private EquipmentInventoryMgr_I eiManager;
 	private MultiLayerSubnetworkMgr_I mlsnManager;
 	private EMSMgr_I emsManager;
+	private FlowDomainMgr_I flowDomainManager;
 
 	// Cache list
 	private List<String> neNames;
@@ -128,6 +141,11 @@ public class CorbaCommands {
 		} else if (managerName.equals(EMS_MANAGER_NAME)) {
 			if (this.emsManager == null) {
 				this.emsManager = EMSMgr_IHelper.narrow(managerInterface.value);
+			}
+		} else if (managerName.equals(FD_MANAGER_NAME)) {
+			if (this.flowDomainManager == null) {
+				this.flowDomainManager = FlowDomainMgr_IHelper
+						.narrow(managerInterface.value);
 			}
 		} else
 			return false;
@@ -625,6 +643,69 @@ public class CorbaCommands {
 
 		return tpHolder.value;
 	}
+	
+	public void getAllFDFrs() throws ProcessingFailureException, SAXException {
+		if (LOG.isInfoEnabled()) {
+			LOG.info("getAllFDFrs() start.");
+		}
+
+		if (!setManagerByName(FD_MANAGER_NAME))
+			return;
+
+		NameAndStringValue_T[] fdname = new NameAndStringValue_T[2];
+		fdname[0] = new NameAndStringValue_T(CorbaConstants.EMS_STR, emsName);
+		fdname[1] = new NameAndStringValue_T("FlowDomain", "ETS_0");
+
+		FDFrList_THolder listHolder = new FDFrList_THolder();
+		FDFrIterator_IHolder iteratorHolder = new FDFrIterator_IHolder();
+
+		FDFrIterator_I iterator = null;
+		short[] rateList = new short[0];
+
+		this.flowDomainManager.getAllFDFrs(fdname, HOW_MANY, rateList, listHolder,
+				iteratorHolder);
+
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Got "
+					+ (listHolder.value != null ? listHolder.value.length : "0")
+					+ " FDFrs");
+		}
+
+		helper.printFDFrs(listHolder.value);
+
+		iterator = iteratorHolder.value;
+		if (iterator != null) {
+			if (LOG.isDebugEnabled()) {
+				LOG.debug("Getting more data...");
+			}
+
+			boolean hasMoreData = true;
+			boolean exitedWhile = false;
+
+			try {
+				while (hasMoreData) {
+					hasMoreData = iterator.next_n(HOW_MANY, listHolder);
+					if (LOG.isDebugEnabled()) {
+						LOG.debug("Got "
+								+ (listHolder.value != null ? listHolder.value.length
+										: "0") + " FDFrs");
+					}
+
+					helper.printFDFrs(listHolder.value);
+				}
+
+				exitedWhile = true;
+			} finally {
+				if (!exitedWhile) {
+					iterator.destroy();
+				}
+			}
+		}
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info("getAllFDFrs() end.");
+		}
+	}
 
 	public List<String> getAllSubnetworkConnections()
 			throws ProcessingFailureException, SAXException {
@@ -649,7 +730,7 @@ public class CorbaCommands {
 		mlsnManager.getAllSubnetworkConnections(nameAndStringValueArray,
 				rateList, HOW_MANY, sncList, sncIterator);
 		sncNames = new ArrayList<String>();
-		
+
 		if (LOG.isInfoEnabled()) {
 			LOG.info("--------------------getAllSubnetworkConnections() SNC Names List Start--------------------.");
 		}
@@ -673,7 +754,8 @@ public class CorbaCommands {
 					hasMoreData = sncIterator.value.next_n(HOW_MANY, sncList);
 					for (int i = 0; i < sncList.value.length; i++) {
 						if (LOG.isInfoEnabled()) {
-							LOG.info(handler.getValueByName(sncList.value[i].name,
+							LOG.info(handler.getValueByName(
+									sncList.value[i].name,
 									CorbaConstants.SUBNETWORK_CONNECTION_STR));
 						}
 						sncNames.add(handler.getValueByName(
@@ -690,7 +772,7 @@ public class CorbaCommands {
 				}
 			}
 		}
-		
+
 		if (LOG.isInfoEnabled()) {
 			LOG.info("--------------------getAllSubnetworkConnections() SNC Names List End--------------------.");
 		}
@@ -770,6 +852,27 @@ public class CorbaCommands {
 
 		if (LOG.isInfoEnabled()) {
 			LOG.info("deactivateAndDeleteSNC() complete.");
+		}
+
+		return errorReason;
+	}
+
+	public StringHolder releaseCall(NameAndStringValue_T[] sncName,
+			TPDataList_THolder tpsToModify) throws ProcessingFailureException {
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info("releaseCall() start.");
+		}
+
+		if (!setManagerByName(MLS_MANAGER_NAME))
+			return null;
+
+		StringHolder errorReason = new StringHolder();
+
+		this.mlsnManager.releaseCall(sncName, tpsToModify, errorReason);
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info("releaseCall() complete.");
 		}
 
 		return errorReason;
@@ -949,12 +1052,12 @@ public class CorbaCommands {
 
 		Corba2XMLContainer container = new Corba2XMLContainer(
 				Corba2XMLStructure.ROUTES);
-		container.setFieldValue(CorbaConstants.SNS_ID_STR, sncId);
+		container.setFieldValue(CorbaConstants.SNC_ID_STR, sncId);
 		container.setFieldValue(CorbaConstants.ACTIVE_STR,
 				String.valueOf(crossConnect.active));
 		container.setFieldValue(CorbaConstants.DIRECTION_STR,
 				String.valueOf(crossConnect.direction.value()));
-		container.setFieldValue(CorbaConstants.CCTYPE_STR,
+		container.setFieldValue(CorbaConstants.CC_TYPE_STR,
 				String.valueOf(crossConnect.ccType.value()));
 		container.setFieldValue(CorbaConstants.AI_DIRECTION_STR, handler
 				.getValueByName(crossConnect.additionalInfo, "Direction"));
@@ -1045,6 +1148,72 @@ public class CorbaCommands {
 		if (LOG.isInfoEnabled()) {
 			LOG.info("getSNC() complete.");
 		}
+
+	}
+
+	public StringHolder establishCall(CallCreateData_T callCreateData,
+			SNCCreateData_T[] connectionCreateDataList,
+			TPDataList_THolder tpsToModify) throws ProcessingFailureException {
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info("establishCall() start.");
+		}
+
+		if (!setManagerByName(MLS_MANAGER_NAME))
+			return null;
+
+		CallAndTopLevelConnections_THolder callAndTopLevelConnections = new CallAndTopLevelConnections_THolder();
+		StringHolder errorReason = new StringHolder();
+
+		this.mlsnManager.establishCall(callCreateData,
+				connectionCreateDataList, callAndTopLevelConnections,
+				tpsToModify, errorReason);
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info("establishCall() complete.");
+
+			if (errorReason != null && errorReason.value != null
+					&& !"".equals(errorReason.value)) {
+				LOG.info("establishCall() Error Reason:" + errorReason.value);
+			}
+		}
+
+		return errorReason;
+	}
+
+	public StringHolder createAndActivateFDFr(FDFrCreateData_T createData,
+			ConnectivityRequirement_T connectivityRequirement,
+			NamingAttributesList_THolder aEnd,
+			NamingAttributesList_THolder zEnd,
+			NamingAttributesList_THolder internalTPs,
+			MatrixFlowDomainFragmentList_THolder mfdfrs,
+			TPDataList_THolder tpsToModify) throws ProcessingFailureException {
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info("createAndActivateFDFr() start.");
+		}
+
+		if (!setManagerByName(MLS_MANAGER_NAME))
+			return null;
+
+		FlowDomainFragment_THolder theFDFr = new FlowDomainFragment_THolder();
+		StringHolder errorReason = new StringHolder();
+
+		this.flowDomainManager.createAndActivateFDFr(createData,
+				connectivityRequirement, aEnd, zEnd, internalTPs, mfdfrs,
+				tpsToModify, theFDFr, errorReason);
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info("createAndActivateFDFr() complete.");
+
+			if (errorReason != null && errorReason.value != null
+					&& !"".equals(errorReason.value)) {
+				LOG.info("createAndActivateFDFr() Error Reason:"
+						+ errorReason.value);
+			}
+		}
+
+		return errorReason;
 
 	}
 

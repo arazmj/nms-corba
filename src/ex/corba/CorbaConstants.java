@@ -99,7 +99,7 @@ public class CorbaConstants {
 
 	// CrossConnect_T
 	public static final String ACTIVE_STR = "ACTIVE";
-	public static final String CC_TYPE_STR = "CCTYPE";
+	public static final String CC_TYPE_STR = "CC_TYPE";
 	public static final String AI_DIRECTION_STR = "AI_DIRECTION";
 	public static final String PRT_ROLE_STR = "PRT_ROLE";
 	public static final String A1_NE_STR = "A1_NE";
@@ -152,9 +152,5 @@ public class CorbaConstants {
 	public static final String FDFR_TYPE_STR = "FDFR_TYPE";
 	public static final String FDFR_STATE_STR = "FDFR_STATE";
 	public static final String A_END_STR = "A_END";
-	public static final String Z_END_STR = "Z_END";
-	
-	//Routes
-	public static final String SNS_ID_STR = "SNS_ID";
-	public static final String CCTYPE_STR = "CCTYPE"; 
+	public static final String Z_END_STR = "Z_END";	
 }
