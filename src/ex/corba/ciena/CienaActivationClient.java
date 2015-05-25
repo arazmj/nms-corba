@@ -52,18 +52,22 @@ public class CienaActivationClient extends CienaConnection {
 			emsSession = main.openEmsSession(args);
 			// main.createMultiNodeSDHService();
 			// main.createMultiNodeEthernetServiceWithVCG();
-			main.releaseCall();
+			// main.releaseCall();
 			// main.createMultiNode1GbpsService();
 			// main.createMultiNode2GpsServiceWithVCG();
-			main.createMultiNode2GpsServiceWithVCG2();
+			// main.createMultiNode2GpsServiceWithVCG2();
 			// main.createMultiNodeSDHWithNEtpInc();
 			// main.createMultiNodeEthernetOverOTNWithNEtpInc();
 			// main.createMultiNodeSDHOverOTNWithNEtpInc();
 			// main.createMultiNodeEthernetServiceWithVCG();
-			// main.createMultiNodeOTN();
+			// main.getSNC();
+			// main.deactivateAndDeleteSNC();
+			// main.createMultiNodeODU1onOTU1();
+			// main.createMultiNodeODU1onOTU2();
+			main.createMultiNodeODU2onOTU2();
+			main.getSNC();
 			// main.createGTP();
 			// main.createMultiNodeSDHServiceWithGTP();
-
 			// main.deactivateAndDeleteSNC();
 			// main.releaseCall();
 			// main.deleteGTP();
@@ -1366,19 +1370,21 @@ public class CienaActivationClient extends CienaConnection {
 		additionalInfo.put("SNC_REGROOM_ALLOWED", "No");
 		additionalInfo.put("SNC_PRIORITY", "0");
 		additionalInfo.put("SNC_SNIC_ENABLED", "No");
-
-		additionalInfo.put("SNC_PREEMPTING", "No");
-		additionalInfo.put("SNC_PREEMPTABILITY", "No");
-		additionalInfo.put("SNC_UNPROTECTED_LINES", "Yes");
-		additionalInfo.put("SNC_PROTECTED_LINES", "No");
-		additionalInfo.put("SNC_LINEAR_APS_PROTECTED_LINES", "No");
-		additionalInfo.put("SNC_LINEAR_VLSR_PROTECTED_LINES", "No");
-		additionalInfo.put("SNC_MATCH_TIME_SLOTS", "Yes");
+		// Required for OTN services
 		additionalInfo.put("SNC_COST_CRITERIA", "Admin Weight");
-		additionalInfo.put("SNC_MAX_ADMIN_WEIGHT", "11300");
-		additionalInfo.put("SNC_PERMANENT", "No");
-		additionalInfo.put("SNC_RETAIN_HOME_PATH", "Disabled");
-		additionalInfo.put("SNC_HOME_PATH_PREEMPTABILITY", "Disabled");
+
+		// additionalInfo.put("SNC_PREEMPTING", "No");
+		// additionalInfo.put("SNC_PREEMPTABILITY", "No");
+		// additionalInfo.put("SNC_UNPROTECTED_LINES", "Yes");
+		// additionalInfo.put("SNC_PROTECTED_LINES", "No");
+		// additionalInfo.put("SNC_LINEAR_APS_PROTECTED_LINES", "No");
+		// additionalInfo.put("SNC_LINEAR_VLSR_PROTECTED_LINES", "No");
+		// additionalInfo.put("SNC_MATCH_TIME_SLOTS", "Yes");
+		// additionalInfo.put("SNC_COST_CRITERIA", "Admin Weight");
+		// additionalInfo.put("SNC_MAX_ADMIN_WEIGHT", "11300");
+		// additionalInfo.put("SNC_PERMANENT", "No");
+		// additionalInfo.put("SNC_RETAIN_HOME_PATH", "Disabled");
+		// additionalInfo.put("SNC_HOME_PATH_PREEMPTABILITY", "Disabled");
 
 		SNCCreateData_T createData = new SNCCreateData_T();
 
@@ -1512,19 +1518,21 @@ public class CienaActivationClient extends CienaConnection {
 		additionalInfo.put("SNC_REGROOM_ALLOWED", "No");
 		additionalInfo.put("SNC_PRIORITY", "0");
 		additionalInfo.put("SNC_SNIC_ENABLED", "No");
-
-		additionalInfo.put("SNC_PREEMPTING", "No");
-		additionalInfo.put("SNC_PREEMPTABILITY", "No");
-		additionalInfo.put("SNC_UNPROTECTED_LINES", "Yes");
-		additionalInfo.put("SNC_PROTECTED_LINES", "No");
-		additionalInfo.put("SNC_LINEAR_APS_PROTECTED_LINES", "No");
-		additionalInfo.put("SNC_LINEAR_VLSR_PROTECTED_LINES", "No");
-		additionalInfo.put("SNC_MATCH_TIME_SLOTS", "Yes");
+		// Required for OTN services
 		additionalInfo.put("SNC_COST_CRITERIA", "Admin Weight");
-		additionalInfo.put("SNC_MAX_ADMIN_WEIGHT", "11300");
-		additionalInfo.put("SNC_PERMANENT", "No");
-		additionalInfo.put("SNC_RETAIN_HOME_PATH", "Disabled");
-		additionalInfo.put("SNC_HOME_PATH_PREEMPTABILITY", "Disabled");
+
+		// additionalInfo.put("SNC_PREEMPTING", "No");
+		// additionalInfo.put("SNC_PREEMPTABILITY", "No");
+		// additionalInfo.put("SNC_UNPROTECTED_LINES", "Yes");
+		// additionalInfo.put("SNC_PROTECTED_LINES", "No");
+		// additionalInfo.put("SNC_LINEAR_APS_PROTECTED_LINES", "No");
+		// additionalInfo.put("SNC_LINEAR_VLSR_PROTECTED_LINES", "No");
+		// additionalInfo.put("SNC_MATCH_TIME_SLOTS", "Yes");
+		// additionalInfo.put("SNC_COST_CRITERIA", "Admin Weight");
+		// additionalInfo.put("SNC_MAX_ADMIN_WEIGHT", "11300");
+		// additionalInfo.put("SNC_PERMANENT", "No");
+		// additionalInfo.put("SNC_RETAIN_HOME_PATH", "Disabled");
+		// additionalInfo.put("SNC_HOME_PATH_PREEMPTABILITY", "Disabled");
 
 		SNCCreateData_T createData = new SNCCreateData_T();
 
@@ -2007,19 +2015,21 @@ public class CienaActivationClient extends CienaConnection {
 		additionalInfo.put("SNC_REGROOM_ALLOWED", "No");
 		additionalInfo.put("SNC_PRIORITY", "0");
 		additionalInfo.put("SNC_SNIC_ENABLED", "No");
-
-		additionalInfo.put("SNC_PREEMPTING", "No");
-		additionalInfo.put("SNC_PREEMPTABILITY", "No");
-		additionalInfo.put("SNC_UNPROTECTED_LINES", "Yes");
-		additionalInfo.put("SNC_PROTECTED_LINES", "No");
-		additionalInfo.put("SNC_LINEAR_APS_PROTECTED_LINES", "No");
-		additionalInfo.put("SNC_LINEAR_VLSR_PROTECTED_LINES", "No");
-		additionalInfo.put("SNC_MATCH_TIME_SLOTS", "Yes");
+		// Required for OTN services
 		additionalInfo.put("SNC_COST_CRITERIA", "Admin Weight");
-		additionalInfo.put("SNC_MAX_ADMIN_WEIGHT", "11300");
-		additionalInfo.put("SNC_PERMANENT", "No");
-		additionalInfo.put("SNC_RETAIN_HOME_PATH", "Disabled");
-		additionalInfo.put("SNC_HOME_PATH_PREEMPTABILITY", "Disabled");
+
+		// additionalInfo.put("SNC_PREEMPTING", "No");
+		// additionalInfo.put("SNC_PREEMPTABILITY", "No");
+		// additionalInfo.put("SNC_UNPROTECTED_LINES", "Yes");
+		// additionalInfo.put("SNC_PROTECTED_LINES", "No");
+		// additionalInfo.put("SNC_LINEAR_APS_PROTECTED_LINES", "No");
+		// additionalInfo.put("SNC_LINEAR_VLSR_PROTECTED_LINES", "No");
+		// additionalInfo.put("SNC_MATCH_TIME_SLOTS", "Yes");
+		// additionalInfo.put("SNC_COST_CRITERIA", "Admin Weight");
+		// additionalInfo.put("SNC_MAX_ADMIN_WEIGHT", "11300");
+		// additionalInfo.put("SNC_PERMANENT", "No");
+		// additionalInfo.put("SNC_RETAIN_HOME_PATH", "Disabled");
+		// additionalInfo.put("SNC_HOME_PATH_PREEMPTABILITY", "Disabled");
 
 		// NE TP Inclusions
 		NameAndStringValue_T[][] neTpInclusions = new NameAndStringValue_T[4][3];
@@ -2309,19 +2319,6 @@ public class CienaActivationClient extends CienaConnection {
 		additionalInfo.put("SNC_PRIORITY", "0");
 		additionalInfo.put("SNC_SNIC_ENABLED", "No");
 
-		// additionalInfo.put("SNC_PREEMPTING", "No");
-		// additionalInfo.put("SNC_PREEMPTABILITY", "No");
-		// additionalInfo.put("SNC_UNPROTECTED_LINES", "Yes");
-		// additionalInfo.put("SNC_PROTECTED_LINES", "No");
-		// additionalInfo.put("SNC_LINEAR_APS_PROTECTED_LINES", "No");
-		// additionalInfo.put("SNC_LINEAR_VLSR_PROTECTED_LINES", "No");
-		// additionalInfo.put("SNC_MATCH_TIME_SLOTS", "Yes");
-		// additionalInfo.put("SNC_COST_CRITERIA", "Admin Weight");
-		// additionalInfo.put("SNC_MAX_ADMIN_WEIGHT", "11300");
-		// additionalInfo.put("SNC_PERMANENT", "No");
-		// additionalInfo.put("SNC_RETAIN_HOME_PATH", "Disabled");
-		// additionalInfo.put("SNC_HOME_PATH_PREEMPTABILITY", "Disabled");
-
 		NameAndStringValue_T[][] neTpInclusions = new NameAndStringValue_T[4][3];
 
 		neTpInclusions[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
@@ -2418,9 +2415,231 @@ public class CienaActivationClient extends CienaConnection {
 				tpsToModify);
 	}
 
-	public void createMultiNodeOTN() throws ProcessingFailureException {
-		String sncID = "NISA-MN-OTN-1+0-3";
-		String userLabel = "NISA-MN-OTN-1+0-3";
+	// ODU1 circuit on OTU1 port
+	public void createMultiNodeODU1onOTU1() throws ProcessingFailureException {
+		String sncID = "NISA-MN-ODU1-1+0-1";
+		String userLabel = "NISA-MN-ODU1-1+0-1";
+		String owner = "";
+
+		// 104 = ODU1, 105 = ODU2, 11315 = PROP_ODU0
+		short layerRate = 104;
+
+		NameAndStringValue_T[][] aEnd = new NameAndStringValue_T[1][4];
+
+		// A-End
+		aEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		aEnd[0][1] = new NameAndStringValue_T("ManagedElement",
+				"SNG-PPD-ASON-CN-01");
+
+		aEnd[0][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=2/slot=13/sub_slot=28/port=1");
+		aEnd[0][3] = new NameAndStringValue_T("CTP",
+				"/frequency=228.85/odu1=1;tp=1");
+
+		// Z-End
+		NameAndStringValue_T[][] zEnd = new NameAndStringValue_T[1][4];
+		zEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		zEnd[0][1] = new NameAndStringValue_T("ManagedElement",
+				"HKG-CH-ASON-CN-01");
+
+		zEnd[0][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=2/slot=15/sub_slot=28/port=1");
+		zEnd[0][3] = new NameAndStringValue_T("CTP",
+				"/frequency=228.85/odu1=1;tp=1");
+
+		NameAndStringValue_T[][] neTpSncExclusions = new NameAndStringValue_T[0][0];
+		CrossConnect_T[] ccInclusions = new CrossConnect_T[0];
+
+		Hashtable<String, String> additionalInfo = new Hashtable<String, String>();
+		additionalInfo.put("SNC_NAME", sncID);
+		additionalInfo.put("SNC_REGROOM_ALLOWED", "No");
+		additionalInfo.put("SNC_PRIORITY", "0");
+		additionalInfo.put("SNC_SNIC_ENABLED", "No");
+		// Required for OTN services
+		additionalInfo.put("SNC_COST_CRITERIA", "Admin Weight");
+
+		// additionalInfo.put("SNC_PREEMPTING", "No");
+		// additionalInfo.put("SNC_PREEMPTABILITY", "No");
+		// additionalInfo.put("SNC_UNPROTECTED_LINES", "Yes");
+		// additionalInfo.put("SNC_PROTECTED_LINES", "No");
+		// additionalInfo.put("SNC_LINEAR_APS_PROTECTED_LINES", "No");
+		// additionalInfo.put("SNC_LINEAR_VLSR_PROTECTED_LINES", "No");
+		// additionalInfo.put("SNC_MATCH_TIME_SLOTS", "Yes");
+
+		// additionalInfo.put("SNC_MAX_ADMIN_WEIGHT", "11300");
+		// additionalInfo.put("SNC_PERMANENT", "No");
+		// additionalInfo.put("SNC_RETAIN_HOME_PATH", "Disabled");
+		// additionalInfo.put("SNC_HOME_PATH_PREEMPTABILITY", "Disabled");
+
+		// NE TP Inclusions
+		// NameAndStringValue_T[][] neTpInclusions = new
+		// NameAndStringValue_T[0][0];
+
+		NameAndStringValue_T[][] neTpInclusions = new NameAndStringValue_T[4][3];
+
+		neTpInclusions[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		neTpInclusions[0][1] = new NameAndStringValue_T("ManagedElement",
+				"SNG-PPD-ASON-CN-01");
+		neTpInclusions[0][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=2/slot=13/sub_slot=28/port=1");
+
+		neTpInclusions[1][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		neTpInclusions[1][1] = new NameAndStringValue_T("ManagedElement",
+				"SNG-PPD-ASON-CN-01");
+		neTpInclusions[1][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=2/slot=4/sub_slot=1/port=1");
+
+		neTpInclusions[2][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		neTpInclusions[2][1] = new NameAndStringValue_T("ManagedElement",
+				"HKG-CH-ASON-CN-01");
+		neTpInclusions[2][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=2/slot=4/sub_slot=1/port=1");
+
+		neTpInclusions[3][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		neTpInclusions[3][1] = new NameAndStringValue_T("ManagedElement",
+				"HKG-CH-ASON-CN-01");
+		neTpInclusions[3][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=2/slot=15/sub_slot=28/port=1");
+
+		SNCCreateData_T createData = new SNCCreateData_T();
+
+		createData.aEnd = aEnd;
+		createData.zEnd = zEnd;
+		createData.additionalCreationInfo = getNameAndStringValues(additionalInfo);
+		createData.neTpInclusions = neTpInclusions;
+		createData.neTpSncExclusions = neTpSncExclusions;
+		createData.ccInclusions = ccInclusions;
+		createData.forceUniqueness = true;
+		createData.fullRoute = true;
+		createData.layerRate = layerRate;
+		createData.networkRouted = NetworkRouted_T.NR_NO;
+		createData.rerouteAllowed = Reroute_T.RR_NO; // yes for 1+r protection
+		createData.direction = ConnectionDirection_T.CD_BI;
+		createData.sncType = SNCType_T.ST_SIMPLE;
+		createData.staticProtectionLevel = StaticProtectionLevel_T.UNPROTECTED;
+		createData.protectionEffort = ProtectionEffort_T.EFFORT_SAME;
+		createData.owner = owner;
+		createData.userLabel = userLabel;
+
+		GradesOfImpact_T tolerableImpact = GradesOfImpact_T.GOI_MINOR_IMPACT;// GOI_HITLESS;
+		EMSFreedomLevel_T emsFreedomLevel = EMSFreedomLevel_T.EMSFL_RECONFIGURATION;// EMSFL_CC_AT_SNC_LAYER;
+
+		TPDataList_THolder tpsToModify = new TPDataList_THolder();
+		tpsToModify.value = new TPData_T[0];
+
+		CorbaCommands cmd = new CorbaCommands(emsSession, this.realEMSName);
+		cmd.createAndActivateSNC(createData, tolerableImpact, emsFreedomLevel,
+				tpsToModify);
+	}
+
+	// ODU1 circuit on OTU2 port
+	public void createMultiNodeODU1onOTU2() throws ProcessingFailureException {
+		String sncID = "NISA-MN-ODU1-1+0-2";
+		String userLabel = "NISA-MN-ODU1-1+0-2";
+		String owner = "";
+
+		// 104 = ODU1, 105 = ODU2, 11315 = PROP_ODU0
+		short layerRate = 104;
+
+		NameAndStringValue_T[][] aEnd = new NameAndStringValue_T[1][4];
+
+		// A-End
+		aEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		aEnd[0][1] = new NameAndStringValue_T("ManagedElement",
+				"SNG-PPD-ASON-CN-01");
+
+		aEnd[0][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=2/slot=4/sub_slot=6/port=1");
+		aEnd[0][3] = new NameAndStringValue_T("CTP",
+				"/frequency=228.85/odu2=1;tp=1;pt=20/odu1=3;tp=3");
+
+		// Z-End
+		NameAndStringValue_T[][] zEnd = new NameAndStringValue_T[1][4];
+		zEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		zEnd[0][1] = new NameAndStringValue_T("ManagedElement",
+				"HKG-CH-ASON-CN-01");
+
+		zEnd[0][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=2/slot=4/sub_slot=6/port=1");
+		zEnd[0][3] = new NameAndStringValue_T("CTP",
+				"/frequency=228.85/odu2=1;tp=1;pt=20/odu1=3;tp=3");
+
+		NameAndStringValue_T[][] neTpSncExclusions = new NameAndStringValue_T[0][0];
+		CrossConnect_T[] ccInclusions = new CrossConnect_T[0];
+
+		Hashtable<String, String> additionalInfo = new Hashtable<String, String>();
+		additionalInfo.put("SNC_NAME", sncID);
+		additionalInfo.put("SNC_REGROOM_ALLOWED", "No");
+		additionalInfo.put("SNC_PRIORITY", "0");
+		additionalInfo.put("SNC_SNIC_ENABLED", "No");
+		// Required for OTN services
+		additionalInfo.put("SNC_COST_CRITERIA", "Admin Weight");
+
+		// NE TP Inclusions
+		// NameAndStringValue_T[][] neTpInclusions = new
+		// NameAndStringValue_T[0][0];
+
+		NameAndStringValue_T[][] neTpInclusions = new NameAndStringValue_T[4][3];
+
+		neTpInclusions[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		neTpInclusions[0][1] = new NameAndStringValue_T("ManagedElement",
+				"SNG-PPD-ASON-CN-01");
+		neTpInclusions[0][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=2/slot=4/sub_slot=6/port=1");
+
+		neTpInclusions[1][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		neTpInclusions[1][1] = new NameAndStringValue_T("ManagedElement",
+				"SNG-PPD-ASON-CN-01");
+		neTpInclusions[1][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=2/slot=4/sub_slot=1/port=1");
+
+		neTpInclusions[2][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		neTpInclusions[2][1] = new NameAndStringValue_T("ManagedElement",
+				"HKG-CH-ASON-CN-01");
+		neTpInclusions[2][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=2/slot=4/sub_slot=1/port=1");
+
+		neTpInclusions[3][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		neTpInclusions[3][1] = new NameAndStringValue_T("ManagedElement",
+				"HKG-CH-ASON-CN-01");
+		neTpInclusions[3][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=2/slot=4/sub_slot=6/port=1");
+
+		SNCCreateData_T createData = new SNCCreateData_T();
+
+		createData.aEnd = aEnd;
+		createData.zEnd = zEnd;
+		createData.additionalCreationInfo = getNameAndStringValues(additionalInfo);
+		createData.neTpInclusions = neTpInclusions;
+		createData.neTpSncExclusions = neTpSncExclusions;
+		createData.ccInclusions = ccInclusions;
+		createData.forceUniqueness = true;
+		createData.fullRoute = true;
+		createData.layerRate = layerRate;
+		createData.networkRouted = NetworkRouted_T.NR_NO;
+		createData.rerouteAllowed = Reroute_T.RR_NO; // yes for 1+r protection
+		createData.direction = ConnectionDirection_T.CD_BI;
+		createData.sncType = SNCType_T.ST_SIMPLE;
+		createData.staticProtectionLevel = StaticProtectionLevel_T.UNPROTECTED;
+		createData.protectionEffort = ProtectionEffort_T.EFFORT_SAME;
+		createData.owner = owner;
+		createData.userLabel = userLabel;
+
+		GradesOfImpact_T tolerableImpact = GradesOfImpact_T.GOI_MINOR_IMPACT;// GOI_HITLESS;
+		EMSFreedomLevel_T emsFreedomLevel = EMSFreedomLevel_T.EMSFL_RECONFIGURATION;// EMSFL_CC_AT_SNC_LAYER;
+
+		TPDataList_THolder tpsToModify = new TPDataList_THolder();
+		tpsToModify.value = new TPData_T[0];
+
+		CorbaCommands cmd = new CorbaCommands(emsSession, this.realEMSName);
+		cmd.createAndActivateSNC(createData, tolerableImpact, emsFreedomLevel,
+				tpsToModify);
+	}
+
+	// ODU2 circuit on OTU2 port
+	public void createMultiNodeODU2onOTU2() throws ProcessingFailureException {
+		String sncID = "NISA-MN-ODU2-1+0-1";
+		String userLabel = "NISA-MN-ODU2-1+0-1";
 		String owner = "";
 
 		// 104 = ODU1, 105 = ODU2, 11315 = PROP_ODU0
@@ -2435,7 +2654,8 @@ public class CienaActivationClient extends CienaConnection {
 
 		aEnd[0][2] = new NameAndStringValue_T("PTP",
 				"/rack=1/shelf=2/slot=4/sub_slot=6/port=1");
-		aEnd[0][3] = new NameAndStringValue_T("CTP", "/odu2=1");
+		aEnd[0][3] = new NameAndStringValue_T("CTP",
+				"/frequency=228.85/odu2=1;tp=1");
 
 		// Z-End
 		NameAndStringValue_T[][] zEnd = new NameAndStringValue_T[1][4];
@@ -2445,7 +2665,8 @@ public class CienaActivationClient extends CienaConnection {
 
 		zEnd[0][2] = new NameAndStringValue_T("PTP",
 				"/rack=1/shelf=2/slot=4/sub_slot=6/port=1");
-		zEnd[0][3] = new NameAndStringValue_T("CTP", "/odu2=1");
+		zEnd[0][3] = new NameAndStringValue_T("CTP",
+				"/frequency=228.85/odu2=1;tp=1");
 
 		NameAndStringValue_T[][] neTpSncExclusions = new NameAndStringValue_T[0][0];
 		CrossConnect_T[] ccInclusions = new CrossConnect_T[0];
@@ -2455,53 +2676,38 @@ public class CienaActivationClient extends CienaConnection {
 		additionalInfo.put("SNC_REGROOM_ALLOWED", "No");
 		additionalInfo.put("SNC_PRIORITY", "0");
 		additionalInfo.put("SNC_SNIC_ENABLED", "No");
-
-		// additionalInfo.put("SNC_PREEMPTING", "No");
-		// additionalInfo.put("SNC_PREEMPTABILITY", "No");
-		// additionalInfo.put("SNC_UNPROTECTED_LINES", "Yes");
-		// additionalInfo.put("SNC_PROTECTED_LINES", "No");
-		// additionalInfo.put("SNC_LINEAR_APS_PROTECTED_LINES", "No");
-		// additionalInfo.put("SNC_LINEAR_VLSR_PROTECTED_LINES", "No");
-		// additionalInfo.put("SNC_MATCH_TIME_SLOTS", "Yes");
-		// additionalInfo.put("SNC_COST_CRITERIA", "Admin Weight");
-		// additionalInfo.put("SNC_MAX_ADMIN_WEIGHT", "11300");
-		// additionalInfo.put("SNC_PERMANENT", "No");
-		// additionalInfo.put("SNC_RETAIN_HOME_PATH", "Disabled");
-		// additionalInfo.put("SNC_HOME_PATH_PREEMPTABILITY", "Disabled");
+		// Required for OTN services
+		additionalInfo.put("SNC_COST_CRITERIA", "Admin Weight");
 
 		// NE TP Inclusions
-		NameAndStringValue_T[][] neTpInclusions = new NameAndStringValue_T[0][0];
-
 		// NameAndStringValue_T[][] neTpInclusions = new
-		// NameAndStringValue_T[4][3];
-		//
-		// neTpInclusions[0][0] = new NameAndStringValue_T("EMS",
-		// this.realEMSName);
-		// neTpInclusions[0][1] = new NameAndStringValue_T("ManagedElement",
-		// "SNG-PPD-ASON-CN-01");
-		// neTpInclusions[0][2] = new NameAndStringValue_T("PTP",
-		// "/rack=1/shelf=2/slot=4/sub_slot=5/port=1");
-		//
-		// neTpInclusions[1][0] = new NameAndStringValue_T("EMS",
-		// this.realEMSName);
-		// neTpInclusions[1][1] = new NameAndStringValue_T("ManagedElement",
-		// "SNG-PPD-ASON-CN-01");
-		// neTpInclusions[1][2] = new NameAndStringValue_T("PTP",
-		// "/rack=1/shelf=2/slot=4/sub_slot=1/port=1");
-		//
-		// neTpInclusions[2][0] = new NameAndStringValue_T("EMS",
-		// this.realEMSName);
-		// neTpInclusions[2][1] = new NameAndStringValue_T("ManagedElement",
-		// "HKG-CH-ASON-CN-01");
-		// neTpInclusions[2][2] = new NameAndStringValue_T("PTP",
-		// "/rack=1/shelf=2/slot=4/sub_slot=1/port=1");
-		//
-		// neTpInclusions[3][0] = new NameAndStringValue_T("EMS",
-		// this.realEMSName);
-		// neTpInclusions[3][1] = new NameAndStringValue_T("ManagedElement",
-		// "HKG-CH-ASON-CN-01");
-		// neTpInclusions[3][2] = new NameAndStringValue_T("PTP",
-		// "/rack=1/shelf=2/slot=4/sub_slot=5/port=1");
+		// NameAndStringValue_T[0][0];
+
+		NameAndStringValue_T[][] neTpInclusions = new NameAndStringValue_T[4][3];
+
+		neTpInclusions[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		neTpInclusions[0][1] = new NameAndStringValue_T("ManagedElement",
+				"SNG-PPD-ASON-CN-01");
+		neTpInclusions[0][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=2/slot=4/sub_slot=6/port=1");
+
+		neTpInclusions[1][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		neTpInclusions[1][1] = new NameAndStringValue_T("ManagedElement",
+				"SNG-PPD-ASON-CN-01");
+		neTpInclusions[1][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=2/slot=4/sub_slot=1/port=1");
+
+		neTpInclusions[2][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		neTpInclusions[2][1] = new NameAndStringValue_T("ManagedElement",
+				"HKG-CH-ASON-CN-01");
+		neTpInclusions[2][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=2/slot=4/sub_slot=1/port=1");
+
+		neTpInclusions[3][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		neTpInclusions[3][1] = new NameAndStringValue_T("ManagedElement",
+				"HKG-CH-ASON-CN-01");
+		neTpInclusions[3][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=2/slot=4/sub_slot=6/port=1");
 
 		SNCCreateData_T createData = new SNCCreateData_T();
 
@@ -2512,9 +2718,9 @@ public class CienaActivationClient extends CienaConnection {
 		createData.neTpSncExclusions = neTpSncExclusions;
 		createData.ccInclusions = ccInclusions;
 		createData.forceUniqueness = true;
-		createData.fullRoute = false;
+		createData.fullRoute = true;
 		createData.layerRate = layerRate;
-		createData.networkRouted = NetworkRouted_T.NR_YES;
+		createData.networkRouted = NetworkRouted_T.NR_NO;
 		createData.rerouteAllowed = Reroute_T.RR_NO; // yes for 1+r protection
 		createData.direction = ConnectionDirection_T.CD_BI;
 		createData.sncType = SNCType_T.ST_SIMPLE;
@@ -2526,62 +2732,6 @@ public class CienaActivationClient extends CienaConnection {
 		GradesOfImpact_T tolerableImpact = GradesOfImpact_T.GOI_MINOR_IMPACT;// GOI_HITLESS;
 		EMSFreedomLevel_T emsFreedomLevel = EMSFreedomLevel_T.EMSFL_RECONFIGURATION;// EMSFL_CC_AT_SNC_LAYER;
 
-		// TPs to Modify
-		// TPDataList_THolder tpsToModify = new TPDataList_THolder();
-		// tpsToModify.value = new TPData_T[2];
-		// tpsToModify.value[0] = new TPData_T();
-		// tpsToModify.value[1] = new TPData_T();
-		//
-		// // A End
-		// tpsToModify.value[0].ingressTrafficDescriptorName = new
-		// NameAndStringValue_T[0];
-		// tpsToModify.value[0].egressTrafficDescriptorName = new
-		// NameAndStringValue_T[0];
-		// tpsToModify.value[0].tpMappingMode =
-		// TerminationMode_T.TM_TERMINATED_AND_AVAILABLE_FOR_MAPPING;
-		// tpsToModify.value[0].tpName = aEnd[0]; // ethPort;
-		//
-		// tpsToModify.value[0].transmissionParams = new LayeredParameters_T[1];
-		//
-		// // Layer 98 - Set Frame Mode
-		// tpsToModify.value[0].transmissionParams[0] = new
-		// LayeredParameters_T();
-		// tpsToModify.value[0].transmissionParams[0].layer = 98;
-		//
-		// tpsToModify.value[0].transmissionParams[0].transmissionParams = new
-		// NameAndStringValue_T[2];
-		// tpsToModify.value[0].transmissionParams[0].transmissionParams[0] =
-		// new NameAndStringValue_T(
-		// "GFPFrameCheckSequence", "Enabled");
-		// tpsToModify.value[0].transmissionParams[0].transmissionParams[1] =
-		// new NameAndStringValue_T(
-		// "ProtocolIdentifier", "GFP_FRAME_MAPPED");
-		//
-		// // Z End
-		// tpsToModify.value[1].ingressTrafficDescriptorName = new
-		// NameAndStringValue_T[0];
-		// tpsToModify.value[1].egressTrafficDescriptorName = new
-		// NameAndStringValue_T[0];
-		// tpsToModify.value[1].tpMappingMode =
-		// TerminationMode_T.TM_TERMINATED_AND_AVAILABLE_FOR_MAPPING;
-		// tpsToModify.value[1].tpName = zEnd[0]; // ethPort;
-		//
-		// tpsToModify.value[1].transmissionParams = new LayeredParameters_T[1];
-		//
-		// // Layer 98 - Set Frame Mode
-		// tpsToModify.value[1].transmissionParams[0] = new
-		// LayeredParameters_T();
-		// tpsToModify.value[1].transmissionParams[0].layer = 98;
-		//
-		// tpsToModify.value[1].transmissionParams[0].transmissionParams = new
-		// NameAndStringValue_T[2];
-		// tpsToModify.value[1].transmissionParams[0].transmissionParams[0] =
-		// new NameAndStringValue_T(
-		// "GFPFrameCheckSequence", "Enabled");
-		// tpsToModify.value[1].transmissionParams[0].transmissionParams[1] =
-		// new NameAndStringValue_T(
-		// "ProtocolIdentifier", "GFP_FRAME_MAPPED");
-
 		TPDataList_THolder tpsToModify = new TPDataList_THolder();
 		tpsToModify.value = new TPData_T[0];
 
@@ -2591,7 +2741,7 @@ public class CienaActivationClient extends CienaConnection {
 	}
 
 	public void deactivateAndDeleteSNC() throws ProcessingFailureException {
-		String sncID = "NISA-MN-SDHService-TPInc-1+0-3";
+		String sncID = "NISA-MN-ODU2-1+0-1";
 		// String sncID = "NISA-MN-SDHOverOTN-TPInc-1+0-3";
 		// String sncID = "NISA-MN-ETHOverOTN-TPInc-1+0-3";
 		// String sncID = "NISA-SDHServiceWithGTP-1+0-1";
@@ -2629,7 +2779,7 @@ public class CienaActivationClient extends CienaConnection {
 	public void getSNC() throws ProcessingFailureException, SAXException,
 			UnsupportedEncodingException, FileNotFoundException {
 
-		String sncID = "NISA-MN-ETHOverOTN-TPInc-1+0-3";
+		String sncID = "NISA-MN-ODU2-1+0-1";
 		// String sncID = "NISA-MN-SDHService-TPInc-1+0-3";
 		// String sncID = "HKG_CH_SNG_PD 1GE004";
 		OutputFormat format = OutputFormat.createPrettyPrint();
