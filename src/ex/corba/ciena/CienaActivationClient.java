@@ -57,15 +57,16 @@ public class CienaActivationClient extends CienaConnection {
 
 			/* ILC Services over OTN link */
 			// main.createMultiNodeSDHOverOTN();
-			// main.createMultiNodeSDHOverOTNWithNEtpInc();
+			main.createMultiNodeSDHOverOTNWithNEtpInc();
 
 			/* E-Line Service over SDH link */
-			// main.createMultiNodeEthOverSDH10Gpbs();
-			main.createMultiNodeEthOverSDH10GpbsWithNEtpInc();
-			// main.createMultiNodeEthOverSDH1GbpsWithVCG();
-			// main.createMultiNodeEthOverSDH2GbpsWithVCG();
+			// main.createMultiNodeEthOverSDH10GE();
+			// main.createMultiNodeEthOverSDH10GEWithNEtpInc();
+			// main.createMultiNodeEthOverSDH1GEWithVCG();
+			// main.createMultiNodeEthOverSDH2GEWithVCG();
+			// main.createMultiNodeEthOverSDH2GEWithGTP();
 			// main.releaseCall();
-			// main.createMultiNodeEthOverSDH2GbpsWithVCG2();
+			// main.createMultiNodeEthOverSDH10GEsubrate();
 
 			/* E-Line Service over OTN link */
 			// main.createMultiNodeEthOverOTN10Gbps();
@@ -75,6 +76,11 @@ public class CienaActivationClient extends CienaConnection {
 			// main.createMultiNodeODU1onOTU1();
 			// main.createMultiNodeODU1onOTU2();
 			// main.createMultiNodeODU2onOTU2();
+
+			/* SNCP Services */
+			// main.createSNCPSDHService();
+			// main.createSNCPSDHWithNEtpInc();
+			main.createSNCPSDHWithNEtpInc2();
 
 			/* GTP based SNCs */
 			// main.createGTP();
@@ -438,7 +444,7 @@ public class CienaActivationClient extends CienaConnection {
 		cmd.establishCall(ccd, sncs, tps);
 	}
 
-	public void createMultiNodeEthOverSDH1GbpsWithVCG()
+	public void createMultiNodeEthOverSDH1GEWithVCG()
 			throws ProcessingFailureException {
 		String callID = "NISA-MN-EthServiceVCG-1";
 		String sncID = "NISA-MN-EthServiceVCG-1";
@@ -628,11 +634,11 @@ public class CienaActivationClient extends CienaConnection {
 		cmd.establishCall(ccd, sncs, tps);
 	}
 
-	public void createMultiNodeEthOverSDH2GbpsWithVCG()
+	public void createMultiNodeEthOverSDH2GEWithVCG()
 			throws ProcessingFailureException {
-		String callID = "NISA-MN-2GbpsServiceVCG-1";
-		String sncID = "NISA-MN-2GbpsServiceVCG-1";
-		String userLabel = "NISA-MN-2GbpsServiceVCG-1";
+		String callID = "NISA-MN-10GEsubrateVCG-1";
+		String sncID = "NISA-MN-10GEsubrateVCG-1";
+		String userLabel = "NISA-MN-10GEsubrateVCG-1";
 		String owner = "";
 
 		// 15 = vc4; 16 = vc4_4c; 17 = vc4_16c; 18 = vc4_64c
@@ -647,7 +653,7 @@ public class CienaActivationClient extends CienaConnection {
 
 		// 2 GbE Service - VCG port
 		aEnd[0][2] = new NameAndStringValue_T("FTP",
-				"/rack=1/shelf=2/slot=4/port_group=3/port=1-A-4-3");
+				"/rack=1/shelf=2/slot=1/port_group=12/port=1-A-1-12");
 		aEnd[0][3] = new NameAndStringValue_T("CTP", "/sts3c_au4=1");
 
 		// Z-End
@@ -658,7 +664,7 @@ public class CienaActivationClient extends CienaConnection {
 
 		// 2 GbE Service - VCG port
 		zEnd[0][2] = new NameAndStringValue_T("FTP",
-				"/rack=1/shelf=2/slot=4/port_group=3/port=1-A-4-3");
+				"/rack=1/shelf=2/slot=1/port_group=12/port=1-A-1-12");
 		zEnd[0][3] = new NameAndStringValue_T("CTP", "/sts3c_au4=1");
 
 		// NameAndStringValue_T[][] neTpInclusions = new
@@ -673,7 +679,7 @@ public class CienaActivationClient extends CienaConnection {
 		neTpInclusions[0][0] = aEnd[0][0];
 		neTpInclusions[0][1] = aEnd[0][1];
 		neTpInclusions[0][2] = new NameAndStringValue_T("PTP",
-				"/rack=1/shelf=2/slot=4/sub_slot=3/port=1");
+				"/rack=1/shelf=2/slot=1/sub_slot=12/port=1");
 
 		neTpInclusions[1] = this.getRoute4TGNIA()[0];
 		neTpInclusions[2] = this.getRoute4TGNIA()[1];
@@ -681,7 +687,7 @@ public class CienaActivationClient extends CienaConnection {
 		neTpInclusions[3][0] = zEnd[0][0];
 		neTpInclusions[3][1] = zEnd[0][1];
 		neTpInclusions[3][2] = new NameAndStringValue_T("PTP",
-				"/rack=1/shelf=2/slot=4/sub_slot=3/port=1");
+				"/rack=1/shelf=2/slot=1/sub_slot=12/port=1");
 
 		Hashtable<String, String> additionalInfo = new Hashtable<String, String>();
 		additionalInfo.put("SNC_NAME", sncID);
@@ -739,23 +745,22 @@ public class CienaActivationClient extends CienaConnection {
 		// Layer 99
 		tps.value[0].transmissionParams[1] = new LayeredParameters_T();
 		tps.value[0].transmissionParams[1].layer = 99;
-		tps.value[0].transmissionParams[1].transmissionParams = new NameAndStringValue_T[3];
+		tps.value[0].transmissionParams[1].transmissionParams = new NameAndStringValue_T[4];
 		tps.value[0].transmissionParams[1].transmissionParams[0] = new NameAndStringValue_T(
 				"VCAT", "Enabled");
 		tps.value[0].transmissionParams[1].transmissionParams[1] = new NameAndStringValue_T(
 				"DynamicAllocationEnabled", "Disabled");
 		tps.value[0].transmissionParams[1].transmissionParams[2] = new NameAndStringValue_T(
 				"AllocatedNumber", "14");
-		// tps.value[0].transmissionParams[1].transmissionParams[3] = new
-		// NameAndStringValue_T(
-		// "DegradeThreshold", "14");
+		tps.value[0].transmissionParams[1].transmissionParams[3] = new NameAndStringValue_T(
+				"DegradeThreshold", "14");
 
 		// Layer 96
 		tps.value[0].transmissionParams[2] = new LayeredParameters_T();
 		tps.value[0].transmissionParams[2].layer = 96;
 		tps.value[0].transmissionParams[2].transmissionParams = new NameAndStringValue_T[1];
 		tps.value[0].transmissionParams[2].transmissionParams[0] = new NameAndStringValue_T(
-				"TunnelEndPoint", "/rack=1/shelf=2/slot=4/sub_slot=3/port=1");
+				"TunnelEndPoint", "/rack=1/shelf=2/slot=1/sub_slot=12/port=1");
 
 		// Z End
 		tps.value[1] = new TPData_T();
@@ -778,23 +783,209 @@ public class CienaActivationClient extends CienaConnection {
 		// Layer 99
 		tps.value[1].transmissionParams[1] = new LayeredParameters_T();
 		tps.value[1].transmissionParams[1].layer = 99;
-		tps.value[1].transmissionParams[1].transmissionParams = new NameAndStringValue_T[3];
+		tps.value[1].transmissionParams[1].transmissionParams = new NameAndStringValue_T[4];
 		tps.value[1].transmissionParams[1].transmissionParams[0] = new NameAndStringValue_T(
 				"VCAT", "Enabled");
 		tps.value[1].transmissionParams[1].transmissionParams[1] = new NameAndStringValue_T(
 				"DynamicAllocationEnabled", "Disabled");
 		tps.value[1].transmissionParams[1].transmissionParams[2] = new NameAndStringValue_T(
 				"AllocatedNumber", "14");
-		// tps.value[1].transmissionParams[1].transmissionParams[3] = new
-		// NameAndStringValue_T(
-		// "DegradeThreshold", "14");
+		tps.value[1].transmissionParams[1].transmissionParams[3] = new NameAndStringValue_T(
+				"DegradeThreshold", "14");
 
 		// Layer 96
 		tps.value[1].transmissionParams[2] = new LayeredParameters_T();
 		tps.value[1].transmissionParams[2].layer = 96;
 		tps.value[1].transmissionParams[2].transmissionParams = new NameAndStringValue_T[1];
 		tps.value[1].transmissionParams[2].transmissionParams[0] = new NameAndStringValue_T(
-				"TunnelEndPoint", "/rack=1/shelf=2/slot=4/sub_slot=3/port=1");
+				"TunnelEndPoint", "/rack=1/shelf=2/slot=1/sub_slot=12/port=1");
+
+		CallCreateData_T ccd = new CallCreateData_T();
+
+		ccd.callName = new NameAndStringValue_T[2];
+		ccd.callName[0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		ccd.callName[1] = new NameAndStringValue_T("Call", callID);
+
+		ccd.aEnd = new CallEnd_T("", "", "", new NameAndStringValue_T[0]);
+		ccd.zEnd = new CallEnd_T("", "", "", new NameAndStringValue_T[0]);
+
+		ccd.forceUniqueness = false;
+		ccd.userLabel = userLabel;
+		ccd.additionalCreationInfo = new NameAndStringValue_T[0];
+		ccd.networkAccessDomain = "";
+		ccd.owner = owner;
+
+		ccd.callDiversity = new Diversity_T(LevelofEffort_T.LE_BEST_EFFORT,
+				LevelofEffort_T.LE_BEST_EFFORT, LevelofEffort_T.LE_BEST_EFFORT,
+				new NameAndStringValue_T[0], new NameAndStringValue_T[0]);
+		ccd.callParameters = new CallParameterProfile_T("", "", "",
+				new NameAndStringValue_T[0]);
+
+		CorbaCommands cmd = new CorbaCommands(emsSession, this.realEMSName);
+		cmd.establishCall(ccd, sncs, tps);
+	}
+
+	public void createMultiNodeEthOverSDH2GEWithGTP()
+			throws ProcessingFailureException {
+		String callID = "NISA-MN-10GEsubrateVCG-1";
+		String sncID = "NISA-MN-10GEsubrateVCG-1";
+		String userLabel = "NISA-MN-10GEsubrateVCG-1";
+		String owner = "";
+
+		// 15 = vc4; 16 = vc4_4c; 17 = vc4_16c; 18 = vc4_64c
+		short layerRate = 15;
+
+		NameAndStringValue_T[][] aEnd = new NameAndStringValue_T[1][3];
+
+		// A-End
+		aEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		aEnd[0][1] = new NameAndStringValue_T("ManagedElement",
+				"SNG-PPD-ASON-CN-01");
+
+		// 2 GbE Service - VCG port
+		aEnd[0][2] = new NameAndStringValue_T("GTP", "GTP_PPD");
+
+		// Z-End
+		NameAndStringValue_T[][] zEnd = new NameAndStringValue_T[1][3];
+		zEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		zEnd[0][1] = new NameAndStringValue_T("ManagedElement",
+				"HKG-CH-ASON-CN-01");
+
+		// 2 GbE Service - VCG port
+		zEnd[0][2] = new NameAndStringValue_T("GTP", "GTP_CH");
+
+		// NameAndStringValue_T[][] neTpInclusions = new
+		// NameAndStringValue_T[0][0];
+		NameAndStringValue_T[][] neTpSncExclusions = new NameAndStringValue_T[0][0];
+		CrossConnect_T[] ccInclusions = new CrossConnect_T[0];
+
+		// NE TP Inclusions
+		// Route 4: HKG/CH-SNG/PD 64S004(TGNIA)
+		NameAndStringValue_T[][] neTpInclusions = new NameAndStringValue_T[4][3];
+
+		neTpInclusions[0][0] = aEnd[0][0];
+		neTpInclusions[0][1] = aEnd[0][1];
+		neTpInclusions[0][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=2/slot=1/sub_slot=12/port=1");
+
+		neTpInclusions[1] = this.getRoute4TGNIA()[0];
+		neTpInclusions[2] = this.getRoute4TGNIA()[1];
+
+		neTpInclusions[3][0] = zEnd[0][0];
+		neTpInclusions[3][1] = zEnd[0][1];
+		neTpInclusions[3][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=2/slot=1/sub_slot=12/port=1");
+
+		Hashtable<String, String> additionalInfo = new Hashtable<String, String>();
+		additionalInfo.put("SNC_NAME", sncID);
+		additionalInfo.put("SNC_PRIORITY", "0");
+		additionalInfo.put("SNC_SNIC_ENABLED", "No");
+		additionalInfo.put("CallName", callID);
+		// additionalInfo.put("SNC_REGROOM_ALLOWED", "No");
+		// additionalInfo.put("SNC_SNCP_PEER", "CD03_CD01_PROTECT");
+		// additionalInfo.put("SNC_DTL_SET_NAME", "W+P");
+
+		SNCCreateData_T createData = new SNCCreateData_T();
+
+		createData.aEnd = aEnd;
+		createData.zEnd = zEnd;
+		createData.additionalCreationInfo = getNameAndStringValues(additionalInfo);
+		createData.neTpInclusions = neTpInclusions;
+		createData.neTpSncExclusions = neTpSncExclusions;
+		createData.ccInclusions = ccInclusions;
+		createData.forceUniqueness = true;
+		createData.fullRoute = true;
+		createData.layerRate = layerRate;
+		createData.networkRouted = NetworkRouted_T.NR_NO;
+		createData.rerouteAllowed = Reroute_T.RR_NO;
+		createData.direction = ConnectionDirection_T.CD_BI;
+		createData.sncType = SNCType_T.ST_SIMPLE;
+		createData.staticProtectionLevel = StaticProtectionLevel_T.UNPROTECTED;
+		createData.protectionEffort = ProtectionEffort_T.EFFORT_SAME;
+		createData.owner = owner;
+		createData.userLabel = userLabel;
+
+		SNCCreateData_T sncs[] = new SNCCreateData_T[1];
+		sncs[0] = createData;
+
+		TPDataList_THolder tps = new TPDataList_THolder();
+		tps.value = new TPData_T[2];
+
+		// A End
+		tps.value[0] = new TPData_T();
+		tps.value[0].egressTrafficDescriptorName = new NameAndStringValue_T[0];
+		tps.value[0].ingressTrafficDescriptorName = new NameAndStringValue_T[0];
+		tps.value[0].tpMappingMode = TerminationMode_T.TM_TERMINATED_AND_AVAILABLE_FOR_MAPPING;
+		tps.value[0].tpName = aEnd[0];
+
+		tps.value[0].transmissionParams = new LayeredParameters_T[3];
+
+		// Layer 98
+		tps.value[0].transmissionParams[0] = new LayeredParameters_T();
+		tps.value[0].transmissionParams[0].layer = 98;
+		tps.value[0].transmissionParams[0].transmissionParams = new NameAndStringValue_T[2];
+		tps.value[0].transmissionParams[0].transmissionParams[0] = new NameAndStringValue_T(
+				"ProtocolIdentifier", "GFP_FRAME_MAPPED");
+		tps.value[0].transmissionParams[0].transmissionParams[1] = new NameAndStringValue_T(
+				"GFPFrameCheckSequence", "Disabled");
+
+		// Layer 99
+		tps.value[0].transmissionParams[1] = new LayeredParameters_T();
+		tps.value[0].transmissionParams[1].layer = 99;
+		tps.value[0].transmissionParams[1].transmissionParams = new NameAndStringValue_T[4];
+		tps.value[0].transmissionParams[1].transmissionParams[0] = new NameAndStringValue_T(
+				"VCAT", "Enabled");
+		tps.value[0].transmissionParams[1].transmissionParams[1] = new NameAndStringValue_T(
+				"DynamicAllocationEnabled", "Disabled");
+		tps.value[0].transmissionParams[1].transmissionParams[2] = new NameAndStringValue_T(
+				"AllocatedNumber", "14");
+		tps.value[0].transmissionParams[1].transmissionParams[3] = new NameAndStringValue_T(
+				"DegradeThreshold", "14");
+
+		// Layer 96
+		tps.value[0].transmissionParams[2] = new LayeredParameters_T();
+		tps.value[0].transmissionParams[2].layer = 96;
+		tps.value[0].transmissionParams[2].transmissionParams = new NameAndStringValue_T[1];
+		tps.value[0].transmissionParams[2].transmissionParams[0] = new NameAndStringValue_T(
+				"TunnelEndPoint", "/rack=1/shelf=2/slot=1/sub_slot=12/port=1");
+
+		// Z End
+		tps.value[1] = new TPData_T();
+		tps.value[1].egressTrafficDescriptorName = new NameAndStringValue_T[0];
+		tps.value[1].ingressTrafficDescriptorName = new NameAndStringValue_T[0];
+		tps.value[1].tpMappingMode = TerminationMode_T.TM_TERMINATED_AND_AVAILABLE_FOR_MAPPING;
+		tps.value[1].tpName = zEnd[0];
+
+		tps.value[1].transmissionParams = new LayeredParameters_T[3];
+
+		// Layer 98
+		tps.value[1].transmissionParams[0] = new LayeredParameters_T();
+		tps.value[1].transmissionParams[0].layer = 98;
+		tps.value[1].transmissionParams[0].transmissionParams = new NameAndStringValue_T[2];
+		tps.value[1].transmissionParams[0].transmissionParams[0] = new NameAndStringValue_T(
+				"ProtocolIdentifier", "GFP_FRAME_MAPPED");
+		tps.value[1].transmissionParams[0].transmissionParams[1] = new NameAndStringValue_T(
+				"GFPFrameCheckSequence", "Disabled");
+
+		// Layer 99
+		tps.value[1].transmissionParams[1] = new LayeredParameters_T();
+		tps.value[1].transmissionParams[1].layer = 99;
+		tps.value[1].transmissionParams[1].transmissionParams = new NameAndStringValue_T[4];
+		tps.value[1].transmissionParams[1].transmissionParams[0] = new NameAndStringValue_T(
+				"VCAT", "Enabled");
+		tps.value[1].transmissionParams[1].transmissionParams[1] = new NameAndStringValue_T(
+				"DynamicAllocationEnabled", "Disabled");
+		tps.value[1].transmissionParams[1].transmissionParams[2] = new NameAndStringValue_T(
+				"AllocatedNumber", "14");
+		tps.value[1].transmissionParams[1].transmissionParams[3] = new NameAndStringValue_T(
+				"DegradeThreshold", "14");
+
+		// Layer 96
+		tps.value[1].transmissionParams[2] = new LayeredParameters_T();
+		tps.value[1].transmissionParams[2].layer = 96;
+		tps.value[1].transmissionParams[2].transmissionParams = new NameAndStringValue_T[1];
+		tps.value[1].transmissionParams[2].transmissionParams[0] = new NameAndStringValue_T(
+				"TunnelEndPoint", "/rack=1/shelf=2/slot=1/sub_slot=12/port=1");
 
 		CallCreateData_T ccd = new CallCreateData_T();
 
@@ -822,19 +1013,20 @@ public class CienaActivationClient extends CienaConnection {
 	}
 
 	// Call using multiple SNCs
-	public void createMultiNodeEthOverSDH2GbpsWithVCG2()
+	public void createMultiNodeEthOverSDH10GEsubrate()
 			throws ProcessingFailureException {
-		String callID = "NISA-MN-2GbpsServiceVCG-1";
-		String sncID = "NISA-MN-2GbpsServiceVCG-";
-		String userLabel = "NISA-MN-2GbpsServiceVCG-";
+		String callID = "NISA-MN-10GEsubrateVCG-1";
+		String sncID = "NISA-MN-10GEsubrateVCG-";
+		String userLabel = "NISA-MN-10GEsubrateVCG-";
 		String owner = "";
 
 		// 15 = vc4; 16 = vc4_4c; 17 = vc4_16c; 18 = vc4_64c
 		short layerRate = 15;
 
 		int startChannel = 1;
-		// 1GbE circuit
-		int noOfVC4 = 3;
+
+		// 1GE=7; 2GE=14; 3GE=20; 4GE=27; 5GE=34; 6GE=41; 7GE=48; 8GE=54; 9GE=61
+		int noOfVC4 = 48;
 
 		NameAndStringValue_T[][] aEnd = null;
 		NameAndStringValue_T[][] zEnd = null;
@@ -850,8 +1042,10 @@ public class CienaActivationClient extends CienaConnection {
 			aEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
 			aEnd[0][1] = new NameAndStringValue_T("ManagedElement",
 					"SNG-PPD-ASON-CN-01");
+			// aEnd[0][2] = new NameAndStringValue_T("FTP",
+			// "/rack=1/shelf=2/slot=4/port_group=3/port=1-A-4-3");
 			aEnd[0][2] = new NameAndStringValue_T("FTP",
-					"/rack=1/shelf=2/slot=4/port_group=3/port=1-A-4-3");
+					"/rack=1/shelf=2/slot=1/port_group=12/port=1-A-1-12");
 			aEnd[0][3] = new NameAndStringValue_T("CTP", "/sts3c_au4="
 					+ startChannel);
 
@@ -860,8 +1054,10 @@ public class CienaActivationClient extends CienaConnection {
 			zEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
 			zEnd[0][1] = new NameAndStringValue_T("ManagedElement",
 					"HKG-CH-ASON-CN-01");
+			// zEnd[0][2] = new NameAndStringValue_T("FTP",
+			// "/rack=1/shelf=2/slot=4/port_group=3/port=1-A-4-3");
 			zEnd[0][2] = new NameAndStringValue_T("FTP",
-					"/rack=1/shelf=2/slot=4/port_group=3/port=1-A-4-3");
+					"/rack=1/shelf=2/slot=1/port_group=12/port=1-A-1-12");
 			zEnd[0][3] = new NameAndStringValue_T("CTP", "/sts3c_au4="
 					+ startChannel);
 
@@ -872,7 +1068,7 @@ public class CienaActivationClient extends CienaConnection {
 			neTpInclusions[0][0] = aEnd[0][0];
 			neTpInclusions[0][1] = aEnd[0][1];
 			neTpInclusions[0][2] = new NameAndStringValue_T("PTP",
-					"/rack=1/shelf=2/slot=4/sub_slot=3/port=1");
+					"/rack=1/shelf=2/slot=1/sub_slot=12/port=1");
 
 			neTpInclusions[1] = this.getRoute4TGNIA()[0];
 			neTpInclusions[2] = this.getRoute4TGNIA()[1];
@@ -880,7 +1076,7 @@ public class CienaActivationClient extends CienaConnection {
 			neTpInclusions[3][0] = zEnd[0][0];
 			neTpInclusions[3][1] = zEnd[0][1];
 			neTpInclusions[3][2] = new NameAndStringValue_T("PTP",
-					"/rack=1/shelf=2/slot=4/sub_slot=3/port=1");
+					"/rack=1/shelf=2/slot=1/sub_slot=12/port=1");
 
 			Hashtable<String, String> additionalInfo = new Hashtable<String, String>();
 			additionalInfo.put("SNC_NAME", sncID + (i + 1));
@@ -940,20 +1136,25 @@ public class CienaActivationClient extends CienaConnection {
 		// Layer 99
 		tps.value[0].transmissionParams[1] = new LayeredParameters_T();
 		tps.value[0].transmissionParams[1].layer = 99;
-		tps.value[0].transmissionParams[1].transmissionParams = new NameAndStringValue_T[3];
+		tps.value[0].transmissionParams[1].transmissionParams = new NameAndStringValue_T[4];
 		tps.value[0].transmissionParams[1].transmissionParams[0] = new NameAndStringValue_T(
 				"VCAT", "Enabled");
 		tps.value[0].transmissionParams[1].transmissionParams[1] = new NameAndStringValue_T(
-				"DynamicAllocationEnabled", "Diabled");
+				"DynamicAllocationEnabled", "Disabled");
 		tps.value[0].transmissionParams[1].transmissionParams[2] = new NameAndStringValue_T(
 				"AllocatedNumber", String.valueOf(noOfVC4));
+		tps.value[0].transmissionParams[1].transmissionParams[3] = new NameAndStringValue_T(
+				"DegradeThreshold", String.valueOf(noOfVC4));
 
 		// Layer 96
 		tps.value[0].transmissionParams[2] = new LayeredParameters_T();
 		tps.value[0].transmissionParams[2].layer = 96;
 		tps.value[0].transmissionParams[2].transmissionParams = new NameAndStringValue_T[1];
+		// tps.value[0].transmissionParams[2].transmissionParams[0] = new
+		// NameAndStringValue_T(
+		// "TunnelEndPoint", "/rack=1/shelf=2/slot=4/sub_slot=3/port=1");
 		tps.value[0].transmissionParams[2].transmissionParams[0] = new NameAndStringValue_T(
-				"TunnelEndPoint", "/rack=1/shelf=2/slot=4/sub_slot=3/port=1");
+				"TunnelEndPoint", "/rack=1/shelf=2/slot=1/sub_slot=12/port=1");
 
 		// Z End
 		tps.value[1] = new TPData_T();
@@ -980,20 +1181,25 @@ public class CienaActivationClient extends CienaConnection {
 		// Layer 99
 		tps.value[1].transmissionParams[1] = new LayeredParameters_T();
 		tps.value[1].transmissionParams[1].layer = 99;
-		tps.value[1].transmissionParams[1].transmissionParams = new NameAndStringValue_T[3];
+		tps.value[1].transmissionParams[1].transmissionParams = new NameAndStringValue_T[4];
 		tps.value[1].transmissionParams[1].transmissionParams[0] = new NameAndStringValue_T(
 				"VCAT", "Enabled");
 		tps.value[1].transmissionParams[1].transmissionParams[1] = new NameAndStringValue_T(
 				"DynamicAllocationEnabled", "Disabled");
 		tps.value[1].transmissionParams[1].transmissionParams[2] = new NameAndStringValue_T(
 				"AllocatedNumber", String.valueOf(noOfVC4));
+		tps.value[1].transmissionParams[1].transmissionParams[3] = new NameAndStringValue_T(
+				"DegradeThreshold", String.valueOf(noOfVC4));
 
 		// Layer 96
 		tps.value[1].transmissionParams[2] = new LayeredParameters_T();
 		tps.value[1].transmissionParams[2].layer = 96;
 		tps.value[1].transmissionParams[2].transmissionParams = new NameAndStringValue_T[1];
+		// tps.value[1].transmissionParams[2].transmissionParams[0] = new
+		// NameAndStringValue_T(
+		// "TunnelEndPoint", "/rack=1/shelf=2/slot=4/sub_slot=3/port=1");
 		tps.value[1].transmissionParams[2].transmissionParams[0] = new NameAndStringValue_T(
-				"TunnelEndPoint", "/rack=1/shelf=2/slot=4/sub_slot=3/port=1");
+				"TunnelEndPoint", "/rack=1/shelf=2/slot=1/sub_slot=12/port=1");
 
 		CallCreateData_T ccd = new CallCreateData_T();
 
@@ -1020,7 +1226,7 @@ public class CienaActivationClient extends CienaConnection {
 		cmd.establishCall(ccd, sncs, tps);
 	}
 
-	public void createMultiNodeEthOverSDH10Gpbs()
+	public void createMultiNodeEthOverSDH10GE()
 			throws ProcessingFailureException {
 		String sncID = "NISA-MN-SNC-10GbEoverSDHlink-1";
 		String userLabel = "NISA-MN-SNC-10GbEoverSDHlink-1";
@@ -1255,7 +1461,6 @@ public class CienaActivationClient extends CienaConnection {
 		// additionalInfo.put("SNC_LINEAR_APS_PROTECTED_LINES", "No");
 		// additionalInfo.put("SNC_LINEAR_VLSR_PROTECTED_LINES", "No");
 		// additionalInfo.put("SNC_MATCH_TIME_SLOTS", "Yes");
-		// additionalInfo.put("SNC_COST_CRITERIA", "Admin Weight");
 		// additionalInfo.put("SNC_MAX_ADMIN_WEIGHT", "11300");
 		// additionalInfo.put("SNC_PERMANENT", "No");
 		// additionalInfo.put("SNC_RETAIN_HOME_PATH", "Disabled");
@@ -1301,9 +1506,9 @@ public class CienaActivationClient extends CienaConnection {
 
 		tpsToModify.value[0].transmissionParams[0].transmissionParams = new NameAndStringValue_T[2];
 		tpsToModify.value[0].transmissionParams[0].transmissionParams[0] = new NameAndStringValue_T(
-				"GFPFrameCheckSequence", "Disabled");
+				"ProtocolIdentifier", "GFP_FRAME_ORDERED_SETS");
 		tpsToModify.value[0].transmissionParams[0].transmissionParams[1] = new NameAndStringValue_T(
-				"ProtocolIdentifier", "GFP_FRAME_MAPPED");
+				"GFPFrameCheckSequence", "Disabled");
 
 		// Z End
 		tpsToModify.value[1].ingressTrafficDescriptorName = new NameAndStringValue_T[0];
@@ -1319,9 +1524,9 @@ public class CienaActivationClient extends CienaConnection {
 
 		tpsToModify.value[1].transmissionParams[0].transmissionParams = new NameAndStringValue_T[2];
 		tpsToModify.value[1].transmissionParams[0].transmissionParams[0] = new NameAndStringValue_T(
-				"GFPFrameCheckSequence", "Disabled");
+				"ProtocolIdentifier", "GFP_FRAME_ORDERED_SETS");
 		tpsToModify.value[1].transmissionParams[0].transmissionParams[1] = new NameAndStringValue_T(
-				"ProtocolIdentifier", "GFP_FRAME_MAPPED");
+				"GFPFrameCheckSequence", "Disabled");
 
 		GradesOfImpact_T tolerableImpact = GradesOfImpact_T.GOI_MINOR_IMPACT;// GOI_HITLESS;
 		EMSFreedomLevel_T emsFreedomLevel = EMSFreedomLevel_T.EMSFL_RECONFIGURATION;// EMSFL_CC_AT_SNC_LAYER;
@@ -1496,7 +1701,7 @@ public class CienaActivationClient extends CienaConnection {
 		NameAndStringValue_T[][] aEnd = new NameAndStringValue_T[1][4];
 		aEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
 		aEnd[0][1] = new NameAndStringValue_T("ManagedElement",
-				"SNG-LAB1-ASON-CN-01");
+				"SNG-PPD-ASON-CN-01");
 		aEnd[0][2] = new NameAndStringValue_T("PTP",
 				"/rack=1/shelf=2/slot=15/sub_slot=1/port=1");
 		aEnd[0][3] = new NameAndStringValue_T("CTP", "/sts48c_vc4_16c=1");
@@ -1505,7 +1710,7 @@ public class CienaActivationClient extends CienaConnection {
 		NameAndStringValue_T[][] zEnd = new NameAndStringValue_T[1][4];
 		zEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
 		zEnd[0][1] = new NameAndStringValue_T("ManagedElement",
-				"SNG-LAB2-ASON-CN-01");
+				"HKG-CH-ASON-CN-01");
 		zEnd[0][2] = new NameAndStringValue_T("PTP",
 				"/rack=1/shelf=2/slot=15/sub_slot=1/port=1");
 		zEnd[0][3] = new NameAndStringValue_T("CTP", "/sts48c_vc4_16c=1");
@@ -1605,8 +1810,322 @@ public class CienaActivationClient extends CienaConnection {
 		ccd.callParameters = new CallParameterProfile_T("", "", "",
 				new NameAndStringValue_T[0]);
 
-		// EstablishCallCommand establishCallCommand = new EstablishCallCommand(
-		// ccd, sncs, tpsToModify);
+		CorbaCommands cmd = new CorbaCommands(emsSession, this.realEMSName);
+		cmd.establishCall(ccd, sncs, tpsToModify);
+	}
+
+	public void createSNCPSDHWithNEtpInc() throws ProcessingFailureException {
+		String callID = "NISA-MN-SNCP-SDHService-2";
+		String sncID = "NISA-MN-SNCP-SDHService-2";
+		String userLabel = "NISA-MN-SNCP-SDHService-2";
+		String owner = "";
+
+		// 15 = vc4; 16 = vc4_4c; 17 = vc4_16c; 18 = vc4_64c; 104 = OTU1
+		short layerRate = 17;
+
+		// A-End
+		NameAndStringValue_T[][] aEnd = new NameAndStringValue_T[1][4];
+		aEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		aEnd[0][1] = new NameAndStringValue_T("ManagedElement",
+				"SNG-PPD-ASON-CN-01");
+		aEnd[0][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=2/slot=15/sub_slot=10/port=1");
+		aEnd[0][3] = new NameAndStringValue_T("CTP", "/sts48c_vc4_16c=1");
+
+		// Z-End
+		NameAndStringValue_T[][] zEnd = new NameAndStringValue_T[1][4];
+		zEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		zEnd[0][1] = new NameAndStringValue_T("ManagedElement",
+				"HKG-CH-ASON-CN-01");
+		zEnd[0][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=2/slot=15/sub_slot=10/port=1");
+		zEnd[0][3] = new NameAndStringValue_T("CTP", "/sts48c_vc4_16c=1");
+
+		// NameAndStringValue_T[][] neTpInclusions = new
+		// NameAndStringValue_T[0][0];
+		NameAndStringValue_T[][] neTpSncExclusions = new NameAndStringValue_T[0][0];
+		CrossConnect_T[] ccInclusions = new CrossConnect_T[0];
+
+		// NE TP Inclusions
+		// Route 4: HKG/CH-SNG/PD 64S004(TGNIA)
+		NameAndStringValue_T[][] neTpInclusions = new NameAndStringValue_T[4][3];
+
+		neTpInclusions[0][0] = aEnd[0][0];
+		neTpInclusions[0][1] = aEnd[0][1];
+		neTpInclusions[0][2] = aEnd[0][2];
+
+		neTpInclusions[1] = this.getRoute4TGNIA()[0];
+		neTpInclusions[2] = this.getRoute4TGNIA()[1];
+
+		neTpInclusions[3][0] = zEnd[0][0];
+		neTpInclusions[3][1] = zEnd[0][1];
+		neTpInclusions[3][2] = zEnd[0][2];
+
+		Hashtable<String, String> additionalInfo = new Hashtable<String, String>();
+		additionalInfo.put("SNC_NAME", sncID + " W");
+		additionalInfo.put("SNC_PRIORITY", "0");
+		additionalInfo.put("SNC_SNIC_ENABLED", "No");
+		additionalInfo.put("CallName", callID);
+		additionalInfo.put("SNC_REGROOM_ALLOWED", "No");
+		additionalInfo.put("SNC_SNCP_PEER", sncID + " P");
+		// additionalInfo.put("SNC_DTL_SET_NAME", "W+P");
+
+		SNCCreateData_T createData = new SNCCreateData_T();
+
+		createData.aEnd = aEnd;
+		createData.zEnd = zEnd;
+		createData.additionalCreationInfo = getNameAndStringValues(additionalInfo);
+		createData.neTpInclusions = neTpInclusions;
+		createData.neTpSncExclusions = neTpSncExclusions;
+		createData.ccInclusions = ccInclusions;
+		createData.forceUniqueness = true;
+		createData.fullRoute = true;
+		createData.layerRate = layerRate;
+		createData.networkRouted = NetworkRouted_T.NR_NO;
+		createData.rerouteAllowed = Reroute_T.RR_NO;
+		createData.direction = ConnectionDirection_T.CD_BI;
+		createData.sncType = SNCType_T.ST_SIMPLE;
+		createData.staticProtectionLevel = StaticProtectionLevel_T.UNPROTECTED;
+		createData.protectionEffort = ProtectionEffort_T.EFFORT_SAME;
+		createData.owner = owner;
+		createData.userLabel = userLabel + " W";
+
+		// Created protected SNC
+		// NameAndStringValue_T[][] neTpInclusions2 = new
+		// NameAndStringValue_T[0][0];
+		NameAndStringValue_T[][] neTpSncExclusions2 = new NameAndStringValue_T[0][0];
+		CrossConnect_T[] ccInclusions2 = new CrossConnect_T[0];
+
+		// NE TP Inclusions
+		// Route 3 (OTU2): HKG/CH-SNG/PD 64S003-OTU2(SJC)
+		NameAndStringValue_T[][] neTpInclusions2 = new NameAndStringValue_T[4][3];
+
+		neTpInclusions2[0][0] = aEnd[0][0];
+		neTpInclusions2[0][1] = aEnd[0][1];
+		neTpInclusions2[0][2] = aEnd[0][2];
+
+		neTpInclusions2[1] = this.getRoute6Extra()[0];
+		neTpInclusions2[2] = this.getRoute6Extra()[1];
+
+		neTpInclusions2[3][0] = zEnd[0][0];
+		neTpInclusions2[3][1] = zEnd[0][1];
+		neTpInclusions2[3][2] = zEnd[0][2];
+
+		Hashtable<String, String> additionalInfo2 = new Hashtable<String, String>();
+		additionalInfo2.put("SNC_NAME", sncID + " P");
+		additionalInfo2.put("SNC_PRIORITY", "0");
+		additionalInfo2.put("SNC_SNIC_ENABLED", "No");
+		additionalInfo2.put("CallName", callID);
+		additionalInfo2.put("SNC_REGROOM_ALLOWED", "No");
+		additionalInfo2.put("SNC_SNCP_PEER", sncID + " W");
+
+		SNCCreateData_T createData2 = new SNCCreateData_T();
+
+		createData2.aEnd = aEnd;
+		createData2.zEnd = zEnd;
+		createData2.additionalCreationInfo = getNameAndStringValues(additionalInfo2);
+		createData2.neTpInclusions = neTpInclusions2;
+		createData2.neTpSncExclusions = neTpSncExclusions2;
+		createData2.ccInclusions = ccInclusions2;
+		createData2.forceUniqueness = true;
+		createData2.fullRoute = true;
+		createData2.layerRate = layerRate;
+		createData2.networkRouted = NetworkRouted_T.NR_NO;
+		createData2.rerouteAllowed = Reroute_T.RR_NO;
+		createData2.direction = ConnectionDirection_T.CD_BI;
+		createData2.sncType = SNCType_T.ST_SIMPLE;
+		createData2.staticProtectionLevel = StaticProtectionLevel_T.UNPROTECTED;
+		createData2.protectionEffort = ProtectionEffort_T.EFFORT_SAME;
+		createData2.owner = owner;
+		createData2.userLabel = userLabel + " P";
+
+		SNCCreateData_T sncs[] = new SNCCreateData_T[2];
+		sncs[0] = createData;
+		sncs[1] = createData2;
+
+		TPDataList_THolder tpsToModify = new TPDataList_THolder();
+		tpsToModify.value = new TPData_T[0];
+
+		CallCreateData_T ccd = new CallCreateData_T();
+
+		ccd.callName = new NameAndStringValue_T[2];
+		ccd.callName[0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		ccd.callName[1] = new NameAndStringValue_T("Call", callID);
+
+		ccd.aEnd = new CallEnd_T("", "", "", new NameAndStringValue_T[0]);// null;
+		ccd.zEnd = new CallEnd_T("", "", "", new NameAndStringValue_T[0]);
+
+		ccd.forceUniqueness = false;
+		ccd.userLabel = userLabel;
+		ccd.additionalCreationInfo = new NameAndStringValue_T[0];
+		ccd.networkAccessDomain = new String("");
+		ccd.owner = owner;
+
+		ccd.callDiversity = new Diversity_T(LevelofEffort_T.from_int(0),
+				LevelofEffort_T.from_int(0), LevelofEffort_T.from_int(0),
+				new NameAndStringValue_T[0], new NameAndStringValue_T[0]);
+		ccd.callParameters = new CallParameterProfile_T("", "", "",
+				new NameAndStringValue_T[0]);
+
+		CorbaCommands cmd = new CorbaCommands(emsSession, this.realEMSName);
+		cmd.establishCall(ccd, sncs, tpsToModify);
+	}
+
+	public void createSNCPSDHWithNEtpInc2() throws ProcessingFailureException {
+		String callID = "NISA-MN-SNCP-SDHService-2";
+		String sncID = "NISA-MN-SNCP-SDHService-2";
+		String userLabel = "NISA-MN-SNCP-SDHService-2";
+		String owner = "";
+
+		// 15 = vc4; 16 = vc4_4c; 17 = vc4_16c; 18 = vc4_64c; 104 = OTU1
+		short layerRate = 17;
+
+		// A-End
+		NameAndStringValue_T[][] aEnd = new NameAndStringValue_T[1][4];
+		aEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		aEnd[0][1] = new NameAndStringValue_T("ManagedElement",
+				"SNG-PPD-ASON-CN-01");
+		aEnd[0][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=2/slot=15/sub_slot=10/port=1");
+		aEnd[0][3] = new NameAndStringValue_T("CTP", "/sts48c_vc4_16c=1");
+
+		// Z-End
+		NameAndStringValue_T[][] zEnd = new NameAndStringValue_T[1][4];
+		zEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		zEnd[0][1] = new NameAndStringValue_T("ManagedElement",
+				"HKG-CH-ASON-CN-01");
+		zEnd[0][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=2/slot=15/sub_slot=10/port=1");
+		zEnd[0][3] = new NameAndStringValue_T("CTP", "/sts48c_vc4_16c=1");
+
+		// NameAndStringValue_T[][] neTpInclusions = new
+		// NameAndStringValue_T[0][0];
+		NameAndStringValue_T[][] neTpSncExclusions = new NameAndStringValue_T[0][0];
+		CrossConnect_T[] ccInclusions = new CrossConnect_T[0];
+
+		// NE TP Inclusions
+		// Route 4: HKG/CH-SNG/PD 64S004(TGNIA)
+		NameAndStringValue_T[][] neTpInclusions = new NameAndStringValue_T[4][3];
+
+		neTpInclusions[0][0] = aEnd[0][0];
+		neTpInclusions[0][1] = aEnd[0][1];
+		neTpInclusions[0][2] = aEnd[0][2];
+
+		neTpInclusions[1] = this.getRoute4TGNIA()[0];
+		neTpInclusions[2] = this.getRoute4TGNIA()[1];
+
+		neTpInclusions[3][0] = zEnd[0][0];
+		neTpInclusions[3][1] = zEnd[0][1];
+		neTpInclusions[3][2] = zEnd[0][2];
+
+		Hashtable<String, String> additionalInfo = new Hashtable<String, String>();
+		additionalInfo.put("SNC_NAME", sncID + " W");
+		additionalInfo.put("SNC_PRIORITY", "0");
+		additionalInfo.put("SNC_SNIC_ENABLED", "No");
+		additionalInfo.put("CallName", callID);
+		additionalInfo.put("SNC_REGROOM_ALLOWED", "No");
+		additionalInfo.put("SNC_SNCP_PEER", sncID + " P");
+		// additionalInfo.put("SNC_DTL_SET_NAME", "W+P");
+
+		SNCCreateData_T createData = new SNCCreateData_T();
+
+		createData.aEnd = aEnd;
+		createData.zEnd = zEnd;
+		createData.additionalCreationInfo = getNameAndStringValues(additionalInfo);
+		createData.neTpInclusions = neTpInclusions;
+		createData.neTpSncExclusions = neTpSncExclusions;
+		createData.ccInclusions = ccInclusions;
+		createData.forceUniqueness = true;
+		createData.fullRoute = true;
+		createData.layerRate = layerRate;
+		createData.networkRouted = NetworkRouted_T.NR_NO;
+		createData.rerouteAllowed = Reroute_T.RR_NO;
+		createData.direction = ConnectionDirection_T.CD_BI;
+		createData.sncType = SNCType_T.ST_SIMPLE;
+		createData.staticProtectionLevel = StaticProtectionLevel_T.UNPROTECTED;
+		createData.protectionEffort = ProtectionEffort_T.EFFORT_SAME;
+		createData.owner = owner;
+		createData.userLabel = userLabel + " W";
+
+		// Created protected SNC
+		// NameAndStringValue_T[][] neTpInclusions2 = new
+		// NameAndStringValue_T[0][0];
+		NameAndStringValue_T[][] neTpSncExclusions2 = new NameAndStringValue_T[0][0];
+		CrossConnect_T[] ccInclusions2 = new CrossConnect_T[0];
+
+		// NE TP Inclusions
+		// Route 3 (OTU2): HKG/CH-SNG/PD 64S003-OTU2(SJC)
+		NameAndStringValue_T[][] neTpInclusions2 = new NameAndStringValue_T[4][3];
+
+		neTpInclusions2[0][0] = aEnd[0][0];
+		neTpInclusions2[0][1] = aEnd[0][1];
+		neTpInclusions2[0][2] = aEnd[0][2];
+
+		neTpInclusions2[1] = this.getRoute6Extra()[0];
+		neTpInclusions2[2] = this.getRoute6Extra()[1];
+
+		neTpInclusions2[3][0] = zEnd[0][0];
+		neTpInclusions2[3][1] = zEnd[0][1];
+		neTpInclusions2[3][2] = zEnd[0][2];
+
+		Hashtable<String, String> additionalInfo2 = new Hashtable<String, String>();
+		additionalInfo2.put("SNC_NAME", sncID + " P");
+		additionalInfo2.put("SNC_PRIORITY", "0");
+		additionalInfo2.put("SNC_SNIC_ENABLED", "No");
+		additionalInfo2.put("CallName", callID);
+		additionalInfo2.put("SNC_REGROOM_ALLOWED", "No");
+		additionalInfo2.put("SNC_SNCP_PEER", sncID + " W");
+
+		SNCCreateData_T createData2 = new SNCCreateData_T();
+
+		createData2.aEnd = aEnd;
+		createData2.zEnd = zEnd;
+		createData2.additionalCreationInfo = getNameAndStringValues(additionalInfo2);
+		createData2.neTpInclusions = neTpInclusions2;
+		createData2.neTpSncExclusions = neTpSncExclusions2;
+		createData2.ccInclusions = ccInclusions2;
+		createData2.forceUniqueness = true;
+		createData2.fullRoute = true;
+		createData2.layerRate = layerRate;
+		createData2.networkRouted = NetworkRouted_T.NR_NO;
+		createData2.rerouteAllowed = Reroute_T.RR_NO;
+		createData2.direction = ConnectionDirection_T.CD_BI;
+		createData2.sncType = SNCType_T.ST_SIMPLE;
+		createData2.staticProtectionLevel = StaticProtectionLevel_T.UNPROTECTED;
+		createData2.protectionEffort = ProtectionEffort_T.EFFORT_SAME;
+		createData2.owner = owner;
+		createData2.userLabel = userLabel + " P";
+
+		SNCCreateData_T sncs[] = new SNCCreateData_T[2];
+		sncs[0] = createData;
+		sncs[1] = createData2;
+
+		TPDataList_THolder tpsToModify = new TPDataList_THolder();
+		tpsToModify.value = new TPData_T[0];
+
+		CallCreateData_T ccd = new CallCreateData_T();
+
+		ccd.callName = new NameAndStringValue_T[2];
+		ccd.callName[0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		ccd.callName[1] = new NameAndStringValue_T("Call", callID);
+
+		ccd.aEnd = new CallEnd_T("", "", "", new NameAndStringValue_T[0]);// null;
+		ccd.zEnd = new CallEnd_T("", "", "", new NameAndStringValue_T[0]);
+
+		ccd.forceUniqueness = false;
+		ccd.userLabel = userLabel;
+		ccd.additionalCreationInfo = new NameAndStringValue_T[0];
+		ccd.networkAccessDomain = new String("");
+		ccd.owner = owner;
+
+		ccd.callDiversity = new Diversity_T(LevelofEffort_T.from_int(0),
+				LevelofEffort_T.from_int(0), LevelofEffort_T.from_int(0),
+				new NameAndStringValue_T[0], new NameAndStringValue_T[0]);
+		ccd.callParameters = new CallParameterProfile_T("", "", "",
+				new NameAndStringValue_T[0]);
+
+		CorbaCommands cmd = new CorbaCommands(emsSession, this.realEMSName);
+		cmd.establishCall(ccd, sncs, tpsToModify);
 	}
 
 	public void createGTP() throws ProcessingFailureException {
@@ -2015,7 +2534,7 @@ public class CienaActivationClient extends CienaConnection {
 				tpsToModify);
 	}
 
-	public void createMultiNodeEthOverSDH10GpbsWithNEtpInc()
+	public void createMultiNodeEthOverSDH10GEWithNEtpInc()
 			throws ProcessingFailureException {
 		String sncID = "NISA-MN-10GbEoverSDHlink-2";
 		String userLabel = "NISA-MN-10GbEoverSDHlink-2";
@@ -2024,17 +2543,16 @@ public class CienaActivationClient extends CienaConnection {
 		// 15 = vc4; 16 = vc4_4c; 17 = vc4_16c; 18 = vc4_64c
 		short layerRate = 18;
 
-		NameAndStringValue_T[][] aEnd = new NameAndStringValue_T[1][4];
-
 		// A-End
+		NameAndStringValue_T[][] aEnd = new NameAndStringValue_T[1][4];
 		aEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
 		aEnd[0][1] = new NameAndStringValue_T("ManagedElement",
-				"SNG-LAB1-ASON-CN-01");
+				"SNG-PPD-ASON-CN-01");
 
 		// 10 GbE Service
 		// Ethernet port; ClientType=10GbE_SONET_SDH
 		aEnd[0][2] = new NameAndStringValue_T("PTP",
-				"/rack=1/shelf=2/slot=1/sub_slot=11/port=1");
+				"/rack=1/shelf=2/slot=1/sub_slot=12/port=1");
 		aEnd[0][3] = new NameAndStringValue_T("CTP",
 				"/encapsulation=1/sts192c_vc4_64c=1");
 
@@ -2042,12 +2560,12 @@ public class CienaActivationClient extends CienaConnection {
 		NameAndStringValue_T[][] zEnd = new NameAndStringValue_T[1][4];
 		zEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
 		zEnd[0][1] = new NameAndStringValue_T("ManagedElement",
-				"SNG-LAB2-ASON-CN-01");
+				"HKG-CH-ASON-CN-01");
 
 		// 10 GbE Service
 		// Ethernet port; ClientType=10GbE_SONET_SDH
 		zEnd[0][2] = new NameAndStringValue_T("PTP",
-				"/rack=1/shelf=2/slot=1/sub_slot=11/port=1");
+				"/rack=1/shelf=2/slot=1/sub_slot=12/port=1");
 		zEnd[0][3] = new NameAndStringValue_T("CTP",
 				"/encapsulation=1/sts192c_vc4_64c=1");
 
@@ -2292,15 +2810,14 @@ public class CienaActivationClient extends CienaConnection {
 		// 104 = ODU1, 105 = ODU2, 11315 = PROP_ODU0
 		short layerRate = 104;
 
-		NameAndStringValue_T[][] aEnd = new NameAndStringValue_T[1][4];
-
 		// A-End
+		NameAndStringValue_T[][] aEnd = new NameAndStringValue_T[1][4];
 		aEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
 		aEnd[0][1] = new NameAndStringValue_T("ManagedElement",
 				"SNG-PPD-ASON-CN-01");
 
 		aEnd[0][2] = new NameAndStringValue_T("PTP",
-				"/rack=1/shelf=2/slot=13/sub_slot=28/port=1");
+				"/rack=1/shelf=2/slot=15/sub_slot=26/port=1");
 		aEnd[0][3] = new NameAndStringValue_T("CTP",
 				"/frequency=228.85/odu1=1;tp=1");
 
@@ -2311,7 +2828,7 @@ public class CienaActivationClient extends CienaConnection {
 				"HKG-CH-ASON-CN-01");
 
 		zEnd[0][2] = new NameAndStringValue_T("PTP",
-				"/rack=1/shelf=2/slot=15/sub_slot=28/port=1");
+				"/rack=1/shelf=2/slot=15/sub_slot=26/port=1");
 		zEnd[0][3] = new NameAndStringValue_T("CTP",
 				"/frequency=228.85/odu1=1;tp=1");
 
@@ -2397,15 +2914,14 @@ public class CienaActivationClient extends CienaConnection {
 		// 104 = ODU1, 105 = ODU2, 11315 = PROP_ODU0
 		short layerRate = 104;
 
-		NameAndStringValue_T[][] aEnd = new NameAndStringValue_T[1][4];
-
 		// A-End
+		NameAndStringValue_T[][] aEnd = new NameAndStringValue_T[1][4];
 		aEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
 		aEnd[0][1] = new NameAndStringValue_T("ManagedElement",
 				"SNG-PPD-ASON-CN-01");
 
 		aEnd[0][2] = new NameAndStringValue_T("PTP",
-				"/rack=1/shelf=2/slot=4/sub_slot=6/port=1");
+				"/rack=1/shelf=2/slot=1/sub_slot=4/port=1");
 		aEnd[0][3] = new NameAndStringValue_T("CTP",
 				"/frequency=228.85/odu2=1;tp=1;pt=20/odu1=3;tp=3");
 
@@ -2416,7 +2932,7 @@ public class CienaActivationClient extends CienaConnection {
 				"HKG-CH-ASON-CN-01");
 
 		zEnd[0][2] = new NameAndStringValue_T("PTP",
-				"/rack=1/shelf=2/slot=4/sub_slot=6/port=1");
+				"/rack=1/shelf=2/slot=1/sub_slot=4/port=1");
 		zEnd[0][3] = new NameAndStringValue_T("CTP",
 				"/frequency=228.85/odu2=1;tp=1;pt=20/odu1=3;tp=3");
 
@@ -2488,15 +3004,14 @@ public class CienaActivationClient extends CienaConnection {
 		// 104 = ODU1, 105 = ODU2, 11315 = PROP_ODU0
 		short layerRate = 105;
 
-		NameAndStringValue_T[][] aEnd = new NameAndStringValue_T[1][4];
-
 		// A-End
+		NameAndStringValue_T[][] aEnd = new NameAndStringValue_T[1][4];
 		aEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
 		aEnd[0][1] = new NameAndStringValue_T("ManagedElement",
 				"SNG-PPD-ASON-CN-01");
 
 		aEnd[0][2] = new NameAndStringValue_T("PTP",
-				"/rack=1/shelf=2/slot=4/sub_slot=6/port=1");
+				"/rack=1/shelf=2/slot=1/sub_slot=4/port=1");
 		aEnd[0][3] = new NameAndStringValue_T("CTP",
 				"/frequency=228.85/odu2=1;tp=1");
 
@@ -2507,7 +3022,7 @@ public class CienaActivationClient extends CienaConnection {
 				"HKG-CH-ASON-CN-01");
 
 		zEnd[0][2] = new NameAndStringValue_T("PTP",
-				"/rack=1/shelf=2/slot=4/sub_slot=6/port=1");
+				"/rack=1/shelf=2/slot=1/sub_slot=4/port=1");
 		zEnd[0][3] = new NameAndStringValue_T("CTP",
 				"/frequency=228.85/odu2=1;tp=1");
 
@@ -2743,6 +3258,25 @@ public class CienaActivationClient extends CienaConnection {
 				"HKG-CH-ASON-CN-01");
 		neTpInclusions[1][2] = new NameAndStringValue_T("PTP",
 				"/rack=1/shelf=2/slot=4/sub_slot=2/port=1");
+
+		return neTpInclusions;
+	}
+
+	public NameAndStringValue_T[][] getRoute6Extra() {
+		// Route 5 (OOB): HKG/CH-SNG/PD 64S005-OOB
+		NameAndStringValue_T[][] neTpInclusions = new NameAndStringValue_T[2][3];
+
+		neTpInclusions[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		neTpInclusions[0][1] = new NameAndStringValue_T("ManagedElement",
+				"SNG-PPD-ASON-CN-01");
+		neTpInclusions[0][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=2/slot=4/sub_slot=4/port=1");
+
+		neTpInclusions[1][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		neTpInclusions[1][1] = new NameAndStringValue_T("ManagedElement",
+				"HKG-CH-ASON-CN-01");
+		neTpInclusions[1][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=2/slot=4/sub_slot=4/port=1");
 
 		return neTpInclusions;
 	}

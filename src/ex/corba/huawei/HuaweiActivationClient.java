@@ -55,8 +55,8 @@ public class HuaweiActivationClient extends HuaweiConnection {
 			// main.createVC4_16c();
 
 			// SDH Path for Ethernet service
-			// main.createVC12Path();
-			// main.createVC3Path();
+			main.createVC12Path();
+			main.createVC3Path();
 
 			// main.deactivateAndDeleteSNC();
 
