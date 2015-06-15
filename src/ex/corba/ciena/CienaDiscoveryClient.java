@@ -99,6 +99,11 @@ public class CienaDiscoveryClient extends CienaConnection {
 				&& props.getProperty("getAllFDFrs").equalsIgnoreCase("yes")) {
 			cmd.getAllFDFrs();
 		}
+		
+		if (props.getProperty("getContainedInUseTPs") != null
+				&& props.getProperty("getContainedInUseTPs").equalsIgnoreCase("yes")) {
+			cmd.getContainedInUseTPs();
+		}
 
 		handler.handlerBuilderEnd();
 	}

@@ -101,6 +101,7 @@ public class CorbaCommands {
 	// Cache list
 	private List<String> neNames;
 	private List<String> sncNames;
+	private List<NameAndStringValue_T[]> tpNames;
 
 	private Set<Short> terminationPointRates;
 
@@ -369,7 +370,8 @@ public class CorbaCommands {
 				}
 
 				for (int i = 0; i < terminationPointList.value.length; i++) {
-					helper.printTerminationPoint(terminationPointList.value[i]);
+					helper.printTerminationPoint(terminationPointList.value[i],
+							CorbaConstants.PTPS_STR);
 				}
 
 				exitWhile = false;
@@ -387,7 +389,9 @@ public class CorbaCommands {
 							}
 
 							for (int i = 0; i < terminationPointList.value.length; i++) {
-								helper.printTerminationPoint(terminationPointList.value[i]);
+								helper.printTerminationPoint(
+										terminationPointList.value[i],
+										CorbaConstants.PTPS_STR);
 							}
 						}
 						exitWhile = true;
@@ -516,6 +520,9 @@ public class CorbaCommands {
 		mlsn[1] = new NameAndStringValue_T(
 				CorbaConstants.MULTILAYER_SUBNETWORK_STR, "MLSN_1");
 
+		if (this.tpNames == null)
+			this.tpNames = new ArrayList<NameAndStringValue_T[]>();
+
 		TopologicalLinkList_THolder topologicalLinkList = new TopologicalLinkList_THolder();
 		TopologicalLinkIterator_IHolder topologicalLinkIterator = new TopologicalLinkIterator_IHolder();
 
@@ -525,6 +532,8 @@ public class CorbaCommands {
 
 			for (int i = 0; i < topologicalLinkList.value.length; i++) {
 				handler.printStructure(getTopologicalLinkParams(topologicalLinkList.value[i]));
+				this.tpNames.add(topologicalLinkList.value[i].aEndTP);
+				this.tpNames.add(topologicalLinkList.value[i].zEndTP);
 			}
 
 			boolean exitWhile = false;
@@ -536,6 +545,10 @@ public class CorbaCommands {
 								HOW_MANY, topologicalLinkList);
 						for (int i = 0; i < topologicalLinkList.value.length; i++) {
 							handler.printStructure(getTopologicalLinkParams(topologicalLinkList.value[i]));
+							this.tpNames
+									.add(topologicalLinkList.value[i].aEndTP);
+							this.tpNames
+									.add(topologicalLinkList.value[i].zEndTP);
 						}
 					}
 
@@ -583,6 +596,7 @@ public class CorbaCommands {
 				.setFieldValue(CorbaConstants.A_END_TP_STR, handler
 						.getValueByName(topologicalLink.aEndTP,
 								CorbaConstants.PTP_STR));
+
 		container.setFieldValue(CorbaConstants.Z_END_NE_STR, handler
 				.getValueByName(topologicalLink.zEndTP,
 						CorbaConstants.MANAGED_ELEMENT_STR));
@@ -643,7 +657,7 @@ public class CorbaCommands {
 
 		return tpHolder.value;
 	}
-	
+
 	public void getAllFDFrs() throws ProcessingFailureException, SAXException {
 		if (LOG.isInfoEnabled()) {
 			LOG.info("getAllFDFrs() start.");
@@ -662,8 +676,8 @@ public class CorbaCommands {
 		FDFrIterator_I iterator = null;
 		short[] rateList = new short[0];
 
-		this.flowDomainManager.getAllFDFrs(fdname, HOW_MANY, rateList, listHolder,
-				iteratorHolder);
+		this.flowDomainManager.getAllFDFrs(fdname, HOW_MANY, rateList,
+				listHolder, iteratorHolder);
 
 		if (LOG.isDebugEnabled()) {
 			LOG.debug("Got "
@@ -1215,6 +1229,154 @@ public class CorbaCommands {
 
 		return errorReason;
 
+	}
+
+	public void getContainedInUseTPs() throws ProcessingFailureException,
+			SAXException {
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info("getContainedInUseTPs() start.");
+		}
+
+		if (!setManagerByName(ME_MANAGER_NAME)) {
+			return;
+		}
+
+		if (this.tpNames == null
+				|| (this.tpNames != null && this.tpNames.size() <= 0)) {
+
+			if (!setManagerByName(MLS_MANAGER_NAME))
+				return;
+
+			if (LOG.isInfoEnabled()) {
+				LOG.info("getAllTopologicalLinks() start.");
+			}
+
+			NameAndStringValue_T[] mlsn = new NameAndStringValue_T[2];
+
+			mlsn[0] = new NameAndStringValue_T(CorbaConstants.EMS_STR, emsName);
+			mlsn[1] = new NameAndStringValue_T(
+					CorbaConstants.MULTILAYER_SUBNETWORK_STR, "MLSN_1");
+
+			this.tpNames = new ArrayList<NameAndStringValue_T[]>();
+
+			TopologicalLinkList_THolder topologicalLinkList = new TopologicalLinkList_THolder();
+			TopologicalLinkIterator_IHolder topologicalLinkIterator = new TopologicalLinkIterator_IHolder();
+
+			try {
+				mlsnManager.getAllTopologicalLinks(mlsn, HOW_MANY,
+						topologicalLinkList, topologicalLinkIterator);
+
+				for (int i = 0; i < topologicalLinkList.value.length; i++) {
+					this.tpNames.add(topologicalLinkList.value[i].aEndTP);
+					this.tpNames.add(topologicalLinkList.value[i].zEndTP);
+				}
+
+				boolean exitWhile = false;
+				if (topologicalLinkIterator.value != null) {
+					try {
+						boolean hasMoreData = true;
+						while (hasMoreData) {
+							hasMoreData = topologicalLinkIterator.value.next_n(
+									HOW_MANY, topologicalLinkList);
+							for (int i = 0; i < topologicalLinkList.value.length; i++) {
+								this.tpNames
+										.add(topologicalLinkList.value[i].aEndTP);
+								this.tpNames
+										.add(topologicalLinkList.value[i].zEndTP);
+							}
+						}
+
+						exitWhile = true;
+					} finally {
+						if (!exitWhile) {
+							topologicalLinkIterator.value.destroy();
+						}
+					}
+				}
+			} catch (ProcessingFailureException ex) {
+				handleProcessingFailureException(ex,
+						"getAllTopologicalLinks. MLS: " + mlsn[1].value);
+			}
+
+			if (LOG.isInfoEnabled()) {
+				LOG.info("getAllTopologicalLinks() complete.");
+			}
+		}
+
+		LOG.info("TP Names List Size:" + this.tpNames != null
+				&& this.tpNames.size() > 0 ? String.valueOf(this.tpNames.size())
+				: "0");
+
+		if (this.tpNames != null && this.tpNames.size() > 0) {
+
+			short[] tpLayerRateList = new short[0];
+
+			TerminationPointList_THolder terminationPointList = new TerminationPointList_THolder();
+			TerminationPointIterator_IHolder terminationPointIterator = new TerminationPointIterator_IHolder();
+
+			boolean exitWhile = false;
+			int counter = 0;
+
+			for (NameAndStringValue_T[] eachTPName : this.tpNames) {
+				try {
+					meManager.getContainedInUseTPs(eachTPName, tpLayerRateList,
+							HOW_MANY, terminationPointList,
+							terminationPointIterator);
+
+					for (int i = 0; i < terminationPointList.value.length; i++) {
+						helper.printTerminationPoint(
+								terminationPointList.value[i],
+								CorbaConstants.IN_USE_TPS_STR);
+					}
+
+					exitWhile = false;
+
+					if (terminationPointIterator.value != null) {
+						try {
+							boolean hasMoreData = true;
+							while (hasMoreData) {
+								hasMoreData = terminationPointIterator.value
+										.next_n(HOW_MANY, terminationPointList);
+								if (LOG.isInfoEnabled()) {
+									LOG.info(
+											"getContainedInUseTPs: got {} InUseTP for ME {}.",
+											terminationPointList.value.length,
+											eachTPName[1].value);
+								}
+
+								for (int i = 0; i < terminationPointList.value.length; i++) {
+									helper.printTerminationPoint(
+											terminationPointList.value[i],
+											CorbaConstants.IN_USE_TPS_STR);
+								}
+							}
+							exitWhile = true;
+						} finally {
+							if (!exitWhile) {
+								terminationPointIterator.value.destroy();
+							}
+						}
+
+						counter++;
+
+						if (LOG.isDebugEnabled()) {
+							LOG.debug("getContainedInUseTPs: finished getContainedInUseTP for ME "
+									+ eachTPName[1].value
+									+ " Order number # "
+									+ counter);
+						}
+					}
+				} catch (ProcessingFailureException ex) {
+					handleProcessingFailureException(ex,
+							"getContainedInUseTPs. ");
+				}
+			}
+
+			if (LOG.isInfoEnabled()) {
+				LOG.info("getContainedInUseTPs() complete.");
+			}
+		}
 	}
 
 	public void handleProcessingFailureException(

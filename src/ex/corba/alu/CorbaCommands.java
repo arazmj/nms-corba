@@ -1,7 +1,6 @@
 package ex.corba.alu;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -246,8 +245,8 @@ public class CorbaCommands {
 
 		ManagedElement_T[] mes = meList.value;
 
-		if (LOG.isDebugEnabled()) {
-			LOG.debug("getAllManagedElements: got " + mes.length + " MEs ");
+		if (LOG.isInfoEnabled()) {
+			LOG.info("getAllManagedElements: got " + mes.length + " MEs ");
 		}
 
 		List<ManagedElement> managedElements = new ArrayList<ManagedElement>();
@@ -257,9 +256,14 @@ public class CorbaCommands {
 			// managedElements.add(Corba2Object.getManagedElement(me));
 			neNames.add(handler.getValueByName(me.name, "ManagedElement"));
 
-			// Cache actual NE without VNE
+			// Cache actual NE without VNE or ENE
+			// Product Name = 'External Network' or '' = VNE (SDH devices of
+			// external network)
+			// Product Name = 'None' = ENE (ISA Cards of external network)
 			if (!me.productName.equals("External Network")
-					&& !me.productName.equals("None")) {
+					&& !me.productName.equals("")
+					&& !me.productName.equals("None")
+					&& !me.productName.startsWith("ISA_ES")) {
 				neNamesWithoutVNE.add(handler.getValueByName(me.name,
 						"ManagedElement"));
 			}
@@ -275,8 +279,9 @@ public class CorbaCommands {
 				while (hasMoreData) {
 					hasMoreData = meItr.value.next_n(HOW_MANY, meList);
 					mes = meList.value;
-					if (LOG.isDebugEnabled())
-						LOG.debug("getAllManagedElements: got " + mes.length
+
+					if (LOG.isInfoEnabled())
+						LOG.info("getAllManagedElements: got " + mes.length
 								+ " MEs ");
 
 					for (ManagedElement_T me : mes) {
@@ -288,6 +293,7 @@ public class CorbaCommands {
 
 						// Cache actual NE without VNE or ENE
 						if (!me.productName.equals("External Network")
+								&& !me.productName.equals("")
 								&& !me.productName.equals("None")
 								&& !me.productName.startsWith("ISA_ES")) {
 							neNamesWithoutVNE.add(handler.getValueByName(
@@ -340,29 +346,20 @@ public class CorbaCommands {
 		int meCounter = 0;
 		boolean exitWhile = false;
 
-		// List<EquipmentHolder> equipmentHolders = new
-		// ArrayList<EquipmentHolder>();
-
 		for (String neName : neNamesWithoutVNE) {
 			try {
 				ne[1].value = neName;
 				eiManager.getAllEquipment(ne, HOW_MANY, equipOrHolderList,
 						equipOrHolderItr);
 
-				LOG.info("getAllEquipment: got "
-						+ equipOrHolderList.value.length
-						+ " equipments for ME " + ne[1].value);
+				if (LOG.isInfoEnabled()) {
+					LOG.info("getAllEquipment: got "
+							+ equipOrHolderList.value.length
+							+ " equipments for ME " + ne[1].value);
+				}
 
 				for (int i = 0; i < equipOrHolderList.value.length; i++) {
 					helper.printEquipmentOrHolder(equipOrHolderList.value[i]);
-
-					// if (equipOrHolderList.value[i].discriminator().value() ==
-					// 1)
-					// {
-					// equipmentHolders.add(Corba2Object
-					// .getEquipmentHolder(equipOrHolderList.value[i]
-					// .holder()));
-					// }
 				}
 
 				exitWhile = false;
@@ -388,9 +385,10 @@ public class CorbaCommands {
 
 				meCounter++;
 
-				System.out
-						.println("getAllEquipment: finished getEquipment for ME "
-								+ ne[1].value + " Order number # " + meCounter);
+				if (LOG.isInfoEnabled()) {
+					LOG.info("getAllEquipment: finished getEquipment for ME "
+							+ ne[1].value + " Order number # " + meCounter);
+				}
 			} catch (ProcessingFailureException ex) {
 				handleProcessingFailureException(ex, "getAllEquipment. ME: "
 						+ neName);
@@ -463,6 +461,7 @@ public class CorbaCommands {
 						while (hasMoreData) {
 							hasMoreData = terminationPointIterator.value
 									.next_n(HOW_MANY, terminationPointList);
+
 							if (LOG.isInfoEnabled()) {
 								LOG.info("getAllPTPs: got {} PTP for ME {}.",
 										terminationPointList.value.length,
@@ -482,8 +481,8 @@ public class CorbaCommands {
 
 					counter++;
 
-					if (LOG.isDebugEnabled()) {
-						LOG.debug("getAllPTPs: finished getPTP for ME "
+					if (LOG.isInfoEnabled()) {
+						LOG.info("getAllPTPs: finished getPTP for ME "
 								+ neNameArray[1].value + " Order number # "
 								+ counter);
 					}
@@ -552,7 +551,7 @@ public class CorbaCommands {
 				}
 			} catch (ProcessingFailureException ex) {
 				handleProcessingFailureException(ex,
-						"getAllTopologicalLinks. MLS: " + mlsn[1].value);
+						"getAllTopologicalLinks. MLSN: " + mlsn[1].value);
 			}
 		}
 
@@ -751,8 +750,15 @@ public class CorbaCommands {
 		sncNames = new ArrayList<String>();
 
 		for (int i = 0; i < sncList.value.length; i++) {
-			sncNames.add(handler.getValueByName(sncList.value[i].name,
-					CorbaConstants.SUBNETWORK_CONNECTION_STR));
+			// Filter MSTRAIL. The MSTRAILS does not have Cross-connects. Hence,
+			// getRoute API will gives for these SNCs
+			if (sncList.value[i].rate != 25 && sncList.value[i].rate != 26
+					&& sncList.value[i].rate != 27
+					&& sncList.value[i].rate != 28) {
+				sncNames.add(handler.getValueByName(sncList.value[i].name,
+						CorbaConstants.SUBNETWORK_CONNECTION_STR));
+			}
+
 			handler.printStructure(helper
 					.getSubnetworkConnectionParams(sncList.value[i]));
 		}
@@ -764,9 +770,18 @@ public class CorbaCommands {
 				while (hasMoreData) {
 					hasMoreData = sncIterator.value.next_n(HOW_MANY, sncList);
 					for (int i = 0; i < sncList.value.length; i++) {
-						sncNames.add(handler.getValueByName(
-								sncList.value[i].name,
-								CorbaConstants.SUBNETWORK_CONNECTION_STR));
+						// Filter MSTRAIL. The MSTRAILS does not have
+						// Cross-connects. Hence,
+						// getRoute API will gives for these SNCs
+						if (sncList.value[i].rate != 25
+								&& sncList.value[i].rate != 26
+								&& sncList.value[i].rate != 27
+								&& sncList.value[i].rate != 28) {
+							sncNames.add(handler.getValueByName(
+									sncList.value[i].name,
+									CorbaConstants.SUBNETWORK_CONNECTION_STR));
+						}
+
 						handler.printStructure(helper
 								.getSubnetworkConnectionParams(sncList.value[i]));
 					}
@@ -808,13 +823,18 @@ public class CorbaCommands {
 		sncNameArray[2].name = CorbaConstants.SUBNETWORK_CONNECTION_STR;
 
 		Route_THolder routeHolder = new Route_THolder();
-		Iterator<String> iter = sncNames.iterator();
 
-		while (iter.hasNext()) {
-			sncNameArray[2].value = iter.next();
+		for (String sncName : sncNames) {
+			sncNameArray[2].value = sncName;
 
 			try {
 				mlsnManager.getRoute(sncNameArray, true, routeHolder);
+
+				if (LOG.isInfoEnabled()) {
+					LOG.info("getRoute: got " + routeHolder.value.length
+							+ " Cross-connects for SNC "
+							+ sncNameArray[2].value);
+				}
 
 				for (CrossConnect_T crossConnect : routeHolder.value) {
 					handler.printStructure(helper.getRouteParams(crossConnect,

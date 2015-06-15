@@ -56,6 +56,7 @@ public class CorbaConstants {
 	public static final String TRANSMISSION_PARAMS_STR = "TRANSMISSION_PARAMS";
 	public static final String TP_PROTECTION_ASSOCIATION_STR = "TP_PROTECTION_ASSOCIATION";
 	public static final String EDGE_POINT_STR = "EDGE_POINT";
+	public static final String PTPS_STR = "PTPS";
 
 	// GTP_T
 	public static final String GTP_STR = "GTP";
@@ -153,4 +154,8 @@ public class CorbaConstants {
 	public static final String FDFR_STATE_STR = "FDFR_STATE";
 	public static final String A_END_STR = "A_END";
 	public static final String Z_END_STR = "Z_END";	
+	
+	//ContainedInUseTPs
+	public static final String IN_USE_TPS_STR = "IN_USE_TPS";
+
 }

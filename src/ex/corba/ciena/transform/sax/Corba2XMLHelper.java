@@ -167,13 +167,15 @@ public class Corba2XMLHelper {
 		return container;
 	}
 
-	public void printTerminationPoint(TerminationPoint_T terminationPoint)
-			throws ProcessingFailureException, SAXException {
-		handler.printStructure(getTerminationPointParams(terminationPoint));
+	public void printTerminationPoint(TerminationPoint_T terminationPoint,
+			String xmlTag) throws ProcessingFailureException, SAXException {
+
+		handler.printStructure(getTerminationPointParams(terminationPoint,
+				xmlTag));
 	}
 
 	public Corba2XMLContainer getTerminationPointParams(
-			TerminationPoint_T terminationPoint)
+			TerminationPoint_T terminationPoint, String xmlTag)
 			throws ProcessingFailureException {
 
 		String type = null;
@@ -285,25 +287,33 @@ public class Corba2XMLHelper {
 			}
 		}
 
-		Corba2XMLContainer container = new Corba2XMLContainer(
-				Corba2XMLStructure.PTPS);
+		Corba2XMLContainer container = null;
+		if (CorbaConstants.PTPS_STR.equals(xmlTag)) {
+			container = new Corba2XMLContainer(Corba2XMLStructure.PTPS);
+		} else {
+			container = new Corba2XMLContainer(Corba2XMLStructure.IN_USE_TPS);
+		}
 		container.setFieldValue(CorbaConstants.NE_ID_STR, handler
 				.getValueByName(terminationPoint.name,
 						CorbaConstants.MANAGED_ELEMENT_STR));
-		container.setFieldValue(CorbaConstants.USER_LABEL_STR,
-				terminationPoint.userLabel);
+		if (CorbaConstants.PTPS_STR.equals(xmlTag)) {
+			container.setFieldValue(CorbaConstants.USER_LABEL_STR,
+					terminationPoint.userLabel);
+		}
 		container.setFieldValue(CorbaConstants.NATIVE_EMS_NAME_STR,
 				terminationPoint.nativeEMSName);
 		container.setFieldValue(CorbaConstants.OWNER_STR,
 				terminationPoint.owner);
-		container
-				.setFieldValue(
-						CorbaConstants.IN_TRAFFIC_DES_NAME_STR,
-						handler.convertNameAndStringValueToString(terminationPoint.ingressTrafficDescriptorName));
-		container
-				.setFieldValue(
-						CorbaConstants.EG_TRAFFIC_DES_NAME_STR,
-						handler.convertNameAndStringValueToString(terminationPoint.egressTrafficDescriptorName));
+		if (CorbaConstants.PTPS_STR.equals(xmlTag)) {
+			container
+					.setFieldValue(
+							CorbaConstants.IN_TRAFFIC_DES_NAME_STR,
+							handler.convertNameAndStringValueToString(terminationPoint.ingressTrafficDescriptorName));
+			container
+					.setFieldValue(
+							CorbaConstants.EG_TRAFFIC_DES_NAME_STR,
+							handler.convertNameAndStringValueToString(terminationPoint.egressTrafficDescriptorName));
+		}
 		if (isFTPExists) {
 			container.setFieldValue(CorbaConstants.FTP_STR, ftpValue);
 		}

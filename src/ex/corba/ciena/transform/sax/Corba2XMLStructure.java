@@ -61,6 +61,19 @@ public enum Corba2XMLStructure {
 			CorbaConstants.EDGE_POINT_STR, CorbaConstants.ADDITIONAL_INFO_STR }),
 
 	/**
+	 * CORBA entity: TerminationPoint_T
+	 */
+	IN_USE_TPS("IN_USE_TPS", new String[] { CorbaConstants.NE_ID_STR,
+			CorbaConstants.NATIVE_EMS_NAME_STR, CorbaConstants.OWNER_STR,
+			CorbaConstants.PTP_STR, CorbaConstants.FTP_STR,
+			CorbaConstants.CTP_STR, CorbaConstants.TYPE_STR,
+			CorbaConstants.CONNECTION_STATE_STR,
+			CorbaConstants.TP_MAPPING_MODE_STR, CorbaConstants.DIRECTION_STR,
+			CorbaConstants.TRANSMISSION_PARAMS_STR,
+			CorbaConstants.TP_PROTECTION_ASSOCIATION_STR,
+			CorbaConstants.EDGE_POINT_STR, CorbaConstants.ADDITIONAL_INFO_STR }),
+
+	/**
 	 * CORBA entity: GTP_T
 	 */
 	GTPS("GTPS", new String[] { CorbaConstants.NE_ID_STR,
