@@ -85,6 +85,12 @@ public class CienaDiscoveryClient extends CienaConnection {
 			cmd.getAllSubnetworkConnections();
 		}
 
+		if (props.getProperty("getAllProtectionGroups") != null
+				&& props.getProperty("getAllProtectionGroups")
+						.equalsIgnoreCase("yes")) {
+			cmd.getAllProtectionGroups();
+		}
+		
 		if (props.getProperty("getAllGTPs") != null
 				&& props.getProperty("getAllGTPs").equalsIgnoreCase("yes")) {
 			cmd.getAllGTPs();
@@ -103,6 +109,11 @@ public class CienaDiscoveryClient extends CienaConnection {
 		if (props.getProperty("getContainedInUseTPs") != null
 				&& props.getProperty("getContainedInUseTPs").equalsIgnoreCase("yes")) {
 			cmd.getContainedInUseTPs();
+		}
+		
+		if (props.getProperty("getEquipmentConfiguration") != null
+				&& props.getProperty("getEquipmentConfiguration").equalsIgnoreCase("yes")) {
+			cmd.getEquipmentConfiguration();
 		}
 
 		handler.handlerBuilderEnd();

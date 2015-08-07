@@ -1154,6 +1154,31 @@ public class CorbaCommands {
 
 		return errorReason;
 	}
+	
+	public void getSNCsByUserLabel(String userLabel) throws ProcessingFailureException, SAXException{
+		
+		if (LOG.isInfoEnabled()) {
+			LOG.info("getSNCsByUserLabel() start.");
+		}
+
+		if (!setManagerByName(MLS_MANAGER_NAME))
+			return;
+
+		SubnetworkConnectionList_THolder sncList = new SubnetworkConnectionList_THolder();
+		
+		mlsnManager.getSNCsByUserLabel(userLabel, sncList);
+
+		for (int i = 0; i < sncList.value.length; i++) {
+			
+			handler.printStructure(helper
+					.getSubnetworkConnectionParams(sncList.value[i]));
+		}
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info("getSNCsByUserLabel() complete.");
+		}
+
+	}
 
 	public void handleProcessingFailureException(
 			ProcessingFailureException pfe, String param)

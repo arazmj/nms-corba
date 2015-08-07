@@ -24,6 +24,12 @@ import com.ciena.oc.equipment.EquipmentInventoryMgr_I;
 import com.ciena.oc.equipment.EquipmentInventoryMgr_IHelper;
 import com.ciena.oc.equipment.EquipmentOrHolderIterator_IHolder;
 import com.ciena.oc.equipment.EquipmentOrHolderList_THolder;
+import com.ciena.oc.equipment.EquipmentOrHolder_T;
+import com.ciena.oc.equipment.Equipment_T;
+import com.ciena.oc.equipmentManagerCIENA.EquipmentConfigurationData_T;
+import com.ciena.oc.equipmentManagerCIENA.EquipmentConfigurationData_THolder;
+import com.ciena.oc.equipmentManagerCIENA.EquipmentMgrCIENA_I;
+import com.ciena.oc.equipmentManagerCIENA.EquipmentMgrCIENA_IHelper;
 import com.ciena.oc.flowDomain.ConnectivityRequirement_T;
 import com.ciena.oc.flowDomain.FlowDomainMgr_I;
 import com.ciena.oc.flowDomain.FlowDomainMgr_IHelper;
@@ -45,6 +51,10 @@ import com.ciena.oc.managedElementManager.ManagedElementMgr_IHelper;
 import com.ciena.oc.multiLayerSubnetwork.EMSFreedomLevel_T;
 import com.ciena.oc.multiLayerSubnetwork.MultiLayerSubnetworkMgr_I;
 import com.ciena.oc.multiLayerSubnetwork.MultiLayerSubnetworkMgr_IHelper;
+import com.ciena.oc.protection.ProtectionGroupIterator_IHolder;
+import com.ciena.oc.protection.ProtectionGroupList_THolder;
+import com.ciena.oc.protection.ProtectionMgr_I;
+import com.ciena.oc.protection.ProtectionMgr_IHelper;
 import com.ciena.oc.subnetworkConnection.CrossConnect_T;
 import com.ciena.oc.subnetworkConnection.GradesOfImpact_T;
 import com.ciena.oc.subnetworkConnection.Route_THolder;
@@ -79,7 +89,9 @@ public class CorbaCommands {
 	public static final String EI_MANAGER_NAME = "EquipmentInventory";
 	public static final String MLS_MANAGER_NAME = "MultiLayerSubnetwork";
 	public static final String EMS_MANAGER_NAME = "EMS";
+	public static final String PRT_MANAGER_NAME = "Protection";
 	public static final String FD_MANAGER_NAME = "FlowDomain";
+	public static final String EICIENA_MANAGER_NAME = "EquipmentCIENA";
 
 	public static final int HOW_MANY = 100;
 
@@ -96,12 +108,15 @@ public class CorbaCommands {
 	private EquipmentInventoryMgr_I eiManager;
 	private MultiLayerSubnetworkMgr_I mlsnManager;
 	private EMSMgr_I emsManager;
+	private ProtectionMgr_I protectionMgr;
 	private FlowDomainMgr_I flowDomainManager;
+	private EquipmentMgrCIENA_I equipmentCIENAManager;
 
 	// Cache list
 	private List<String> neNames;
 	private List<String> sncNames;
 	private List<NameAndStringValue_T[]> tpNames;
+	private List<NameAndStringValue_T[]> slotNames;
 
 	private Set<Short> terminationPointRates;
 
@@ -124,6 +139,14 @@ public class CorbaCommands {
 		this.managerInterface = new Common_IHolder();
 		this.emsSession.getManager(managerName, this.managerInterface);
 
+		// LOG.info("Available managers: ");
+		// ManagerNames_THolder names = new ManagerNames_THolder();
+		// this.emsSession.getSupportedManagers(names);
+		// String[] availableManagers = names.value;
+		// for (int i = 0; i < availableManagers.length; i++) {
+		// LOG.info(" " + i + ") " + availableManagers[i]);
+		// }
+
 		if (managerName.equals(ME_MANAGER_NAME)) {
 			if (this.meManager == null) {
 				this.meManager = ManagedElementMgr_IHelper
@@ -143,9 +166,19 @@ public class CorbaCommands {
 			if (this.emsManager == null) {
 				this.emsManager = EMSMgr_IHelper.narrow(managerInterface.value);
 			}
+		} else if (managerName.equals(PRT_MANAGER_NAME)) {
+			if (this.protectionMgr == null) {
+				this.protectionMgr = ProtectionMgr_IHelper
+						.narrow(managerInterface.value);
+			}
 		} else if (managerName.equals(FD_MANAGER_NAME)) {
 			if (this.flowDomainManager == null) {
 				this.flowDomainManager = FlowDomainMgr_IHelper
+						.narrow(managerInterface.value);
+			}
+		} else if (managerName.equals(EICIENA_MANAGER_NAME)) {
+			if (this.equipmentCIENAManager == null) {
+				this.equipmentCIENAManager = EquipmentMgrCIENA_IHelper
 						.narrow(managerInterface.value);
 			}
 		} else
@@ -254,22 +287,53 @@ public class CorbaCommands {
 
 	public void getAllEquipment() throws ProcessingFailureException,
 			SAXException {
+
 		if (LOG.isInfoEnabled()) {
 			LOG.info("getAllEquipment() start.");
 		}
+
+		List<EquipmentOrHolder_T> equipmentList = getAllEquipmentList();
+
+		if (equipmentList != null && equipmentList.size() > 0) {
+			for (int i = 0; i < equipmentList.size(); i++) {
+				helper.printEquipmentOrHolder(equipmentList.get(i));
+			}
+		} else {
+			if (LOG.isInfoEnabled()) {
+				LOG.info("getAllEquipment() got 0 Equipments");
+			}
+		}
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info("getAllEquipment() complete.");
+		}
+	}
+
+	public List<EquipmentOrHolder_T> getAllEquipmentList()
+			throws ProcessingFailureException, SAXException {
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info("getAllEquipmentList() start.");
+		}
+
+		List<EquipmentOrHolder_T> equipmentList = new ArrayList<EquipmentOrHolder_T>();
 
 		if (neNames == null) {
 			neNames = getAllManagedElementNames();
 		}
 
 		if (!setManagerByName(EI_MANAGER_NAME))
-			return;
+			return null;
 
 		NameAndStringValue_T[] ne = new NameAndStringValue_T[2];
 
 		ne[0] = new NameAndStringValue_T("EMS", emsName);
 		ne[1] = new NameAndStringValue_T();
 		ne[1].name = "ManagedElement";
+
+		if (this.slotNames == null) {
+			this.slotNames = new ArrayList<NameAndStringValue_T[]>();
+		}
 
 		EquipmentOrHolderList_THolder equipOrHolderList = new EquipmentOrHolderList_THolder();
 		EquipmentOrHolderIterator_IHolder equipOrHolderItr = new EquipmentOrHolderIterator_IHolder();
@@ -283,12 +347,35 @@ public class CorbaCommands {
 				eiManager.getAllEquipment(ne, HOW_MANY, equipOrHolderList,
 						equipOrHolderItr);
 
-				LOG.info("getAllEquipment: got "
+				LOG.info("getAllEquipmentList: got "
 						+ equipOrHolderList.value.length
 						+ " equipments for ME " + ne[1].value);
 
 				for (int i = 0; i < equipOrHolderList.value.length; i++) {
-					helper.printEquipmentOrHolder(equipOrHolderList.value[i]);
+					equipmentList.add(equipOrHolderList.value[i]);
+					if (equipOrHolderList.value[i].discriminator().value() != 1) {
+						Equipment_T equipment = equipOrHolderList.value[i]
+								.equip();
+
+						if (equipment != null
+								&& ("TSLM-12"
+										.equals(equipment.installedEquipmentObjectType) || "TSLM-48"
+										.equals(equipment.installedEquipmentObjectType))) {
+
+							NameAndStringValue_T[] slotNameAndStringValueArray = new NameAndStringValue_T[3];
+							slotNameAndStringValueArray[0] = equipment.name[0];
+							slotNameAndStringValueArray[1] = equipment.name[1];
+							if ("EquipmentHolder"
+									.equals(equipment.name[2].name)) {
+								slotNameAndStringValueArray[2] = equipment.name[2];
+							} else if (equipment.name.length > 3
+									&& "EquipmentHolder"
+											.equals(equipment.name[3].name)) {
+								slotNameAndStringValueArray[2] = equipment.name[3];
+							}
+							slotNames.add(slotNameAndStringValueArray);
+						}
+					}
 				}
 
 				exitWhile = false;
@@ -301,7 +388,31 @@ public class CorbaCommands {
 									HOW_MANY, equipOrHolderList);
 
 							for (int i = 0; i < equipOrHolderList.value.length; i++) {
-								helper.printEquipmentOrHolder(equipOrHolderList.value[i]);
+
+								equipmentList.add(equipOrHolderList.value[i]);
+								if (equipOrHolderList.value[i].discriminator()
+										.value() != 1) {
+									Equipment_T equipment = equipOrHolderList.value[i]
+											.equip();
+									if (equipment != null
+											&& ("TSLM-12"
+													.equals(equipment.installedEquipmentObjectType) || "TSLM-48"
+													.equals(equipment.installedEquipmentObjectType))) {
+										NameAndStringValue_T[] slotNameAndStringValueArray = new NameAndStringValue_T[3];
+										slotNameAndStringValueArray[0] = equipment.name[0];
+										slotNameAndStringValueArray[1] = equipment.name[1];
+										if ("EquipmentHolder"
+												.equals(equipment.name[2].name)) {
+											slotNameAndStringValueArray[2] = equipment.name[2];
+										} else if (equipment.name.length > 3
+												&& "EquipmentHolder"
+														.equals(equipment.name[3].name)) {
+											slotNameAndStringValueArray[2] = equipment.name[3];
+										}
+										slotNames
+												.add(slotNameAndStringValueArray);
+									}
+								}
 							}
 						}
 
@@ -315,18 +426,20 @@ public class CorbaCommands {
 				meCounter++;
 
 				if (LOG.isInfoEnabled()) {
-					LOG.info("getAllEquipment: finished getEquipment for ME "
+					LOG.info("getAllEquipmentList: finished getEquipment for ME "
 							+ ne[1].value + " Order number # " + meCounter);
 				}
 			} catch (ProcessingFailureException ex) {
-				handleProcessingFailureException(ex, "getAllEquipment. ME: "
-						+ neName);
+				handleProcessingFailureException(ex,
+						"getAllEquipmentList. ME: " + neName);
 			}
 		}
 
 		if (LOG.isInfoEnabled()) {
-			LOG.info("getAllEquipment() complete.");
+			LOG.info("getAllEquipmentList() complete.");
 		}
+
+		return equipmentList;
 	}
 
 	public void getAllPTPs() throws ProcessingFailureException, SAXException {
@@ -631,6 +744,91 @@ public class CorbaCommands {
 		}
 
 		return container;
+	}
+
+	public void getAllProtectionGroups() throws ProcessingFailureException,
+			SAXException {
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info("getAllProtectionGroups() start.");
+		}
+
+		if (neNames == null) {
+			neNames = getAllManagedElementNames();
+		}
+
+		if (!setManagerByName(PRT_MANAGER_NAME))
+			return;
+
+		NameAndStringValue_T[] nameAndStringValueArray = new NameAndStringValue_T[2];
+
+		nameAndStringValueArray[0] = new NameAndStringValue_T();
+		nameAndStringValueArray[0].name = CorbaConstants.EMS_STR;
+		nameAndStringValueArray[0].value = emsName;
+		nameAndStringValueArray[1] = new NameAndStringValue_T();
+		nameAndStringValueArray[1].name = CorbaConstants.MANAGED_ELEMENT_STR;
+
+		ProtectionGroupList_THolder protectionGroupList = new ProtectionGroupList_THolder();
+		ProtectionGroupIterator_IHolder protectionGroupIterator = new ProtectionGroupIterator_IHolder();
+
+		int counter = 0;
+		boolean exitwhile = false;
+		for (String n : neNames) {
+			try {
+				nameAndStringValueArray[1].value = n;
+				protectionMgr.getAllProtectionGroups(nameAndStringValueArray,
+						HOW_MANY, protectionGroupList, protectionGroupIterator);
+
+				if (LOG.isDebugEnabled()) {
+					LOG.debug("getAllProtectionGroups: got "
+							+ protectionGroupList.value.length
+							+ " pieces of ProtectionGroup for ME "
+							+ nameAndStringValueArray[1].value);
+				}
+
+				helper.printProtectionGroup(protectionGroupList.value);
+
+				exitwhile = false;
+				if (protectionGroupIterator.value != null) {
+					try {
+						boolean hasMoreData = true;
+						while (hasMoreData) {
+							hasMoreData = protectionGroupIterator.value.next_n(
+									HOW_MANY, protectionGroupList);
+
+							if (LOG.isDebugEnabled()) {
+								LOG.debug("getAllProtectionGroups: got next "
+										+ protectionGroupList.value.length
+										+ " pieces of ProtectionGroup for ME "
+										+ nameAndStringValueArray[1].value);
+							}
+
+							helper.printProtectionGroup(protectionGroupList.value);
+						}
+						exitwhile = true;
+					} finally {
+						if (!exitwhile) {
+							protectionGroupIterator.value.destroy();
+						}
+					}
+
+					counter++;
+
+					if (LOG.isDebugEnabled()) {
+						LOG.debug("getAllProtectionGroups: finished getProtectionGroup for ME "
+								+ nameAndStringValueArray[1].value
+								+ " Order number # " + counter);
+					}
+				}
+			} catch (ProcessingFailureException ex) {
+				handleProcessingFailureException(ex,
+						"getAllProtectionGroups. ME: " + n);
+			}
+		}
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info("getAllProtectionGroups() complete");
+		}
 	}
 
 	private TerminationPoint_T getTerminationPoint(
@@ -1238,10 +1436,6 @@ public class CorbaCommands {
 			LOG.info("getContainedInUseTPs() start.");
 		}
 
-		if (!setManagerByName(ME_MANAGER_NAME)) {
-			return;
-		}
-
 		if (this.tpNames == null
 				|| (this.tpNames != null && this.tpNames.size() <= 0)) {
 
@@ -1268,8 +1462,13 @@ public class CorbaCommands {
 						topologicalLinkList, topologicalLinkIterator);
 
 				for (int i = 0; i < topologicalLinkList.value.length; i++) {
-					this.tpNames.add(topologicalLinkList.value[i].aEndTP);
-					this.tpNames.add(topologicalLinkList.value[i].zEndTP);
+					if (topologicalLinkList.value[i].aEndTP != null) {
+						this.tpNames.add(topologicalLinkList.value[i].aEndTP);
+					}
+
+					if (topologicalLinkList.value[i].zEndTP != null) {
+						this.tpNames.add(topologicalLinkList.value[i].zEndTP);
+					}
 				}
 
 				boolean exitWhile = false;
@@ -1280,10 +1479,15 @@ public class CorbaCommands {
 							hasMoreData = topologicalLinkIterator.value.next_n(
 									HOW_MANY, topologicalLinkList);
 							for (int i = 0; i < topologicalLinkList.value.length; i++) {
-								this.tpNames
-										.add(topologicalLinkList.value[i].aEndTP);
-								this.tpNames
-										.add(topologicalLinkList.value[i].zEndTP);
+								if (topologicalLinkList.value[i].aEndTP != null) {
+									this.tpNames
+											.add(topologicalLinkList.value[i].aEndTP);
+								}
+
+								if (topologicalLinkList.value[i].zEndTP != null) {
+									this.tpNames
+											.add(topologicalLinkList.value[i].zEndTP);
+								}
 							}
 						}
 
@@ -1304,6 +1508,10 @@ public class CorbaCommands {
 			}
 		}
 
+		if (!setManagerByName(ME_MANAGER_NAME)) {
+			return;
+		}
+
 		LOG.info("TP Names List Size:" + this.tpNames != null
 				&& this.tpNames.size() > 0 ? String.valueOf(this.tpNames.size())
 				: "0");
@@ -1320,6 +1528,10 @@ public class CorbaCommands {
 
 			for (NameAndStringValue_T[] eachTPName : this.tpNames) {
 				try {
+					if (LOG.isInfoEnabled()) {
+						LOG.info("getContainedInUseTPs: " + eachTPName);
+					}
+
 					meManager.getContainedInUseTPs(eachTPName, tpLayerRateList,
 							HOW_MANY, terminationPointList,
 							terminationPointIterator);
@@ -1379,18 +1591,140 @@ public class CorbaCommands {
 		}
 	}
 
+	public EquipmentConfigurationData_T configureEquipment(
+			EquipmentConfigurationData_T equipmentConfiguredData)
+			throws ProcessingFailureException {
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info("configureEquipment() start.");
+		}
+
+		if (!setManagerByName(EICIENA_MANAGER_NAME)) {
+			return null;
+		}
+
+		EquipmentConfigurationData_THolder outputEquipmentConfigHolder = new EquipmentConfigurationData_THolder();
+
+		this.equipmentCIENAManager.configureEquipment(equipmentConfiguredData,
+				outputEquipmentConfigHolder);
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info("configureEquipment() complete.");
+
+		}
+
+		EquipmentConfigurationData_T equipmentConfig = null;
+
+		if (outputEquipmentConfigHolder != null) {
+			equipmentConfig = outputEquipmentConfigHolder.value;
+		}
+
+		return equipmentConfig;
+	}
+
+	public void getEquipmentConfiguration() throws ProcessingFailureException,
+			SAXException {
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info("getEquipmentConfiguration() start.");
+		}
+
+		if (!setManagerByName(EICIENA_MANAGER_NAME)) {
+			return;
+		}
+
+		if (this.slotNames == null
+				|| (this.slotNames != null && this.slotNames.size() <= 0)) {
+
+			List<EquipmentOrHolder_T> equipmentList = getAllEquipmentList();
+
+			if (equipmentList != null && equipmentList.size() > 0) {
+				for (int i = 0; i < equipmentList.size(); i++) {
+					EquipmentOrHolder_T eachEquipmentOrHolder = equipmentList
+							.get(i);
+
+					if (eachEquipmentOrHolder != null
+							&& eachEquipmentOrHolder.discriminator().value() != 1) {
+
+						Equipment_T equipment = eachEquipmentOrHolder.equip();
+						if (equipment != null
+								&& ("TSLM-12"
+										.equals(equipment.installedEquipmentObjectType) || "TSLM-48"
+										.equals(equipment.installedEquipmentObjectType))) {
+
+							NameAndStringValue_T[] slotNameAndStringValueArray = new NameAndStringValue_T[3];
+							slotNameAndStringValueArray[0] = equipment.name[0];
+							slotNameAndStringValueArray[1] = equipment.name[1];
+
+							if ("EquipmentHolder"
+									.equals(equipment.name[2].name)) {
+								slotNameAndStringValueArray[2] = equipment.name[2];
+							} else if (equipment.name.length > 3
+									&& "EquipmentHolder"
+											.equals(equipment.name[3].name)) {
+								slotNameAndStringValueArray[2] = equipment.name[3];
+							}
+
+							slotNames.add(slotNameAndStringValueArray);
+						}
+					}
+				}
+			} else {
+				if (LOG.isInfoEnabled()) {
+					LOG.info("getAllEquipment() got 0 Equipments");
+				}
+			}
+		}
+
+		LOG.info("Slot Names List Size:" + this.slotNames != null
+				&& this.slotNames.size() > 0 ? String.valueOf(this.slotNames
+				.size()) : "0");
+
+		if (this.slotNames != null && this.slotNames.size() > 0) {
+
+			EquipmentConfigurationData_THolder equipmentConfigDataHolder = new EquipmentConfigurationData_THolder();
+			String[] eqtParametersList = new String[0];
+
+			for (NameAndStringValue_T[] eachSlotNameArray : this.slotNames) {
+
+				try {
+					this.equipmentCIENAManager.getEquipmentConfiguration(
+							eachSlotNameArray, eqtParametersList,
+							equipmentConfigDataHolder);
+
+					if (equipmentConfigDataHolder != null
+							&& equipmentConfigDataHolder.value != null) {
+
+						handler.printStructure(helper
+								.printEquipmentConfiguration(equipmentConfigDataHolder.value));
+					} else {
+						LOG.info("equipmentConfigDataHolder is empty");
+					}
+
+				} catch (ProcessingFailureException ex) {
+					handleProcessingFailureException(ex,
+							"getEquipmentConfiguration. ");
+				}
+			}
+
+			if (LOG.isInfoEnabled()) {
+				LOG.info("getEquipmentConfiguration() complete.");
+			}
+		}
+	}
+
 	public void handleProcessingFailureException(
 			ProcessingFailureException pfe, String param)
 			throws ProcessingFailureException {
 		CorbaErrorProcessor err = new CorbaErrorProcessor(pfe);
 
 		if (err.getPriority() == CorbaErrorDescriptions.PRIORITY.MAJOR) {
-			LOG.error("Alcatel OMS 1350>> " + param + ", " + err.printError()
+			LOG.error("Ciena OC>> " + param + ", " + err.printError()
 					+ " It is a major error. Stop interaction with server", pfe);
 
 			throw pfe;
 		} else {
-			LOG.error("Alcatel OMS 1350>> " + param + err.printError()
+			LOG.error("Ciena OC>> " + param + err.printError()
 					+ " It is a minor error. Continue interaction with server",
 					pfe);
 		}

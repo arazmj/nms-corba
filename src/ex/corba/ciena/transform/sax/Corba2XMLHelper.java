@@ -6,10 +6,15 @@ import com.ciena.oc.equipment.EquipmentHolder_T;
 import com.ciena.oc.equipment.EquipmentOrHolder_T;
 import com.ciena.oc.equipment.Equipment_T;
 import com.ciena.oc.equipment.HolderState_T;
+import com.ciena.oc.equipmentManagerCIENA.EquipmentConfigurationData_T;
 import com.ciena.oc.flowDomainFragment.FlowDomainFragment_T;
 import com.ciena.oc.globaldefs.NameAndStringValue_T;
 import com.ciena.oc.globaldefs.ProcessingFailureException;
 import com.ciena.oc.managedElement.ManagedElement_T;
+import com.ciena.oc.protection.ProtectionGroupType_T;
+import com.ciena.oc.protection.ProtectionGroup_T;
+import com.ciena.oc.protection.ProtectionSchemeState_T;
+import com.ciena.oc.protection.ReversionMode_T;
 import com.ciena.oc.subnetworkConnection.SubnetworkConnection_T;
 import com.ciena.oc.terminationPoint.Directionality_T;
 import com.ciena.oc.terminationPoint.GTP_T;
@@ -347,6 +352,106 @@ public class Corba2XMLHelper {
 		return container;
 	}
 
+	public void printProtectionGroup(ProtectionGroup_T[] protectionGroup)
+			throws ProcessingFailureException, SAXException {
+
+		if (protectionGroup == null) {
+			return;
+		}
+
+		for (int i = 0; i < protectionGroup.length; i++) {
+			handler.printStructure(getProtectionGroupParams(protectionGroup[i]));
+		}
+	}
+
+	public Corba2XMLContainer getProtectionGroupParams(
+			ProtectionGroup_T protectionGroup)
+			throws ProcessingFailureException {
+		String protectionGroupType = null;
+
+		switch (protectionGroup.protectionGroupType.value()) {
+		case ProtectionGroupType_T._PGT_2_FIBER_BLSR:
+			protectionGroupType = "PGT_2_FIBER_BLSR";
+			break;
+		case ProtectionGroupType_T._PGT_4_FIBER_BLSR:
+			protectionGroupType = "PGT_4_FIBER_BLSR";
+			break;
+		case ProtectionGroupType_T._PGT_MSP_1_FOR_N:
+			protectionGroupType = "PGT_MSP_1_FOR_N";
+			break;
+		case ProtectionGroupType_T._PGT_MSP_1_PLUS_1:
+			protectionGroupType = "PGT_MSP_1_PLUS_1";
+			break;
+		default:
+			protectionGroupType = "";
+			break;
+		}
+
+		String protectionSchemeState = null;
+		switch (protectionGroup.protectionSchemeState.value()) {
+		case ProtectionSchemeState_T._PSS_AUTOMATIC:
+			protectionSchemeState = "AUTOMATIC";
+			break;
+		case ProtectionSchemeState_T._PSS_FORCED_OR_LOCKED_OUT:
+			protectionSchemeState = "FORCED_OR_LOCKED_OUT";
+			break;
+		case ProtectionSchemeState_T._PSS_UNKNOWN:
+			protectionSchemeState = CorbaConstants.UNKNOWN_STR;
+			break;
+		default:
+			protectionSchemeState = "";
+			break;
+		}
+
+		String reversionMode = null;
+		switch (protectionGroup.reversionMode.value()) {
+		case ReversionMode_T._RM_NON_REVERTIVE:
+			reversionMode = "NON_REVERTIVE";
+			break;
+		case ReversionMode_T._RM_REVERTIVE:
+			reversionMode = "REVERTIVE";
+			break;
+		case ReversionMode_T._RM_UNKNOWN:
+			reversionMode = CorbaConstants.UNKNOWN_STR;
+			break;
+		default:
+			reversionMode = "";
+			break;
+		}
+
+		Corba2XMLContainer container = new Corba2XMLContainer(
+				Corba2XMLStructure.PROTECTION_GROUPS);
+		container.setFieldValue(CorbaConstants.NE_ID_STR, handler
+				.getValueByName(protectionGroup.name,
+						CorbaConstants.MANAGED_ELEMENT_STR));
+		container.setFieldValue(CorbaConstants.USER_LABEL_STR,
+				protectionGroup.userLabel);
+		container.setFieldValue(CorbaConstants.NATIVE_EMS_NAME_STR,
+				protectionGroup.nativeEMSName);
+		container
+				.setFieldValue(CorbaConstants.OWNER_STR, protectionGroup.owner);
+		container.setFieldValue(CorbaConstants.PROTECTION_GROUP_TYPE_STR,
+				protectionGroupType);
+		container.setFieldValue(CorbaConstants.PROTECTION_SCHEMA_STATE_STR,
+				protectionSchemeState);
+		container.setFieldValue(CorbaConstants.REVERSION_MODE_STR,
+				reversionMode);
+		container.setFieldValue(CorbaConstants.RATE_STR,
+				String.valueOf(protectionGroup.rate));
+		container.setFieldValue(CorbaConstants.PGP_TP_LIST_STR, handler
+				.convertNameAndStringValuesToString(protectionGroup.pgpTPList));
+		container
+				.setFieldValue(
+						CorbaConstants.PGP_PARAMETERS_STR,
+						handler.convertNameAndStringValueToString(protectionGroup.pgpParameters));
+		container
+				.setFieldValue(
+						CorbaConstants.ADDITIONAL_INFO_STR,
+						handler.convertNameAndStringValueToString(protectionGroup.additionalInfo));
+
+		return container;
+	}
+	
 	public void printGTP(GTP_T gtp_T) throws ProcessingFailureException,
 			SAXException {
 		handler.printStructure(getGTPParams(gtp_T));
@@ -618,6 +723,29 @@ public class Corba2XMLHelper {
 				.setFieldValue(
 						CorbaConstants.ADDITIONAL_INFO_STR,
 						handler.convertNameAndStringValueToString(value.additionalInfo));
+
+		return container;
+	}
+
+	public Corba2XMLContainer printEquipmentConfiguration(
+			EquipmentConfigurationData_T value)
+			throws ProcessingFailureException {
+
+		Corba2XMLContainer container = new Corba2XMLContainer(
+				Corba2XMLStructure.EQUIPMENT_CONFIG);
+
+		container
+				.setFieldValue(CorbaConstants.NE_ID_STR, handler
+						.getValueByName(value.name,
+								CorbaConstants.MANAGED_ELEMENT_STR));
+		container.setFieldValue(CorbaConstants.HOLDER_STR,
+				handler.getValueByName(value.name,
+						CorbaConstants.EQUIPMENT_HOLDER_STR));
+		container.setFieldValue(CorbaConstants.HOLDER_TYPE_STR,
+				value.equipmentType);
+		
+		container.setFieldValue(CorbaConstants.CONFIG_PARAMETERS, handler
+				.convertNameAndStringValueToString(value.eqtConfigParameters));
 
 		return container;
 	}

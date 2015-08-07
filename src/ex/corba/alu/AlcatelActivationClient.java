@@ -40,14 +40,16 @@ public class AlcatelActivationClient extends AlcatelConnection {
 		try {
 			emsSession = main.openEmsSession(args);
 
-			main.createE1();
+			// main.createE1();
 			// main.createDS3();
 			// main.createE1WithConstraintsNE();
 			// main.createE1WithConstraintsST();
+			main.deactivateAndDeleteSNC();
+			main.createE1WWithNEtpInc();
 			// main.createE1WithSNCP();
 			// main.createE1WithSNCPWithConstraints();
 
-			// main.createAU4WithConstraintsPort();
+			 main.createAU4WithNEtpInc();
 
 			// main.createE1WithVNE();
 			// main.createDS3WithVNE();
@@ -56,14 +58,14 @@ public class AlcatelActivationClient extends AlcatelConnection {
 			// main.createVC4_4c();
 
 			// Path for Ethernet services
-			// main.create2MPathForEVC();
+			 main.create2MPathForEVC();
 			// main.create4MPathForEVC();
 			// main.create10MPathForEVC();
 
 			// main.modifySNCUpgrade();
 			// main.modifySNCDowngrade();
 
-			// main.createServerTrail();
+			 main.createServerTrail();
 			// main.createServerTrailWithConstraintsPort();
 			// main.createServerTrailWithConstraintsTL();
 
@@ -381,6 +383,120 @@ public class AlcatelActivationClient extends AlcatelConnection {
 		createData.ccInclusions = ccInclusions;
 		createData.forceUniqueness = true;
 		createData.fullRoute = false;
+		createData.layerRate = layerRate;
+		createData.networkRouted = NetworkRouted_T.NR_YES;
+		createData.rerouteAllowed = Reroute_T.RR_NO;
+		createData.direction = ConnectionDirection_T.CD_BI;
+		createData.sncType = SNCType_T.ST_SIMPLE;
+		createData.staticProtectionLevel = StaticProtectionLevel_T.UNPROTECTED;
+		createData.protectionEffort = ProtectionEffort_T.EFFORT_SAME;
+		createData.owner = owner;
+		createData.userLabel = userLabel;
+
+		GradesOfImpact_T tolerableImpact = GradesOfImpact_T.GOI_HITLESS;// GOI_HITLESS;
+		EMSFreedomLevel_T emsFreedomLevel = EMSFreedomLevel_T.EMSFL_RECONFIGURATION;// EMSFL_CC_AT_SNC_LAYER;
+
+		TPDataList_THolder tpsToModify = new TPDataList_THolder();
+		tpsToModify.value = new TPData_T[0];
+
+		CorbaCommands cmd = new CorbaCommands(emsSession, this.realEMSName);
+		cmd.createAndActivateSNC(createData, tolerableImpact, emsFreedomLevel,
+				tpsToModify);
+	}
+
+	public void createE1WWithNEtpInc() throws ProcessingFailureException {
+		String sncID = "NISA-E1-Path-2";
+		String userLabel = "NISA-E1-Path-2";
+		String owner = "";
+
+		// 80 = LR_DSR_2M
+		short layerRate = 80;
+
+		NameAndStringValue_T[][] aEnd = new NameAndStringValue_T[1][4];
+
+		// A-End
+		aEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		aEnd[0][1] = new NameAndStringValue_T("ManagedElement", "101/1");
+		aEnd[0][2] = new NameAndStringValue_T("PTP", "NISA_CC2/r01s1b01p004c1");
+		aEnd[0][3] = new NameAndStringValue_T("CTP", "NISA_CC2/r01s1b01p004c1");
+
+		// Z-End
+		NameAndStringValue_T[][] zEnd = new NameAndStringValue_T[1][4];
+		zEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		zEnd[0][1] = new NameAndStringValue_T("ManagedElement", "103/1");
+		zEnd[0][2] = new NameAndStringValue_T("PTP", "NISA_CC1/r01s1b01p002c1");
+		zEnd[0][3] = new NameAndStringValue_T("CTP", "NISA_CC1/r01s1b01p002c1");
+
+		// Route constraints as Server trail End points
+		// Refer <TL_ID>CONNECT_23</TL_ID> for Server trail end points
+		NameAndStringValue_T[][] neTpInclusions = new NameAndStringValue_T[4][4];
+		neTpInclusions[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		neTpInclusions[0][1] = new NameAndStringValue_T("ManagedElement",
+				"101/1");
+		neTpInclusions[0][2] = new NameAndStringValue_T("PTP",
+				"NISA_CC2/r01s1b37p001");
+		neTpInclusions[0][3] = new NameAndStringValue_T("CTP",
+				"NISA_CC2/r01s1b37p001 01/1/1.1");
+
+		neTpInclusions[1][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		neTpInclusions[1][1] = new NameAndStringValue_T("ManagedElement",
+				"101/1");
+		neTpInclusions[1][2] = new NameAndStringValue_T("PTP",
+				"NISA_CC2/r01s1b01p004c1");
+		neTpInclusions[1][3] = new NameAndStringValue_T("PTP",
+				"NISA_CC2/r01s1b01p004c1");
+
+		neTpInclusions[2][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		neTpInclusions[2][1] = new NameAndStringValue_T("ManagedElement",
+				"103/1");
+		neTpInclusions[2][2] = new NameAndStringValue_T("PTP",
+				"NISA_CC1/r01s1b25p001");
+		neTpInclusions[2][3] = new NameAndStringValue_T("CTP",
+				"NISA_CC1/r01s1b25p001 01/1/1.1");
+
+		neTpInclusions[3][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		neTpInclusions[3][1] = new NameAndStringValue_T("ManagedElement",
+				"103/1");
+		neTpInclusions[3][2] = new NameAndStringValue_T("PTP",
+				"NISA_CC1/r01s1b01p002c1");
+		neTpInclusions[3][3] = new NameAndStringValue_T("CTP",
+				"NISA_CC1/r01s1b01p002c1");
+
+		// NameAndStringValue_T[][] neTpInclusions= new
+		// NameAndStringValue_T[0][0];
+		NameAndStringValue_T[][] neTpSncExclusions = new NameAndStringValue_T[0][0];
+		CrossConnect_T[] ccInclusions = new CrossConnect_T[0];
+
+		Hashtable<String, String> additionalInfo = new Hashtable<String, String>();
+		additionalInfo.put("SNC_NAME", sncID);
+		additionalInfo.put("SIGNALRATE", "lo2Mb");
+
+		// Mandatory for neTpInclusions
+		additionalInfo.put("INCLU1_SECTION", "main");
+		additionalInfo.put("INCLU2_SECTION", "main");
+		additionalInfo.put("INCLU3_SECTION", "main");
+		additionalInfo.put("INCLU4_SECTION", "main");
+
+		NameAndStringValue_T[] additionalCreationInfo = new NameAndStringValue_T[additionalInfo
+				.size()];
+		Enumeration<String> keySet = additionalInfo.keys();
+
+		for (int i = 0; keySet.hasMoreElements(); i++) {
+			String name = (String) keySet.nextElement();
+			String value = (String) additionalInfo.get(name);
+			additionalCreationInfo[i] = new NameAndStringValue_T(name, value);
+		}
+
+		SNCCreateData_T createData = new SNCCreateData_T();
+
+		createData.aEnd = aEnd;
+		createData.zEnd = zEnd;
+		createData.additionalCreationInfo = additionalCreationInfo;
+		createData.neTpInclusions = neTpInclusions;
+		createData.neTpSncExclusions = neTpSncExclusions;
+		createData.ccInclusions = ccInclusions;
+		createData.forceUniqueness = true;
+		createData.fullRoute = true;
 		createData.layerRate = layerRate;
 		createData.networkRouted = NetworkRouted_T.NR_YES;
 		createData.rerouteAllowed = Reroute_T.RR_NO;
@@ -949,8 +1065,7 @@ public class AlcatelActivationClient extends AlcatelConnection {
 				tpsToModify);
 	}
 
-	public void createAU4WithConstraintsPort()
-			throws ProcessingFailureException {
+	public void createAU4WithNEtpInc() throws ProcessingFailureException {
 		String sncID = "NISA-AU4-Path-neTpInclusions-1";
 		String userLabel = "NISA-AU4-Path-neTpInclusions-1";
 		String owner = "";
@@ -1543,7 +1658,7 @@ public class AlcatelActivationClient extends AlcatelConnection {
 		final String sncType = "path";
 
 		List<String> sncIDsList = new ArrayList<String>();
-		sncIDsList.add("PATH_172");
+		sncIDsList.add("PATH_425");
 		// sncIDsList.add("PATH_28");
 
 		GradesOfImpact_T tolerableImpact = GradesOfImpact_T.GOI_MAJOR_IMPACT;

@@ -157,5 +157,9 @@ public class CorbaConstants {
 	
 	//ContainedInUseTPs
 	public static final String IN_USE_TPS_STR = "IN_USE_TPS";
+	
+	//EquipmentConfiguration
+	public static final String CONFIG_PARAMETERS = "CONFIG_PARAMS";
+	
 
 }
