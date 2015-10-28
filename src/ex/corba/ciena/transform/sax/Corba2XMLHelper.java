@@ -741,7 +741,7 @@ public class Corba2XMLHelper {
 		container.setFieldValue(CorbaConstants.HOLDER_STR,
 				handler.getValueByName(value.name,
 						CorbaConstants.EQUIPMENT_HOLDER_STR));
-		container.setFieldValue(CorbaConstants.HOLDER_TYPE_STR,
+		container.setFieldValue(CorbaConstants.EQUIPMENT_TYPE_STR,
 				value.equipmentType);
 		
 		container.setFieldValue(CorbaConstants.CONFIG_PARAMETERS, handler

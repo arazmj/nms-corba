@@ -301,17 +301,22 @@ public class Corba2XMLHandler {
 			return "";
 		}
 
-		StringBuffer nameAndValuesList = new StringBuffer();
+		StringBuffer nameAndValuesBuffer = new StringBuffer();
 
-		for (NameAndStringValue_T nv : nameAndValue) {
+		for (int counter = 0; counter < nameAndValue.length; counter++) {
+			NameAndStringValue_T nv = nameAndValue[counter];
 
 			if (!"EMS".equals(nv.name) && !"ManagedElement".equals(nv.name)) {
-				nameAndValuesList.append(nv.name).append("=").append(nv.value)
-						.append(";");
+				nameAndValuesBuffer.append(nv.name).append("=")
+						.append(nv.value);
+				
+				if (counter != (nameAndValue.length - 1)) {
+					nameAndValuesBuffer.append(",");
+				}
 			}
 		}
 
-		return nameAndValuesList.toString();
+		return nameAndValuesBuffer.toString();
 	}
 
 	/**
@@ -324,6 +329,7 @@ public class Corba2XMLHandler {
 	 */
 	public String convertNameAndStringValuesToStringExcludingEMS(
 			NameAndStringValue_T[][] nameAndValuesArray) {
+
 		if (nameAndValuesArray == null) {
 			return "";
 		}
@@ -331,9 +337,16 @@ public class Corba2XMLHandler {
 		StringBuffer nameAndValuesList = new StringBuffer();
 
 		for (NameAndStringValue_T[] nv : nameAndValuesArray) {
-			nameAndValuesList.append("{")
-					.append(convertNameAndStringValueToStringExcludingEMS(nv))
-					.append("}");
+
+			if (nv != null) {
+				String nameAndValueString = convertNameAndStringValueToStringExcludingEMS(nv);
+
+				if (nameAndValueString != null
+						&& !"".equals(nameAndValueString)) {
+					nameAndValuesList.append("{").append(nameAndValueString)
+							.append("}");
+				}
+			}
 		}
 
 		return nameAndValuesList.toString();

@@ -94,36 +94,26 @@ public enum Corba2XMLStructure {
 			CorbaConstants.A_TRANSMISSION_PARAMS_STR,
 			CorbaConstants.Z_TRANSMISSION_PARAMS_STR }),
 
-    /**
-     * CORBA entity: ProtectionGroup_T
-     */
-    PROTECTION_GROUPS("PROTECTION_GROUPS", new String[]{
-            CorbaConstants.NE_ID_STR,
-            CorbaConstants.USER_LABEL_STR,
-            CorbaConstants.NATIVE_EMS_NAME_STR,
-            CorbaConstants.OWNER_STR,
-            CorbaConstants.PROTECTION_GROUP_TYPE_STR,
-            CorbaConstants.PROTECTION_SCHEMA_STATE_STR,
-            CorbaConstants.REVERSION_MODE_STR,
-            CorbaConstants.RATE_STR,
-            CorbaConstants.PGP_TP_LIST_STR,
-            CorbaConstants.PGP_PARAMETERS_STR,
-            CorbaConstants.ADDITIONAL_INFO_STR
-    }),
-    
+	/**
+	 * CORBA entity: ProtectionGroup_T
+	 */
+	PROTECTION_GROUPS("PROTECTION_GROUPS", new String[] {
+			CorbaConstants.NE_ID_STR, CorbaConstants.USER_LABEL_STR,
+			CorbaConstants.NATIVE_EMS_NAME_STR, CorbaConstants.OWNER_STR,
+			CorbaConstants.PROTECTION_GROUP_TYPE_STR,
+			CorbaConstants.PROTECTION_SCHEMA_STATE_STR,
+			CorbaConstants.REVERSION_MODE_STR, CorbaConstants.RATE_STR,
+			CorbaConstants.PGP_TP_LIST_STR, CorbaConstants.PGP_PARAMETERS_STR,
+			CorbaConstants.ADDITIONAL_INFO_STR }),
+
 	/**
 	 * CORBA entity: CrossConnect_T
 	 */
 	ROUTES("ROUTES", new String[] { CorbaConstants.SNC_ID_STR,
 			CorbaConstants.ACTIVE_STR, CorbaConstants.DIRECTION_STR,
-			CorbaConstants.CC_TYPE_STR, CorbaConstants.AI_DIRECTION_STR,
-			CorbaConstants.PRT_ROLE_STR, CorbaConstants.A1_NE_STR,
-			CorbaConstants.A1_PTP_STR, CorbaConstants.A1_CTP_STR,
-			CorbaConstants.Z1_NE_STR, CorbaConstants.Z1_PTP_STR,
-			CorbaConstants.Z1_CTP_STR, CorbaConstants.A2_NE_STR,
-			CorbaConstants.A2_PTP_STR, CorbaConstants.A2_CTP_STR,
-			CorbaConstants.Z2_NE_STR, CorbaConstants.Z2_PTP_STR,
-			CorbaConstants.Z2_CTP_STR, CorbaConstants.SOURCE_TIME_STAMP_STR }),
+			CorbaConstants.CC_TYPE_STR, CorbaConstants.A_END_NE_STR,
+			CorbaConstants.A_END_TP_STR, CorbaConstants.Z_END_NE_STR,
+			CorbaConstants.Z_END_TP_STR, CorbaConstants.SOURCE_TIME_STAMP_STR }),
 
 	/**
 	 * CORBA entity: FlowDomainFragment_T
@@ -138,14 +128,13 @@ public enum Corba2XMLStructure {
 			CorbaConstants.A_END_STR, CorbaConstants.Z_END_STR,
 			CorbaConstants.TRANSMISSION_PARAMS_STR,
 			CorbaConstants.ADDITIONAL_INFO_STR, }),
-			
+
 	/**
 	 * CORBA entity: EquipmentConfigurationData_T
 	 */
 	EQUIPMENT_CONFIG("EQUIPMENT_CONFIG", new String[] {
-			CorbaConstants.NE_ID_STR, 
-			CorbaConstants.HOLDER_STR,
-			CorbaConstants.HOLDER_TYPE_STR, 
+			CorbaConstants.NE_ID_STR, CorbaConstants.HOLDER_STR,
+			CorbaConstants.EQUIPMENT_TYPE_STR,
 			CorbaConstants.CONFIG_PARAMETERS, }),
 	/**
 	 * CORBA entity: SubnetworkConnection_T

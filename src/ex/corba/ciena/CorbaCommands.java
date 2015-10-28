@@ -64,6 +64,7 @@ import com.ciena.oc.subnetworkConnection.SubnetworkConnectionList_THolder;
 import com.ciena.oc.subnetworkConnection.SubnetworkConnection_T;
 import com.ciena.oc.subnetworkConnection.SubnetworkConnection_THolder;
 import com.ciena.oc.subnetworkConnection.TPDataList_THolder;
+import com.ciena.oc.subnetworkConnection.TPData_T;
 import com.ciena.oc.terminationPoint.GTPEffort_T;
 import com.ciena.oc.terminationPoint.GTP_THolder;
 import com.ciena.oc.terminationPoint.GTPiterator_IHolder;
@@ -1264,6 +1265,7 @@ public class CorbaCommands {
 
 		Corba2XMLContainer container = new Corba2XMLContainer(
 				Corba2XMLStructure.ROUTES);
+
 		container.setFieldValue(CorbaConstants.SNC_ID_STR, sncId);
 		container.setFieldValue(CorbaConstants.ACTIVE_STR,
 				String.valueOf(crossConnect.active));
@@ -1271,51 +1273,21 @@ public class CorbaCommands {
 				String.valueOf(crossConnect.direction.value()));
 		container.setFieldValue(CorbaConstants.CC_TYPE_STR,
 				String.valueOf(crossConnect.ccType.value()));
-		container.setFieldValue(CorbaConstants.AI_DIRECTION_STR, handler
-				.getValueByName(crossConnect.additionalInfo, "Direction"));
-		container.setFieldValue(CorbaConstants.PRT_ROLE_STR, handler
-				.getValueByName(crossConnect.additionalInfo, "ProtectionRole"));
-		container.setFieldValue(CorbaConstants.A1_NE_STR, handler
+		container.setFieldValue(CorbaConstants.A_END_NE_STR, handler
 				.getValueByName(crossConnect.aEndNameList[0],
 						CorbaConstants.MANAGED_ELEMENT_STR));
-		container.setFieldValue(CorbaConstants.A1_PTP_STR, handler
-				.getValueByName(crossConnect.aEndNameList[0],
-						CorbaConstants.PTP_STR));
-		container.setFieldValue(CorbaConstants.A1_CTP_STR, handler
-				.getValueByName(crossConnect.aEndNameList[0],
-						CorbaConstants.CTP_STR));
-		container.setFieldValue(CorbaConstants.Z1_NE_STR, handler
+		container
+				.setFieldValue(
+						CorbaConstants.A_END_TP_STR,
+						handler.convertNameAndStringValuesToStringExcludingEMS(crossConnect.aEndNameList));
+		container.setFieldValue(CorbaConstants.Z_END_NE_STR, handler
 				.getValueByName(crossConnect.zEndNameList[0],
 						CorbaConstants.MANAGED_ELEMENT_STR));
-		container.setFieldValue(CorbaConstants.Z1_PTP_STR, handler
-				.getValueByName(crossConnect.zEndNameList[0],
-						CorbaConstants.PTP_STR));
-		container.setFieldValue(CorbaConstants.Z1_CTP_STR, handler
-				.getValueByName(crossConnect.zEndNameList[0],
-						CorbaConstants.CTP_STR));
-		if (crossConnect.aEndNameList.length > 1) {
-			container.setFieldValue(CorbaConstants.A2_NE_STR, handler
-					.getValueByName(crossConnect.aEndNameList[1],
-							CorbaConstants.MANAGED_ELEMENT_STR));
-			container.setFieldValue(CorbaConstants.A2_PTP_STR, handler
-					.getValueByName(crossConnect.aEndNameList[1],
-							CorbaConstants.PTP_STR));
-			container.setFieldValue(CorbaConstants.A2_CTP_STR, handler
-					.getValueByName(crossConnect.aEndNameList[1],
-							CorbaConstants.CTP_STR));
-		}
+		container
+				.setFieldValue(
+						CorbaConstants.Z_END_TP_STR,
+						handler.convertNameAndStringValuesToStringExcludingEMS(crossConnect.zEndNameList));
 
-		if (crossConnect.zEndNameList.length > 1) {
-			container.setFieldValue(CorbaConstants.Z2_NE_STR, handler
-					.getValueByName(crossConnect.zEndNameList[1],
-							CorbaConstants.MANAGED_ELEMENT_STR));
-			container.setFieldValue(CorbaConstants.Z2_PTP_STR, handler
-					.getValueByName(crossConnect.zEndNameList[1],
-							CorbaConstants.PTP_STR));
-			container.setFieldValue(CorbaConstants.Z2_CTP_STR, handler
-					.getValueByName(crossConnect.zEndNameList[1],
-							CorbaConstants.CTP_STR));
-		}
 		container.setFieldValue(CorbaConstants.SOURCE_TIME_STAMP_STR,
 				handler.convertSystemTimeToString());
 
@@ -1711,6 +1683,35 @@ public class CorbaCommands {
 				LOG.info("getEquipmentConfiguration() complete.");
 			}
 		}
+	}
+
+	public TerminationPoint_T setTPData(TPData_T tpData)
+			throws ProcessingFailureException {
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info("setTPData() start.");
+		}
+
+		if (!setManagerByName(ME_MANAGER_NAME)) {
+			return null;
+		}
+
+		TerminationPoint_THolder terminationPointHolder = new TerminationPoint_THolder();
+
+		this.meManager.setTPData(tpData, terminationPointHolder);
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info("setTPData() complete.");
+
+		}
+
+		TerminationPoint_T terminationPoint = null;
+
+		if (terminationPointHolder != null) {
+			terminationPoint = terminationPointHolder.value;
+		}
+
+		return terminationPoint;
 	}
 
 	public void handleProcessingFailureException(

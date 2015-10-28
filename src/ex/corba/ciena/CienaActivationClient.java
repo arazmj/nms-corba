@@ -18,6 +18,7 @@ import com.ciena.oc.callSNC.CallParameterProfile_T;
 import com.ciena.oc.callSNC.Diversity_T;
 import com.ciena.oc.callSNC.LevelofEffort_T;
 import com.ciena.oc.emsSession.EmsSession_I;
+import com.ciena.oc.equipmentManagerCIENA.EquipmentConfigurationData_T;
 import com.ciena.oc.globaldefs.ConnectionDirection_T;
 import com.ciena.oc.globaldefs.NameAndStringValue_T;
 import com.ciena.oc.globaldefs.ProcessingFailureException;
@@ -96,8 +97,15 @@ public class CienaActivationClient extends CienaConnection {
 			// main.deleteGTP();
 			// main.createMultiNodeSDHServiceWithGTP();
 
+			/* Change Port Group */
+			// main.configureEquipmentTSLM12();
+			// main.configureEquipmentTSLM48();
+
+			/* Change port Client Type */
+			// main.setTPData();
+
 			// main.deactivateAndDeleteSNC("NISA-SDHService-1+0-3");
-//			 main.releaseCall("NISA-MN-10GEsubrateVCG-1");
+			// main.releaseCall("NISA-MN-10GEsubrateVCG-1");
 
 			// main.getSNC();
 		} catch (ProcessingFailureException pfe) {
@@ -3952,6 +3960,170 @@ public class CienaActivationClient extends CienaConnection {
 		CorbaCommands cmd = new CorbaCommands(emsSession, this.realEMSName);
 		cmd.createAndActivateSNC(createData, tolerableImpact, emsFreedomLevel,
 				tpsToModify);
+	}
+
+	public void configureEquipmentTSLM12() throws ProcessingFailureException,
+			SAXException, UnsupportedEncodingException, FileNotFoundException {
+
+		EquipmentConfigurationData_T equipmentConfig = new EquipmentConfigurationData_T();
+		NameAndStringValue_T[] equipmentConfigNames = new NameAndStringValue_T[3];
+
+		equipmentConfigNames[0] = new NameAndStringValue_T("EMS",
+				this.realEMSName);
+
+		equipmentConfigNames[1] = new NameAndStringValue_T("ManagedElement",
+				"SNG-PPD-ASON-CN-01");
+		equipmentConfigNames[2] = new NameAndStringValue_T("EquipmentHolder",
+				"/rack=1/shelf=2/slot=4");
+
+		equipmentConfig.name = equipmentConfigNames;
+		equipmentConfig.equipmentType = "TSLM-12";
+
+		NameAndStringValue_T[] equipmentConfigParams = new NameAndStringValue_T[1];
+		equipmentConfigParams[0] = new NameAndStringValue_T(
+				"AI_PORT_GROUP_TYPE_7", "1x10GbE_SONET_SDH");
+
+		equipmentConfig.eqtConfigParameters = equipmentConfigParams;
+
+		OutputFormat format = OutputFormat.createPrettyPrint();
+		XMLWriter xmlWriter = new XMLWriter(new FileOutputStream("output.xml"),
+				format);
+		Corba2XMLHandler handler = new Corba2XMLHandler(xmlWriter);
+
+		CorbaCommands cmd = new CorbaCommands(emsSession, this.realEMSName,
+				xmlWriter);
+		handler.handlerBuilderStart();
+		cmd.configureEquipment(equipmentConfig);
+		handler.handlerBuilderEnd();
+	}
+
+	public void configureEquipmentTSLM48() throws ProcessingFailureException,
+			SAXException, UnsupportedEncodingException, FileNotFoundException {
+
+		EquipmentConfigurationData_T equipmentConfig = new EquipmentConfigurationData_T();
+		NameAndStringValue_T[] equipmentConfigNames = new NameAndStringValue_T[3];
+
+		equipmentConfigNames[0] = new NameAndStringValue_T("EMS",
+				this.realEMSName);
+
+		equipmentConfigNames[1] = new NameAndStringValue_T("ManagedElement",
+				"SNG-PPD-ASON-CN-01");
+		equipmentConfigNames[2] = new NameAndStringValue_T("EquipmentHolder",
+				"/rack=1/shelf=2/slot=15");
+
+		equipmentConfig.name = equipmentConfigNames;
+		equipmentConfig.equipmentType = "TSLM-48";
+
+		NameAndStringValue_T[] equipmentConfigParams = new NameAndStringValue_T[1];
+		equipmentConfigParams[0] = new NameAndStringValue_T(
+				"AI_PORT_GROUP_TYPE_7", "4x2500M_OTN");
+
+		equipmentConfig.eqtConfigParameters = equipmentConfigParams;
+
+		OutputFormat format = OutputFormat.createPrettyPrint();
+		XMLWriter xmlWriter = new XMLWriter(new FileOutputStream("output.xml"),
+				format);
+		Corba2XMLHandler handler = new Corba2XMLHandler(xmlWriter);
+
+		CorbaCommands cmd = new CorbaCommands(emsSession, this.realEMSName,
+				xmlWriter);
+		handler.handlerBuilderStart();
+		cmd.configureEquipment(equipmentConfig);
+		handler.handlerBuilderEnd();
+	}
+
+	/**
+	 * Change Port Client type to from 10GbE_SONET_SDH to 10GbE_SONET_SDH_VCAT
+	 * 
+	 * @throws ProcessingFailureException
+	 * @throws SAXException
+	 * @throws UnsupportedEncodingException
+	 * @throws FileNotFoundException
+	 */
+	public void setTPData() throws ProcessingFailureException, SAXException,
+			UnsupportedEncodingException, FileNotFoundException {
+
+		NameAndStringValue_T[][] tp = new NameAndStringValue_T[1][3];
+
+		tp[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		tp[0][1] = new NameAndStringValue_T("ManagedElement",
+				"SNG-PPD-ASON-CN-01");
+		tp[0][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=2/slot=4/sub_slot=10/port=1");
+
+		TPData_T tpData = new TPData_T();
+
+		tpData.egressTrafficDescriptorName = new NameAndStringValue_T[0];
+		tpData.ingressTrafficDescriptorName = new NameAndStringValue_T[0];
+		tpData.tpMappingMode = TerminationMode_T.TM_TERMINATED_AND_AVAILABLE_FOR_MAPPING;
+		tpData.tpName = tp[0];
+
+		tpData.transmissionParams = new LayeredParameters_T[1];
+
+		// Layer 50
+		tpData.transmissionParams[0] = new LayeredParameters_T();
+		tpData.transmissionParams[0].layer = 50;
+		tpData.transmissionParams[0].transmissionParams = new NameAndStringValue_T[1];
+		tpData.transmissionParams[0].transmissionParams[0] = new NameAndStringValue_T(
+				"ClientType", "10GbE_SONET_SDH_VCAT");
+
+		OutputFormat format = OutputFormat.createPrettyPrint();
+		XMLWriter xmlWriter = new XMLWriter(new FileOutputStream("output.xml"),
+				format);
+		Corba2XMLHandler handler = new Corba2XMLHandler(xmlWriter);
+
+		CorbaCommands cmd = new CorbaCommands(emsSession, this.realEMSName,
+				xmlWriter);
+		handler.handlerBuilderStart();
+		cmd.setTPData(tpData);
+		handler.handlerBuilderEnd();
+	}
+
+	/**
+	 * Change Port Client type to from 10GbE_SONET_SDH_VCAT to 10GbE_SONET_SDH
+	 * 
+	 * @throws ProcessingFailureException
+	 * @throws SAXException
+	 * @throws UnsupportedEncodingException
+	 * @throws FileNotFoundException
+	 */
+	public void setTPData2() throws ProcessingFailureException, SAXException,
+			UnsupportedEncodingException, FileNotFoundException {
+
+		NameAndStringValue_T[][] tp = new NameAndStringValue_T[1][3];
+
+		tp[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		tp[0][1] = new NameAndStringValue_T("ManagedElement",
+				"SNG-PPD-ASON-CN-01");
+		tp[0][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=2/slot=4/sub_slot=10/port=1");
+
+		TPData_T tpData = new TPData_T();
+
+		tpData.egressTrafficDescriptorName = new NameAndStringValue_T[0];
+		tpData.ingressTrafficDescriptorName = new NameAndStringValue_T[0];
+		tpData.tpMappingMode = TerminationMode_T.TM_TERMINATED_AND_AVAILABLE_FOR_MAPPING;
+		tpData.tpName = tp[0];
+
+		tpData.transmissionParams = new LayeredParameters_T[1];
+
+		// Layer 50
+		tpData.transmissionParams[0] = new LayeredParameters_T();
+		tpData.transmissionParams[0].layer = 50;
+		tpData.transmissionParams[0].transmissionParams = new NameAndStringValue_T[1];
+		tpData.transmissionParams[0].transmissionParams[0] = new NameAndStringValue_T(
+				"ClientType", "10GbE_SONET_SDH");
+
+		OutputFormat format = OutputFormat.createPrettyPrint();
+		XMLWriter xmlWriter = new XMLWriter(new FileOutputStream("output.xml"),
+				format);
+		Corba2XMLHandler handler = new Corba2XMLHandler(xmlWriter);
+
+		CorbaCommands cmd = new CorbaCommands(emsSession, this.realEMSName,
+				xmlWriter);
+		handler.handlerBuilderStart();
+		cmd.setTPData(tpData);
+		handler.handlerBuilderEnd();
 	}
 
 	public void deactivateAndDeleteSNC() throws ProcessingFailureException {
