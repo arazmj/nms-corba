@@ -20,6 +20,7 @@
 *.zip
 *.war
 *.ear
+*.log
 
 # Folders #
 ############
