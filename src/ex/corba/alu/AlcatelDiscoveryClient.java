@@ -103,8 +103,14 @@ public class AlcatelDiscoveryClient extends AlcatelConnection {
 
 		if (props.getProperty("getTopologicalLinksOfFDFr") != null
 				&& props.getProperty("getTopologicalLinksOfFDFr")
-						.equalsIgnoreCase("yes")) {
+				.equalsIgnoreCase("yes")) {
 			cmd.getTopologicalLinksOfFDFr();
+		}
+		
+		if (props.getProperty("getContainedPotentialTPs") != null
+				&& props.getProperty("getContainedPotentialTPs")
+						.equalsIgnoreCase("yes")) {
+			cmd.getContainedPotentialTPs();
 		}
 
 		handler.handlerBuilderEnd();

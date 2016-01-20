@@ -174,6 +174,7 @@ public class Corba2XMLHelper {
 
 	public void printTerminationPoint(TerminationPoint_T terminationPoint)
 			throws ProcessingFailureException, SAXException {
+
 		handler.printStructure(getTerminationPointParams(terminationPoint));
 	}
 
@@ -292,6 +293,7 @@ public class Corba2XMLHelper {
 
 		Corba2XMLContainer container = new Corba2XMLContainer(
 				Corba2XMLStructure.PTPS);
+
 		container.setFieldValue(CorbaConstants.NE_ID_STR, handler
 				.getValueByName(terminationPoint.name,
 						CorbaConstants.MANAGED_ELEMENT_STR));
@@ -319,6 +321,173 @@ public class Corba2XMLHelper {
 
 		if (isCTPExists) {
 			container.setFieldValue(CorbaConstants.CTP_STR, ctpValue);
+		}
+
+		container.setFieldValue(CorbaConstants.TYPE_STR, type);
+		container.setFieldValue(CorbaConstants.CONNECTION_STATE_STR,
+				connectionState);
+		container.setFieldValue(CorbaConstants.TP_MAPPING_MODE_STR,
+				tpMappingMode);
+		container.setFieldValue(CorbaConstants.DIRECTION_STR, direction);
+		container
+				.setFieldValue(
+						CorbaConstants.TRANSMISSION_PARAMS_STR,
+						handler.convertLayeredParametersToString(terminationPoint.transmissionParams));
+		container.setFieldValue(CorbaConstants.TP_PROTECTION_ASSOCIATION_STR,
+				tpProtectionAssociation);
+		container.setFieldValue(CorbaConstants.EDGE_POINT_STR,
+				terminationPoint.edgePoint ? "true" : "false");
+		container
+				.setFieldValue(
+						CorbaConstants.ADDITIONAL_INFO_STR,
+						handler.convertNameAndStringValueToString(terminationPoint.additionalInfo));
+		return container;
+	}
+
+	public void printContainedTPParams(TerminationPoint_T terminationPoint,
+			String sncID, String ctpInput) throws ProcessingFailureException,
+			SAXException {
+
+		handler.printStructure(getContainedTPParams(terminationPoint, sncID,
+				ctpInput));
+	}
+
+	public Corba2XMLContainer getContainedTPParams(
+			TerminationPoint_T terminationPoint, String sncID, String ctpInput)
+			throws ProcessingFailureException {
+
+		String type = null;
+		switch (terminationPoint.type.value()) {
+		case TPType_T._TPT_CTP:
+			type = "TPT_CTP";
+			break;
+		case TPType_T._TPT_PTP:
+			type = "TPT_PTP";
+			break;
+		case TPType_T._TPT_TPPool:
+			type = "TPT_TPPool";
+			break;
+		default:
+			type = "";
+			break;
+		}
+
+		String connectionState = null;
+		switch (terminationPoint.connectionState.value()) {
+		case TPConnectionState_T._TPCS_NA:
+			connectionState = "TPCS_NA";
+			break;
+		case TPConnectionState_T._TPCS_BI_CONNECTED:
+			connectionState = "TPCS_BI_CONNECTED";
+			break;
+		case TPConnectionState_T._TPCS_NOT_CONNECTED:
+			connectionState = "TPCS_NOT_CONNECTED";
+			break;
+		case TPConnectionState_T._TPCS_SINK_CONNECTED:
+			connectionState = "TPCS_SINK_CONNECTED";
+			break;
+		case TPConnectionState_T._TPCS_SOURCE_CONNECTED:
+			connectionState = "TPCS_SOURCE_CONNECTED";
+			break;
+		default:
+			connectionState = "";
+			break;
+		}
+
+		String tpMappingMode = null;
+		switch (terminationPoint.tpMappingMode.value()) {
+		case TerminationMode_T._TM_NA:
+			tpMappingMode = "TM_NA";
+			break;
+		case TerminationMode_T._TM_NEITHER_TERMINATED_NOR_AVAILABLE_FOR_MAPPING:
+			tpMappingMode = "TM_NEITHER_TERMINATED_NOR_AVAILABLE_FOR_MAPPING";
+			break;
+		case TerminationMode_T._TM_TERMINATED_AND_AVAILABLE_FOR_MAPPING:
+			tpMappingMode = "TM_TERMINATED_AND_AVAILABLE_FOR_MAPPING";
+			break;
+		default:
+			tpMappingMode = "";
+			break;
+		}
+
+		String direction = null;
+		switch (terminationPoint.direction.value()) {
+		case Directionality_T._D_BIDIRECTIONAL:
+			direction = "BIDIRECTIONAL";
+			break;
+		case Directionality_T._D_NA:
+			direction = "NA";
+			break;
+		case Directionality_T._D_SINK:
+			direction = "SINK";
+			break;
+		case Directionality_T._D_SOURCE:
+			direction = "SOURCE";
+			break;
+		default:
+			direction = "";
+			break;
+		}
+
+		String tpProtectionAssociation = null;
+		if (terminationPoint.tpProtectionAssociation.value() == TPProtectionAssociation_T._TPPA_PSR_RELATED) {
+			tpProtectionAssociation = "TPPA_PSR_RELATED";
+		} else if (terminationPoint.tpProtectionAssociation.value() == TPProtectionAssociation_T._TPPA_NA) {
+			tpProtectionAssociation = "TPPA_NA";
+		}
+
+		boolean isPTPExists = false;
+		boolean isCTPExists = false;
+
+		String ptpValue = null;
+		String ctpValue = null;
+
+		for (NameAndStringValue_T eachNameAndStringValue : terminationPoint.name) {
+			if (eachNameAndStringValue != null
+					&& CorbaConstants.CTP_STR
+							.equals(eachNameAndStringValue.name)) {
+				isCTPExists = true;
+				ctpValue = eachNameAndStringValue.value;
+			}
+			if (eachNameAndStringValue != null
+					&& CorbaConstants.PTP_STR
+							.equals(eachNameAndStringValue.name)) {
+				isPTPExists = true;
+				ptpValue = eachNameAndStringValue.value;
+			}
+		}
+
+		Corba2XMLContainer container = new Corba2XMLContainer(
+				Corba2XMLStructure.CONTAINED_POTENTIAL_TPS);
+
+		container.setFieldValue(CorbaConstants.SNC_ID_STR, sncID);
+
+		container.setFieldValue(CorbaConstants.NE_ID_STR, handler
+				.getValueByName(terminationPoint.name,
+						CorbaConstants.MANAGED_ELEMENT_STR));
+		container.setFieldValue(CorbaConstants.USER_LABEL_STR,
+				terminationPoint.userLabel);
+		container.setFieldValue(CorbaConstants.NATIVE_EMS_NAME_STR,
+				terminationPoint.nativeEMSName);
+		container.setFieldValue(CorbaConstants.OWNER_STR,
+				terminationPoint.owner);
+		container
+				.setFieldValue(
+						CorbaConstants.IN_TRAFFIC_DES_NAME_STR,
+						handler.convertNameAndStringValueToString(terminationPoint.ingressTrafficDescriptorName));
+		container
+				.setFieldValue(
+						CorbaConstants.EG_TRAFFIC_DES_NAME_STR,
+						handler.convertNameAndStringValueToString(terminationPoint.egressTrafficDescriptorName));
+
+		container.setFieldValue(CorbaConstants.IN_CTP_STR, ctpInput);
+		
+		if (isPTPExists) {
+			container.setFieldValue(CorbaConstants.IN_PTP_STR, ptpValue);
+		}
+
+		if (isCTPExists) {
+			container.setFieldValue(CorbaConstants.OUT_CTP_STR, ctpValue);			
 		}
 
 		container.setFieldValue(CorbaConstants.TYPE_STR, type);

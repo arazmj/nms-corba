@@ -153,12 +153,17 @@ public class CorbaConstants {
 	public static final String FDFR_TYPE_STR = "FDFR_TYPE";
 	public static final String FDFR_STATE_STR = "FDFR_STATE";
 	public static final String A_END_STR = "A_END";
-	public static final String Z_END_STR = "Z_END";	
-	
-	//ContainedInUseTPs
+	public static final String Z_END_STR = "Z_END";
+
+	// ContainedInUseTPs
 	public static final String IN_USE_TPS_STR = "IN_USE_TPS";
-	
-	//EquipmentConfiguration
+
+	// EquipmentConfiguration
 	public static final String EQUIPMENT_TYPE_STR = "EQUIPMENT_TYPE";
 	public static final String CONFIG_PARAMETERS = "CONFIG_PARAMS";
+
+	// ContainedPotentialTPs
+	public static final String IN_PTP_STR = "IN_PTP";
+	public static final String IN_CTP_STR = "IN_CTP";
+	public static final String OUT_CTP_STR = "OUT_CTP";
 }

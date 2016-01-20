@@ -31,6 +31,7 @@ import subnetworkConnection.SNCCreateData_T;
 import subnetworkConnection.SNCIterator_IHolder;
 import subnetworkConnection.SNCModifyData_T;
 import subnetworkConnection.SubnetworkConnectionList_THolder;
+import subnetworkConnection.SubnetworkConnection_T;
 import subnetworkConnection.SubnetworkConnection_THolder;
 import subnetworkConnection.TPDataList_THolder;
 import terminationPoint.TerminationPointIterator_IHolder;
@@ -109,6 +110,7 @@ public class CorbaCommands {
 	private List<String> neNamesWithoutVNE;
 	private List<String> sncNames;
 	private List<String> subnetworkNames;
+	private List<NameAndStringValue_T[]> serverTrailTPList;
 
 	private Set<Short> terminationPointRates;
 
@@ -748,8 +750,12 @@ public class CorbaCommands {
 		mlsnManager.getAllSubnetworkConnections(nameAndStringValueArray,
 				rateList, HOW_MANY, sncList, sncIterator);
 		sncNames = new ArrayList<String>();
+		serverTrailTPList = new ArrayList<NameAndStringValue_T[]>();
 
 		for (int i = 0; i < sncList.value.length; i++) {
+			String sncID = handler.getValueByName(sncList.value[i].name,
+					CorbaConstants.SUBNETWORK_CONNECTION_STR);
+
 			// Filter MSTRAIL. The MSTRAILS does not have Cross-connects. Hence,
 			// getRoute API will gives for these SNCs
 			if (sncList.value[i].rate != 25 && sncList.value[i].rate != 26
@@ -757,7 +763,10 @@ public class CorbaCommands {
 					&& sncList.value[i].rate != 28) {
 				sncNames.add(handler.getValueByName(sncList.value[i].name,
 						CorbaConstants.SUBNETWORK_CONNECTION_STR));
+
 			}
+
+			populateServerTrailTPList(sncList.value[i]);
 
 			handler.printStructure(helper
 					.getSubnetworkConnectionParams(sncList.value[i]));
@@ -781,6 +790,7 @@ public class CorbaCommands {
 									sncList.value[i].name,
 									CorbaConstants.SUBNETWORK_CONNECTION_STR));
 						}
+						populateServerTrailTPList(sncList.value[i]);
 
 						handler.printStructure(helper
 								.getSubnetworkConnectionParams(sncList.value[i]));
@@ -1154,9 +1164,10 @@ public class CorbaCommands {
 
 		return errorReason;
 	}
-	
-	public void getSNCsByUserLabel(String userLabel) throws ProcessingFailureException, SAXException{
-		
+
+	public void getSNCsByUserLabel(String userLabel)
+			throws ProcessingFailureException, SAXException {
+
 		if (LOG.isInfoEnabled()) {
 			LOG.info("getSNCsByUserLabel() start.");
 		}
@@ -1165,11 +1176,11 @@ public class CorbaCommands {
 			return;
 
 		SubnetworkConnectionList_THolder sncList = new SubnetworkConnectionList_THolder();
-		
+
 		mlsnManager.getSNCsByUserLabel(userLabel, sncList);
 
 		for (int i = 0; i < sncList.value.length; i++) {
-			
+
 			handler.printStructure(helper
 					.getSubnetworkConnectionParams(sncList.value[i]));
 		}
@@ -1178,6 +1189,175 @@ public class CorbaCommands {
 			LOG.info("getSNCsByUserLabel() complete.");
 		}
 
+	}
+
+	public void getContainedPotentialTPs() throws ProcessingFailureException,
+			SAXException {
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info("getContainedPotentialTPs() start.");
+		}
+
+		if (!setManagerByName(ME_MANAGER_NAME))
+			return;
+
+		if (this.serverTrailTPList == null) {
+			getAllSubnetworkConnections();
+		}
+
+		short[] tpLayerRateList = new short[0];
+
+		TerminationPointList_THolder terminationPointList = new TerminationPointList_THolder();
+		TerminationPointIterator_IHolder terminationPointIterator = new TerminationPointIterator_IHolder();
+
+		int counter = 0;
+		boolean exitWhile = false;
+		for (int count = 0; count < this.serverTrailTPList.size(); count++) {
+
+			NameAndStringValue_T[] inputNE = new NameAndStringValue_T[4];
+
+			try {
+
+				NameAndStringValue_T[] eachNameAndStringValueArray = this.serverTrailTPList
+						.get(count);
+
+				inputNE[0] = new NameAndStringValue_T(
+						eachNameAndStringValueArray[0].name,
+						eachNameAndStringValueArray[0].value);
+
+				inputNE[1] = new NameAndStringValue_T(
+						eachNameAndStringValueArray[1].name,
+						eachNameAndStringValueArray[1].value);
+
+				inputNE[2] = new NameAndStringValue_T(
+						eachNameAndStringValueArray[2].name,
+						eachNameAndStringValueArray[2].value);
+
+				inputNE[3] = new NameAndStringValue_T(
+						eachNameAndStringValueArray[3].name,
+						eachNameAndStringValueArray[3].value);
+
+				String sncID = eachNameAndStringValueArray[4].value;
+
+				LOG.info("SNC_ID:" + sncID);
+				LOG.info("NEID:" + eachNameAndStringValueArray[1].value);
+				LOG.info("PTP:" + eachNameAndStringValueArray[2].value);
+				LOG.info("CTP:" + eachNameAndStringValueArray[3].value);
+				LOG.info("*****************************************");
+
+				meManager.getContainedPotentialTPs(inputNE, tpLayerRateList,
+						HOW_MANY, terminationPointList,
+						terminationPointIterator);
+
+				for (int i = 0; i < terminationPointList.value.length; i++) {
+					helper.printContainedTPParams(
+							terminationPointList.value[i], sncID,
+							inputNE[3].value);
+				}
+
+				exitWhile = false;
+
+				if (terminationPointIterator.value != null) {
+					try {
+						boolean hasMoreData = true;
+						while (hasMoreData) {
+							hasMoreData = terminationPointIterator.value
+									.next_n(HOW_MANY, terminationPointList);
+
+							for (int i = 0; i < terminationPointList.value.length; i++) {
+								helper.printContainedTPParams(
+										terminationPointList.value[i], sncID,
+										inputNE[3].value);
+							}
+						}
+						exitWhile = true;
+					} finally {
+						if (!exitWhile) {
+							terminationPointIterator.value.destroy();
+						}
+					}
+
+					counter++;
+
+				}
+
+			} catch (ProcessingFailureException ex) {
+				handleProcessingFailureException(ex,
+						"getContainedPotentialTPs. ME: " + inputNE);
+			}
+		}
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info("getContainedPotentialTPs() complete.");
+		}
+
+	}
+
+	private void populateServerTrailTPList(SubnetworkConnection_T snc) {
+
+		String sncID = handler.getValueByName(snc.name,
+				CorbaConstants.SUBNETWORK_CONNECTION_STR);
+
+		int rate = snc.rate;
+
+		if (rate == 15 && sncID != null && sncID.startsWith("TRAIL")) {
+
+			String aEndPTP = handler.getValueByName(snc.aEnd[0].tpName,
+					CorbaConstants.PTP_STR);
+
+			if (aEndPTP != null && !aEndPTP.endsWith("gMAU")) {
+
+				NameAndStringValue_T[] serverTrailAEndTPNameArray = new NameAndStringValue_T[5];
+
+				serverTrailAEndTPNameArray[0] = new NameAndStringValue_T(
+						CorbaConstants.EMS_STR, emsName);
+
+				serverTrailAEndTPNameArray[1] = new NameAndStringValue_T(
+						CorbaConstants.MANAGED_ELEMENT_STR,
+						handler.getValueByName(snc.aEnd[0].tpName,
+								CorbaConstants.MANAGED_ELEMENT_STR));
+
+				serverTrailAEndTPNameArray[2] = new NameAndStringValue_T(
+						CorbaConstants.PTP_STR, aEndPTP);
+
+				serverTrailAEndTPNameArray[3] = new NameAndStringValue_T(
+						CorbaConstants.CTP_STR, handler.getValueByName(
+								snc.aEnd[0].tpName, CorbaConstants.CTP_STR));
+
+				serverTrailAEndTPNameArray[4] = new NameAndStringValue_T(
+						CorbaConstants.SNC_ID_STR, sncID);
+
+				serverTrailTPList.add(serverTrailAEndTPNameArray);
+			}
+
+			String zEndPTP = handler.getValueByName(snc.zEnd[0].tpName,
+					CorbaConstants.PTP_STR);
+
+			if (zEndPTP != null && !zEndPTP.endsWith("gMAU")) {
+
+				NameAndStringValue_T[] serverTrailZEndTPNameArray = new NameAndStringValue_T[5];
+
+				serverTrailZEndTPNameArray[0] = new NameAndStringValue_T(
+						CorbaConstants.EMS_STR, emsName);
+
+				serverTrailZEndTPNameArray[1] = new NameAndStringValue_T(
+						CorbaConstants.MANAGED_ELEMENT_STR,
+						handler.getValueByName(snc.zEnd[0].tpName,
+								CorbaConstants.MANAGED_ELEMENT_STR));
+
+				serverTrailZEndTPNameArray[2] = new NameAndStringValue_T(
+						CorbaConstants.PTP_STR, zEndPTP);
+
+				serverTrailZEndTPNameArray[3] = new NameAndStringValue_T(
+						CorbaConstants.CTP_STR, handler.getValueByName(
+								snc.zEnd[0].tpName, CorbaConstants.CTP_STR));
+
+				serverTrailZEndTPNameArray[4] = new NameAndStringValue_T(
+						CorbaConstants.SNC_ID_STR, sncID);
+
+				serverTrailTPList.add(serverTrailZEndTPNameArray);
+			}
+		}
 	}
 
 	public void handleProcessingFailureException(
