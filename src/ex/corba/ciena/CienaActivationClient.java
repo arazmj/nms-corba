@@ -71,8 +71,8 @@ public class CienaActivationClient extends CienaConnection {
 			// main.createEthOverSDH2GEWithGTP();
 
 			/* Call using multiple SNCs */
-			main.createEthOverSDH10GEsubrate();
-			// main.createEthOverSDH10GEsubrateWithNEtpInc();
+			// main.createEthOverSDH10GEsubrate();
+			main.createEthOverSDH10GEsubrateWithNEtpInc();
 
 			/* E-Line Service over OTN link */
 			// main.createMultiNodeEthOverOTN10Gbps();

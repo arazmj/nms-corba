@@ -1,20 +1,99 @@
-Jun 15, 2015 6:10:21 PM org.jacorb.config.JacORBConfiguration init
+Jun 24, 2015 5:19:06 PM org.jacorb.config.JacORBConfiguration init
 WARNING: jacorb.home unset! Will use '.'
-Jun 15, 2015 6:10:21 PM org.jacorb.config.JacORBConfiguration init
+Jun 24, 2015 5:19:06 PM org.jacorb.config.JacORBConfiguration init
 WARNING: File .\jacorb.properties for configuration jacorb not found
-Jun 15, 2015 6:10:21 PM org.jacorb.orb.ORB printVersion
+Jun 24, 2015 5:19:06 PM org.jacorb.orb.ORB printVersion
 INFO: 
 	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	JacORB V 2.3.1, www.jacorb.org
 	(C) The JacORB project 27-May-2009
 	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Jun 15, 2015 6:10:21 PM org.jacorb.orb.ORB initKnownReferencesMap
+Jun 24, 2015 5:19:06 PM org.jacorb.orb.ORB initKnownReferencesMap
 INFO: Property "jacorb.hashtable_class" is set to: java.util.HashMap
-Jun 15, 2015 6:10:21 PM org.jacorb.orb.portableInterceptor.InterceptorManager <init>
+Jun 24, 2015 5:19:06 PM org.jacorb.orb.portableInterceptor.InterceptorManager <init>
 INFO: InterceptorManager started with 1 Server Interceptors, 1 Client Interceptors and 0 IOR Interceptors
-Jun 15, 2015 6:10:21 PM org.jacorb.orb.giop.CodeSet getTCSDefault
+Jun 24, 2015 5:19:06 PM org.jacorb.orb.giop.CodeSet getTCSDefault
 WARNING: Warning - unknown codeset (Cp1252) - defaulting to ISO-8859-1
-Jun 15, 2015 6:10:21 PM org.jacorb.orb.giop.ClientConnectionManager getConnection
-INFO: ClientConnectionManager: created new ClientGIOPConnection to 10.100.3.38:20025 (3385f539)
-Jun 15, 2015 6:10:21 PM org.jacorb.orb.iiop.ClientIIOPConnection connect
-INFO: Connected to 10.100.3.38:20025 from local port 58616
+Jun 24, 2015 5:19:06 PM org.jacorb.orb.giop.ClientConnectionManager getConnection
+INFO: ClientConnectionManager: created new ClientGIOPConnection to 10.100.3.38:20025 (7e4736ab)
+Jun 24, 2015 5:19:06 PM org.jacorb.orb.iiop.ClientIIOPConnection connect
+INFO: Connected to 10.100.3.38:20025 from local port 54522
+Jun 24, 2015 5:19:06 PM org.jacorb.orb.giop.ClientConnectionManager getConnection
+INFO: ClientConnectionManager: found ClientGIOPConnection to 10.100.3.38:20025 (7e4736ab)
+Jun 24, 2015 5:19:07 PM org.jacorb.poa.AOM add
+INFO: oid: 
+00 18 46 2C 43 15 36 04 01 01 48                            ..F,C.6...H
+object is activated
+Jun 24, 2015 5:19:07 PM org.jacorb.poa.POA getImplName
+INFO: Using server ID (3184099660) for transient POA
+Jun 24, 2015 5:19:07 PM org.jacorb.orb.giop.ClientConnectionManager getConnection
+INFO: ClientConnectionManager: created new ClientGIOPConnection to 10.100.3.38:40000 (b6bf0e6)
+Jun 24, 2015 5:19:07 PM org.jacorb.orb.iiop.ClientIIOPConnection connect
+INFO: Connected to 10.100.3.38:40000 from local port 54524
+Jun 24, 2015 5:19:07 PM ex.corba.ciena.CorbaCommands getEquipmentConfiguration
+INFO: getEquipmentConfiguration() start.
+Jun 24, 2015 5:19:07 PM org.jacorb.orb.giop.ClientConnectionManager getConnection
+INFO: ClientConnectionManager: found ClientGIOPConnection to 10.100.3.38:40000 (b6bf0e6)
+Jun 24, 2015 5:19:07 PM ex.corba.ciena.CorbaCommands getAllEquipmentList
+INFO: getAllEquipmentList() start.
+Jun 24, 2015 5:19:07 PM org.jacorb.orb.giop.ClientConnectionManager getConnection
+INFO: ClientConnectionManager: found ClientGIOPConnection to 10.100.3.38:40000 (b6bf0e6)
+Jun 24, 2015 5:19:07 PM ex.corba.ciena.CorbaCommands getAllManagedElementNames
+INFO: NE: SNG-PPD-ASON-CN-01
+Jun 24, 2015 5:19:07 PM ex.corba.ciena.CorbaCommands getAllManagedElementNames
+INFO: NE: HKG-CH-ASON-CN-01
+Jun 24, 2015 5:19:07 PM org.jacorb.orb.giop.ClientConnectionManager getConnection
+INFO: ClientConnectionManager: found ClientGIOPConnection to 10.100.3.38:40000 (b6bf0e6)
+Jun 24, 2015 5:19:10 PM ex.corba.ciena.CorbaCommands getAllEquipmentList
+INFO: getAllEquipmentList: got 100 equipments for ME SNG-PPD-ASON-CN-01
+Jun 24, 2015 5:19:10 PM org.jacorb.orb.giop.ClientConnectionManager getConnection
+INFO: ClientConnectionManager: found ClientGIOPConnection to 10.100.3.38:40000 (b6bf0e6)
+Jun 24, 2015 5:19:10 PM ex.corba.ciena.CorbaCommands getAllEquipmentList
+INFO: getAllEquipmentList: finished getEquipment for ME SNG-PPD-ASON-CN-01 Order number # 1
+Jun 24, 2015 5:19:13 PM ex.corba.ciena.CorbaCommands getAllEquipmentList
+INFO: getAllEquipmentList: got 100 equipments for ME HKG-CH-ASON-CN-01
+Jun 24, 2015 5:19:13 PM org.jacorb.orb.giop.ClientConnectionManager getConnection
+INFO: ClientConnectionManager: found ClientGIOPConnection to 10.100.3.38:40000 (b6bf0e6)
+Jun 24, 2015 5:19:13 PM ex.corba.ciena.CorbaCommands getAllEquipmentList
+INFO: getAllEquipmentList: finished getEquipment for ME HKG-CH-ASON-CN-01 Order number # 2
+Jun 24, 2015 5:19:13 PM ex.corba.ciena.CorbaCommands getAllEquipmentList
+INFO: getAllEquipmentList() complete.
+Jun 24, 2015 5:19:13 PM ex.corba.ciena.CorbaCommands getEquipmentConfiguration
+INFO: 352
+Jun 24, 2015 5:19:13 PM ex.corba.ciena.CorbaCommands getEquipmentConfiguration
+INFO: eachNameAndStringValueArray:name:EMS,value:CIENA/LightWorks_ON-Center
+Jun 24, 2015 5:19:13 PM ex.corba.ciena.CorbaCommands getEquipmentConfiguration
+INFO: eachNameAndStringValueArray:name:ManagedElement,value:SNG-PPD-ASON-CN-01
+Jun 24, 2015 5:19:13 PM ex.corba.ciena.CorbaCommands getEquipmentConfiguration
+INFO: eachNameAndStringValueArray:name:EquipmentHolder,value:/rack=1/shelf=4/slot=1
+Jun 24, 2015 5:19:13 PM org.jacorb.orb.giop.ClientConnectionManager getConnection
+INFO: ClientConnectionManager: found ClientGIOPConnection to 10.100.3.38:40000 (b6bf0e6)
+Jun 24, 2015 5:19:13 PM ex.corba.ciena.CorbaCommands handleProcessingFailureException
+SEVERE: Ciena OC>> getEquipmentConfiguration. , ProcessingFailureException: reason: This call is only available for 54XX  NEs., ErrorCode: 9 ErrorType: EXCPT_UNABLE_TO_COMPLY ErrorDescription: The value EXCPT_UNABLE_TO_COMPLY value is used as a generic value when a server cannot respond to the request. It is a major error. Stop interaction with server
+com.ciena.oc.globaldefs.ProcessingFailureException: IDL:mtnm.tmforum.org/globaldefs/ProcessingFailureException:1.0
+	at com.ciena.oc.globaldefs.ProcessingFailureExceptionHelper.read(ProcessingFailureExceptionHelper.java:67)
+	at com.ciena.oc.equipmentManagerCIENA._EquipmentMgrCIENA_IStub.getEquipmentConfiguration(_EquipmentMgrCIENA_IStub.java:2327)
+	at ex.corba.ciena.CorbaCommands.getEquipmentConfiguration(CorbaCommands.java:1580)
+	at ex.corba.ciena.CienaDiscoveryClient.executeCommandsXmlOutput(CienaDiscoveryClient.java:110)
+	at ex.corba.ciena.CienaDiscoveryClient.main(CienaDiscoveryClient.java:30)
+
+Jun 24, 2015 5:19:13 PM ex.corba.ciena.CienaDiscoveryClient main
+SEVERE: Ciena ON-Center: ProcessingFailureException: reason: This call is only available for 54XX  NEs., ErrorCode: 9 ErrorType: EXCPT_UNABLE_TO_COMPLY ErrorDescription: The value EXCPT_UNABLE_TO_COMPLY value is used as a generic value when a server cannot respond to the request.
+Jun 24, 2015 5:19:13 PM org.jacorb.orb.ORB shutdown
+INFO: prepare ORB for shutdown...
+Jun 24, 2015 5:19:13 PM org.jacorb.orb.ORB shutdown
+INFO: ORB going down...
+Jun 24, 2015 5:19:13 PM org.jacorb.poa.POA makeDestructionComplete
+INFO: POA RootPOA destroyed
+Jun 24, 2015 5:19:13 PM org.jacorb.orb.iiop.ClientIIOPConnection close
+INFO: Client-side TCP transport to 10.100.3.38:20025 closed.
+Jun 24, 2015 5:19:13 PM org.jacorb.orb.iiop.IIOPListener$Acceptor run
+INFO: Listener exited
+Jun 24, 2015 5:19:13 PM org.jacorb.orb.iiop.ClientIIOPConnection close
+INFO: Client-side TCP transport to 10.100.3.38:40000 closed.
+Jun 24, 2015 5:19:13 PM org.jacorb.util.threadpool.ConsumerTie run
+INFO: ConsumerTie exited
+Jun 24, 2015 5:19:13 PM org.jacorb.orb.ORB shutdown
+INFO: ORB shutdown complete
+Jun 24, 2015 5:19:13 PM org.jacorb.util.threadpool.ConsumerTie run
+INFO: ConsumerTie exited

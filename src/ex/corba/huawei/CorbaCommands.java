@@ -1110,7 +1110,7 @@ public class CorbaCommands {
 			throws ProcessingFailureException {
 
 		if (LOG.isInfoEnabled()) {
-			LOG.info("createEthService() start.");
+			LOG.info("deleteEthService() start.");
 		}
 
 		if (!setManagerByName(MSTP_SERVICE_MANAGER_NAME))
@@ -1119,7 +1119,7 @@ public class CorbaCommands {
 		this.mstpServiceManager.deleteEthService(name);
 
 		if (LOG.isInfoEnabled()) {
-			LOG.info("createEthService() complete.");
+			LOG.info("deleteEthService() complete.");
 		}
 	}
 

@@ -1415,7 +1415,7 @@ public class CorbaCommands {
 				return;
 
 			if (LOG.isInfoEnabled()) {
-				LOG.info("getAllTopologicalLinks() start.");
+				LOG.info("getContainedInUseTPs() start.");
 			}
 
 			NameAndStringValue_T[] mlsn = new NameAndStringValue_T[2];
@@ -1472,11 +1472,7 @@ public class CorbaCommands {
 				}
 			} catch (ProcessingFailureException ex) {
 				handleProcessingFailureException(ex,
-						"getAllTopologicalLinks. MLS: " + mlsn[1].value);
-			}
-
-			if (LOG.isInfoEnabled()) {
-				LOG.info("getAllTopologicalLinks() complete.");
+						"getContainedInUseTPs. MLS: " + mlsn[1].value);
 			}
 		}
 
@@ -1545,7 +1541,7 @@ public class CorbaCommands {
 						counter++;
 
 						if (LOG.isDebugEnabled()) {
-							LOG.debug("getContainedInUseTPs: finished getContainedInUseTP for ME "
+							LOG.debug("getContainedInUseTPs: finished getContainedInUseTP for Port "
 									+ eachTPName[1].value
 									+ " Order number # "
 									+ counter);

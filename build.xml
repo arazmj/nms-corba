@@ -75,7 +75,7 @@
 		<delete file="${dist.dir}/${dist.file}" />
 		
 		<zip destfile="${dist.dir}/${dist.file}">
-			<zipfileset dir="${basedir}" excludes=".git/, src/, dist/, **/*.class"/>
+			<zipfileset dir="${basedir}" excludes=".git/, dist/, **/*.class"/>
 			<zipfileset file="${dist.dir}/${jarfile}" prefix="lib"/>
 		</zip>
 	</target>

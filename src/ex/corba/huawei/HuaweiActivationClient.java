@@ -70,14 +70,15 @@ public class HuaweiActivationClient extends HuaweiConnection {
 			 * SDH Path on MSP 1+1
 			 */
 			// main.deactivateAndDeleteSNC("2015-07-31 05:02:11 - 1087-sdh");
-			// main.createE1withCCIncOnMSP();
-			main.createVC3withCCIncOnMSP();
+			main.createE1withCCIncOnMSP();
+			// main.createVC3withCCIncOnMSP();
 			// main.createSncpE1withCCIncOnMSP();
 
 			/*
 			 * Ethernet service
 			 */
 			// main.createEthService();
+			// main.delEthService();
 			// main.addBindingPathVC12();
 			// main.addBindingPathVC3();
 			// main.addBindingPathVC12for4M();
@@ -1993,6 +1994,172 @@ public class HuaweiActivationClient extends HuaweiConnection {
 				emsFreedomLevel, tpsToModify);
 	}
 
+	public void createSTM1withCCIncOnMSP() throws ProcessingFailureException {
+		String userLabel = "NISA-E1-NV-MSP1+1-1";
+		String owner = "";
+
+		// 8 = LR_E1_2M
+		short layerRate = 8;
+
+		NameAndStringValue_T[][] aEnd = new NameAndStringValue_T[1][4];
+
+		// A-End
+		aEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		aEnd[0][1] = new NameAndStringValue_T("ManagedElement", "3145729");
+		aEnd[0][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=1/slot=3/domain=sdh/port=2");
+		aEnd[0][3] = new NameAndStringValue_T("CTP", "/vt2_tu12=1");
+
+		// Z-End
+		NameAndStringValue_T[][] zEnd = new NameAndStringValue_T[1][4];
+		zEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		zEnd[0][1] = new NameAndStringValue_T("ManagedElement", "3145732");
+		zEnd[0][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=1/slot=8/domain=sdh/port=1");
+		zEnd[0][3] = new NameAndStringValue_T("CTP",
+				"/sts3c_au4-j=1/vt2_tu12-k=2-l=1-m=1");
+
+		// CC Inclusions
+		CrossConnect_T[] ccInclusions = new CrossConnect_T[4];
+		ccInclusions[0] = new CrossConnect_T();
+		ccInclusions[0].active = false;
+		ccInclusions[0].direction = ConnectionDirection_T.CD_BI;
+		ccInclusions[0].ccType = SNCType_T.ST_SIMPLE;
+
+		// Node 1 cross-connect - 1
+		NameAndStringValue_T[][] aEndCCList0 = aEnd;
+
+		NameAndStringValue_T[][] zEndCCList0 = new NameAndStringValue_T[1][4];
+		zEndCCList0[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		zEndCCList0[0][1] = new NameAndStringValue_T("ManagedElement",
+				"3145729");
+		zEndCCList0[0][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=1/slot=13/domain=sdh/port=1");
+		zEndCCList0[0][3] = new NameAndStringValue_T("CTP",
+				"/sts3c_au4-j=2/vt2_tu12-k=2-l=1-m=1");
+
+		ccInclusions[0].aEndNameList = aEndCCList0;
+		ccInclusions[0].zEndNameList = zEndCCList0;
+		ccInclusions[0].additionalInfo = new NameAndStringValue_T[1];
+		ccInclusions[0].additionalInfo[0] = new NameAndStringValue_T(
+				"ProtectionRole", "Work");
+
+		// Node 2 cross-connect - 1
+		ccInclusions[1] = new CrossConnect_T();
+		ccInclusions[1].active = false;
+		ccInclusions[1].direction = ConnectionDirection_T.CD_BI;
+		ccInclusions[1].ccType = SNCType_T.ST_SIMPLE;
+
+		NameAndStringValue_T[][] aEndCCList1 = new NameAndStringValue_T[1][4];
+		aEndCCList1[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		aEndCCList1[0][1] = new NameAndStringValue_T("ManagedElement",
+				"3145732");
+		aEndCCList1[0][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=1/slot=23/domain=sdh/port=1");
+		aEndCCList1[0][3] = new NameAndStringValue_T("CTP",
+				"/sts3c_au4-j=2/vt2_tu12-k=2-l=1-m=1");
+
+		NameAndStringValue_T[][] zEndCCList1 = zEnd;
+
+		ccInclusions[1].aEndNameList = aEndCCList1;
+		ccInclusions[1].zEndNameList = zEndCCList1;
+		ccInclusions[1].additionalInfo = new NameAndStringValue_T[1];
+		ccInclusions[1].additionalInfo[0] = new NameAndStringValue_T(
+				"ProtectionRole", "Work");
+
+		// Node 1 cross-connect - 2: Protected MSP path
+		ccInclusions[2] = new CrossConnect_T();
+		ccInclusions[2].active = false;
+		ccInclusions[2].direction = ConnectionDirection_T.CD_UNI;
+		ccInclusions[2].ccType = SNCType_T.ST_SIMPLE;
+
+		NameAndStringValue_T[][] aEndCCList2 = aEnd;
+
+		NameAndStringValue_T[][] zEndCCList2 = new NameAndStringValue_T[1][4];
+		zEndCCList2[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		zEndCCList2[0][1] = new NameAndStringValue_T("ManagedElement",
+				"3145729");
+		zEndCCList2[0][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=1/slot=14/domain=sdh/port=1");
+		zEndCCList2[0][3] = new NameAndStringValue_T("CTP",
+				"/sts3c_au4-j=2/vt2_tu12-k=2-l=1-m=1");
+
+		ccInclusions[2].aEndNameList = aEndCCList2;
+		ccInclusions[2].zEndNameList = zEndCCList2;
+		ccInclusions[2].additionalInfo = new NameAndStringValue_T[1];
+		ccInclusions[2].additionalInfo[0] = new NameAndStringValue_T(
+				"ProtectionRole", "Protection");
+
+		// Node 2 cross-connect - 2: Protected MSP path
+		ccInclusions[3] = new CrossConnect_T();
+		ccInclusions[3].active = false;
+		ccInclusions[3].direction = ConnectionDirection_T.CD_UNI;
+		ccInclusions[3].ccType = SNCType_T.ST_SIMPLE;
+
+		NameAndStringValue_T[][] aEndCCList5 = zEnd;
+
+		NameAndStringValue_T[][] zEndCCList5 = new NameAndStringValue_T[1][4];
+		zEndCCList5[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		zEndCCList5[0][1] = new NameAndStringValue_T("ManagedElement",
+				"3145732");
+		zEndCCList5[0][2] = new NameAndStringValue_T("PTP",
+				"/rack=1/shelf=1/slot=24/domain=sdh/port=1");
+		zEndCCList5[0][3] = new NameAndStringValue_T("CTP",
+				"/sts3c_au4-j=2/vt2_tu12-k=2-l=1-m=1");
+
+		ccInclusions[3].aEndNameList = aEndCCList5;
+		ccInclusions[3].zEndNameList = zEndCCList5;
+		ccInclusions[3].additionalInfo = new NameAndStringValue_T[1];
+		ccInclusions[3].additionalInfo[0] = new NameAndStringValue_T(
+				"ProtectionRole", "Protection");
+
+		NameAndStringValue_T[][] neTpInclusions = new NameAndStringValue_T[0][0];
+		NameAndStringValue_T[][] neTpExclusions = new NameAndStringValue_T[0][0];
+
+		Hashtable<String, String> additionalInfo = new Hashtable<String, String>();
+
+		NameAndStringValue_T[] additionalCreationInfo = new NameAndStringValue_T[additionalInfo
+				.size()];
+		Enumeration<String> keySet = additionalInfo.keys();
+
+		for (int i = 0; keySet.hasMoreElements(); i++) {
+			String name = (String) keySet.nextElement();
+			String value = (String) additionalInfo.get(name);
+			additionalCreationInfo[i] = new NameAndStringValue_T(name, value);
+		}
+
+		SNCCreateData_T createData = new SNCCreateData_T();
+
+		createData.aEnd = aEnd;
+		createData.zEnd = zEnd;
+		createData.additionalCreationInfo = additionalCreationInfo;
+		createData.neTpInclusions = neTpInclusions;
+		createData.neTpSncExclusions = neTpExclusions;
+		createData.ccInclusions = ccInclusions;
+		createData.forceUniqueness = false;
+		// fullRoute should be true for ccInclusions
+		createData.fullRoute = true;
+		createData.layerRate = layerRate;
+		createData.networkRouted = NetworkRouted_T.NR_NA;
+		createData.rerouteAllowed = Reroute_T.RR_NA;
+		createData.direction = ConnectionDirection_T.CD_BI;
+		createData.sncType = SNCType_T.ST_SIMPLE;
+		createData.staticProtectionLevel = StaticProtectionLevel_T.UNPROTECTED;
+		createData.protectionEffort = ProtectionEffort_T.EFFORT_WHATEVER;
+		createData.owner = owner;
+		createData.userLabel = userLabel;
+
+		GradesOfImpact_T tolerableImpact = GradesOfImpact_T.GOI_HITLESS;
+		EMSFreedomLevel_T emsFreedomLevel = EMSFreedomLevel_T.EMSFL_CC_AT_SNC_LAYER;
+
+		TPDataList_THolder tpsToModify = new TPDataList_THolder();
+		tpsToModify.value = new TPData_T[0];
+
+		CorbaCommands cmd = new CorbaCommands(emsSession, this.realEMSName);
+		errorReason = cmd.createAndActivateSNC(createData, tolerableImpact,
+				emsFreedomLevel, tpsToModify);
+	}
+	
 	public void createSncpE1withCCIncOnMSP() throws ProcessingFailureException {
 		String userLabel = "NISA-E1-NV-MSP1_1-2";
 		String owner = "";
@@ -2215,7 +2382,7 @@ public class HuaweiActivationClient extends HuaweiConnection {
 
 		NameAndStringValue_T[] ethernetPort = new NameAndStringValue_T[3];
 		ethernetPort[0] = new NameAndStringValue_T("EMS", this.realEMSName);
-		ethernetPort[1] = new NameAndStringValue_T("ManagedElement", "3145729");
+		ethernetPort[1] = new NameAndStringValue_T("ManagedElement", "3145728");
 		ethernetPort[2] = new NameAndStringValue_T("PTP",
 				"/rack=1/shelf=1/slot=5/domain=eth/type=mac/port=2");
 
@@ -2229,9 +2396,9 @@ public class HuaweiActivationClient extends HuaweiConnection {
 
 		NameAndStringValue_T[] vctrunkPort = new NameAndStringValue_T[3];
 		vctrunkPort[0] = new NameAndStringValue_T("EMS", this.realEMSName);
-		vctrunkPort[1] = new NameAndStringValue_T("ManagedElement", "3145729");
+		vctrunkPort[1] = new NameAndStringValue_T("ManagedElement", "3145728");
 		vctrunkPort[2] = new NameAndStringValue_T("PTP",
-				"/rack=1/shelf=1/slot=5/domain=eth/type=mp/port=2");
+				"/rack=1/shelf=1/slot=5/domain=eth/type=mp/port=3");
 
 		createData.zEndPoint.name = vctrunkPort;
 		// createData.zEndPoint.vlanID = 1;
@@ -2419,8 +2586,8 @@ public class HuaweiActivationClient extends HuaweiConnection {
 		NameAndStringValue_T[] ethServiceName = new NameAndStringValue_T[3];
 		ethServiceName[0] = new NameAndStringValue_T("EMS", this.realEMSName);
 		ethServiceName[1] = new NameAndStringValue_T("ManagedElement",
-				"3145729");
-		ethServiceName[2] = new NameAndStringValue_T("EthService", "1/4/0/1");
+				"3145728");
+		ethServiceName[2] = new NameAndStringValue_T("EthService", "1/5/0/4");
 
 		CorbaCommands cmd = new CorbaCommands(emsSession, this.realEMSName);
 		cmd.deleteEthService(ethServiceName);
