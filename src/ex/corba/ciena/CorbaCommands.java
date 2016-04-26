@@ -96,8 +96,7 @@ public class CorbaCommands {
 
 	public static final int HOW_MANY = 100;
 
-	public static final Logger LOG = LoggerFactory
-			.getLogger(CorbaCommands.class);
+	public static final Logger LOG = LoggerFactory.getLogger(CorbaCommands.class);
 
 	private EmsSession_I emsSession;
 	private String emsName;
@@ -126,16 +125,14 @@ public class CorbaCommands {
 		this.emsName = emsName;
 	}
 
-	public CorbaCommands(EmsSession_I emsSession, String emsName,
-			ContentHandler contentHandler) {
+	public CorbaCommands(EmsSession_I emsSession, String emsName, ContentHandler contentHandler) {
 		this.emsSession = emsSession;
 		this.emsName = emsName;
 		this.handler = new Corba2XMLHandler(contentHandler);
 		this.helper = new Corba2XMLHelper(handler);
 	}
 
-	public boolean setManagerByName(final String managerName)
-			throws ProcessingFailureException {
+	public boolean setManagerByName(final String managerName) throws ProcessingFailureException {
 
 		this.managerInterface = new Common_IHolder();
 		this.emsSession.getManager(managerName, this.managerInterface);
@@ -150,18 +147,15 @@ public class CorbaCommands {
 
 		if (managerName.equals(ME_MANAGER_NAME)) {
 			if (this.meManager == null) {
-				this.meManager = ManagedElementMgr_IHelper
-						.narrow(managerInterface.value);
+				this.meManager = ManagedElementMgr_IHelper.narrow(managerInterface.value);
 			}
 		} else if (managerName.equals(EI_MANAGER_NAME)) {
 			if (this.eiManager == null) {
-				this.eiManager = EquipmentInventoryMgr_IHelper
-						.narrow(managerInterface.value);
+				this.eiManager = EquipmentInventoryMgr_IHelper.narrow(managerInterface.value);
 			}
 		} else if (managerName.equals(MLS_MANAGER_NAME)) {
 			if (this.mlsnManager == null) {
-				this.mlsnManager = MultiLayerSubnetworkMgr_IHelper
-						.narrow(managerInterface.value);
+				this.mlsnManager = MultiLayerSubnetworkMgr_IHelper.narrow(managerInterface.value);
 			}
 		} else if (managerName.equals(EMS_MANAGER_NAME)) {
 			if (this.emsManager == null) {
@@ -169,18 +163,15 @@ public class CorbaCommands {
 			}
 		} else if (managerName.equals(PRT_MANAGER_NAME)) {
 			if (this.protectionMgr == null) {
-				this.protectionMgr = ProtectionMgr_IHelper
-						.narrow(managerInterface.value);
+				this.protectionMgr = ProtectionMgr_IHelper.narrow(managerInterface.value);
 			}
 		} else if (managerName.equals(FD_MANAGER_NAME)) {
 			if (this.flowDomainManager == null) {
-				this.flowDomainManager = FlowDomainMgr_IHelper
-						.narrow(managerInterface.value);
+				this.flowDomainManager = FlowDomainMgr_IHelper.narrow(managerInterface.value);
 			}
 		} else if (managerName.equals(EICIENA_MANAGER_NAME)) {
 			if (this.equipmentCIENAManager == null) {
-				this.equipmentCIENAManager = EquipmentMgrCIENA_IHelper
-						.narrow(managerInterface.value);
+				this.equipmentCIENAManager = EquipmentMgrCIENA_IHelper.narrow(managerInterface.value);
 			}
 		} else
 			return false;
@@ -188,8 +179,7 @@ public class CorbaCommands {
 		return true;
 	}
 
-	public List<String> getAllManagedElementNames()
-			throws ProcessingFailureException, SAXException {
+	public List<String> getAllManagedElementNames() throws ProcessingFailureException, SAXException {
 		System.out.println("getAllManagedElementNames...");
 
 		if (!setManagerByName(ME_MANAGER_NAME)) {
@@ -199,8 +189,7 @@ public class CorbaCommands {
 		NamingAttributesList_THolder meNameList = new NamingAttributesList_THolder();
 		NamingAttributesIterator_IHolder meNameItr = new NamingAttributesIterator_IHolder();
 
-		this.meManager.getAllManagedElementNames(HOW_MANY, meNameList,
-				meNameItr);
+		this.meManager.getAllManagedElementNames(HOW_MANY, meNameList, meNameItr);
 
 		neNames = new ArrayList<String>();
 
@@ -220,8 +209,7 @@ public class CorbaCommands {
 					hasMoreData = meNameItr.value.next_n(HOW_MANY, meNameList);
 					for (int i = 0; i < meNameList.value.length; i++)
 						for (int j = 0; j < meNameList.value[i].length; j++)
-							if (meNameList.value[i][j].name
-									.equals("ManagedElement")) {
+							if (meNameList.value[i][j].name.equals("ManagedElement")) {
 								neNames.add(meNameList.value[i][j].value);
 							}
 				}
@@ -266,14 +254,11 @@ public class CorbaCommands {
 					hasMoreData = meItr.value.next_n(HOW_MANY, meList);
 					mes = meList.value;
 					if (LOG.isDebugEnabled())
-						LOG.debug("getAllManagedElements: got " + mes.length
-								+ " MEs ");
+						LOG.debug("getAllManagedElements: got " + mes.length + " MEs ");
 
 					for (ManagedElement_T me : mes) {
-						handler.printStructure(helper
-								.getManagedElementParams(me));
-						neNames.add(handler.getValueByName(me.name,
-								"ManagedElement"));
+						handler.printStructure(helper.getManagedElementParams(me));
+						neNames.add(handler.getValueByName(me.name, "ManagedElement"));
 					}
 				}
 
@@ -286,8 +271,7 @@ public class CorbaCommands {
 		LOG.info("getAllManagedElements() complete.");
 	}
 
-	public void getAllEquipment() throws ProcessingFailureException,
-			SAXException {
+	public void getAllEquipment() throws ProcessingFailureException, SAXException {
 
 		if (LOG.isInfoEnabled()) {
 			LOG.info("getAllEquipment() start.");
@@ -310,8 +294,7 @@ public class CorbaCommands {
 		}
 	}
 
-	public List<EquipmentOrHolder_T> getAllEquipmentList()
-			throws ProcessingFailureException, SAXException {
+	public List<EquipmentOrHolder_T> getAllEquipmentList() throws ProcessingFailureException, SAXException {
 
 		if (LOG.isInfoEnabled()) {
 			LOG.info("getAllEquipmentList() start.");
@@ -345,33 +328,25 @@ public class CorbaCommands {
 		for (String neName : neNames) {
 			try {
 				ne[1].value = neName;
-				eiManager.getAllEquipment(ne, HOW_MANY, equipOrHolderList,
-						equipOrHolderItr);
+				eiManager.getAllEquipment(ne, HOW_MANY, equipOrHolderList, equipOrHolderItr);
 
-				LOG.info("getAllEquipmentList: got "
-						+ equipOrHolderList.value.length
-						+ " equipments for ME " + ne[1].value);
+				LOG.info("getAllEquipmentList: got " + equipOrHolderList.value.length + " equipments for ME "
+						+ ne[1].value);
 
 				for (int i = 0; i < equipOrHolderList.value.length; i++) {
 					equipmentList.add(equipOrHolderList.value[i]);
 					if (equipOrHolderList.value[i].discriminator().value() != 1) {
-						Equipment_T equipment = equipOrHolderList.value[i]
-								.equip();
+						Equipment_T equipment = equipOrHolderList.value[i].equip();
 
-						if (equipment != null
-								&& ("TSLM-12"
-										.equals(equipment.installedEquipmentObjectType) || "TSLM-48"
-										.equals(equipment.installedEquipmentObjectType))) {
+						if (equipment != null && ("TSLM-12".equals(equipment.installedEquipmentObjectType)
+								|| "TSLM-48".equals(equipment.installedEquipmentObjectType))) {
 
 							NameAndStringValue_T[] slotNameAndStringValueArray = new NameAndStringValue_T[3];
 							slotNameAndStringValueArray[0] = equipment.name[0];
 							slotNameAndStringValueArray[1] = equipment.name[1];
-							if ("EquipmentHolder"
-									.equals(equipment.name[2].name)) {
+							if ("EquipmentHolder".equals(equipment.name[2].name)) {
 								slotNameAndStringValueArray[2] = equipment.name[2];
-							} else if (equipment.name.length > 3
-									&& "EquipmentHolder"
-											.equals(equipment.name[3].name)) {
+							} else if (equipment.name.length > 3 && "EquipmentHolder".equals(equipment.name[3].name)) {
 								slotNameAndStringValueArray[2] = equipment.name[3];
 							}
 							slotNames.add(slotNameAndStringValueArray);
@@ -385,33 +360,25 @@ public class CorbaCommands {
 					try {
 						boolean hasMoreData = true;
 						while (hasMoreData) {
-							hasMoreData = equipOrHolderItr.value.next_n(
-									HOW_MANY, equipOrHolderList);
+							hasMoreData = equipOrHolderItr.value.next_n(HOW_MANY, equipOrHolderList);
 
 							for (int i = 0; i < equipOrHolderList.value.length; i++) {
 
 								equipmentList.add(equipOrHolderList.value[i]);
-								if (equipOrHolderList.value[i].discriminator()
-										.value() != 1) {
-									Equipment_T equipment = equipOrHolderList.value[i]
-											.equip();
-									if (equipment != null
-											&& ("TSLM-12"
-													.equals(equipment.installedEquipmentObjectType) || "TSLM-48"
-													.equals(equipment.installedEquipmentObjectType))) {
+								if (equipOrHolderList.value[i].discriminator().value() != 1) {
+									Equipment_T equipment = equipOrHolderList.value[i].equip();
+									if (equipment != null && ("TSLM-12".equals(equipment.installedEquipmentObjectType)
+											|| "TSLM-48".equals(equipment.installedEquipmentObjectType))) {
 										NameAndStringValue_T[] slotNameAndStringValueArray = new NameAndStringValue_T[3];
 										slotNameAndStringValueArray[0] = equipment.name[0];
 										slotNameAndStringValueArray[1] = equipment.name[1];
-										if ("EquipmentHolder"
-												.equals(equipment.name[2].name)) {
+										if ("EquipmentHolder".equals(equipment.name[2].name)) {
 											slotNameAndStringValueArray[2] = equipment.name[2];
 										} else if (equipment.name.length > 3
-												&& "EquipmentHolder"
-														.equals(equipment.name[3].name)) {
+												&& "EquipmentHolder".equals(equipment.name[3].name)) {
 											slotNameAndStringValueArray[2] = equipment.name[3];
 										}
-										slotNames
-												.add(slotNameAndStringValueArray);
+										slotNames.add(slotNameAndStringValueArray);
 									}
 								}
 							}
@@ -427,12 +394,11 @@ public class CorbaCommands {
 				meCounter++;
 
 				if (LOG.isInfoEnabled()) {
-					LOG.info("getAllEquipmentList: finished getEquipment for ME "
-							+ ne[1].value + " Order number # " + meCounter);
+					LOG.info("getAllEquipmentList: finished getEquipment for ME " + ne[1].value + " Order number # "
+							+ meCounter);
 				}
 			} catch (ProcessingFailureException ex) {
-				handleProcessingFailureException(ex,
-						"getAllEquipmentList. ME: " + neName);
+				handleProcessingFailureException(ex, "getAllEquipmentList. ME: " + neName);
 			}
 		}
 
@@ -458,8 +424,7 @@ public class CorbaCommands {
 
 		NameAndStringValue_T[] neNameArray = new NameAndStringValue_T[2];
 
-		neNameArray[0] = new NameAndStringValue_T(CorbaConstants.EMS_STR,
-				emsName);
+		neNameArray[0] = new NameAndStringValue_T(CorbaConstants.EMS_STR, emsName);
 		neNameArray[1] = new NameAndStringValue_T();
 		neNameArray[1].name = CorbaConstants.MANAGED_ELEMENT_STR;
 
@@ -473,19 +438,16 @@ public class CorbaCommands {
 		for (String neName : neNames) {
 			try {
 				neNameArray[1].value = neName;
-				meManager.getAllPTPs(neNameArray, tpLayerRateList,
-						connectionLayerRateList, HOW_MANY,
+				meManager.getAllPTPs(neNameArray, tpLayerRateList, connectionLayerRateList, HOW_MANY,
 						terminationPointList, terminationPointIterator);
 
 				if (LOG.isInfoEnabled()) {
-					LOG.info("getAllPTPs: got {} PTP for ME {}.",
-							terminationPointList.value.length,
+					LOG.info("getAllPTPs: got {} PTP for ME {}.", terminationPointList.value.length,
 							neNameArray[1].value);
 				}
 
 				for (int i = 0; i < terminationPointList.value.length; i++) {
-					helper.printTerminationPoint(terminationPointList.value[i],
-							CorbaConstants.PTPS_STR);
+					helper.printTerminationPoint(terminationPointList.value[i], CorbaConstants.PTPS_STR);
 				}
 
 				exitWhile = false;
@@ -494,18 +456,14 @@ public class CorbaCommands {
 					try {
 						boolean hasMoreData = true;
 						while (hasMoreData) {
-							hasMoreData = terminationPointIterator.value
-									.next_n(HOW_MANY, terminationPointList);
+							hasMoreData = terminationPointIterator.value.next_n(HOW_MANY, terminationPointList);
 							if (LOG.isInfoEnabled()) {
-								LOG.info("getAllPTPs: got {} PTP for ME {}.",
-										terminationPointList.value.length,
+								LOG.info("getAllPTPs: got {} PTP for ME {}.", terminationPointList.value.length,
 										neNameArray[1].value);
 							}
 
 							for (int i = 0; i < terminationPointList.value.length; i++) {
-								helper.printTerminationPoint(
-										terminationPointList.value[i],
-										CorbaConstants.PTPS_STR);
+								helper.printTerminationPoint(terminationPointList.value[i], CorbaConstants.PTPS_STR);
 							}
 						}
 						exitWhile = true;
@@ -518,14 +476,12 @@ public class CorbaCommands {
 					counter++;
 
 					if (LOG.isDebugEnabled()) {
-						LOG.debug("getAllPTPs: finished getPTP for ME "
-								+ neNameArray[1].value + " Order number # "
+						LOG.debug("getAllPTPs: finished getPTP for ME " + neNameArray[1].value + " Order number # "
 								+ counter);
 					}
 				}
 			} catch (ProcessingFailureException ex) {
-				handleProcessingFailureException(ex, "getAllPTPs. ME: "
-						+ neName);
+				handleProcessingFailureException(ex, "getAllPTPs. ME: " + neName);
 			}
 		}
 
@@ -562,12 +518,10 @@ public class CorbaCommands {
 			for (String n : neNames) {
 				try {
 					ne[1].value = n;
-					this.meManager.getAllGTPs(ne, tpLayerRateList, HOW_MANY,
-							th, ith);
+					this.meManager.getAllGTPs(ne, tpLayerRateList, HOW_MANY, th, ith);
 
 					if (LOG.isInfoEnabled()) {
-						LOG.info("getAllGTPs: got " + th.value.length
-								+ " pieces of GTP for ME " + ne[1].value);
+						LOG.info("getAllGTPs: got " + th.value.length + " pieces of GTP for ME " + ne[1].value);
 					}
 
 					for (int i = 0; i < th.value.length; i++) {
@@ -583,9 +537,7 @@ public class CorbaCommands {
 								hasMoreData = ith.value.next_n(HOW_MANY, th);
 
 								if (LOG.isInfoEnabled()) {
-									LOG.info("getAllGTPs: got next "
-											+ th.value.length
-											+ " pieces of GTP for ME "
+									LOG.info("getAllGTPs: got next " + th.value.length + " pieces of GTP for ME "
 											+ ne[1].value);
 								}
 
@@ -601,8 +553,7 @@ public class CorbaCommands {
 					counter++;
 
 					if (LOG.isInfoEnabled()) {
-						LOG.info("getAllGTPs: finished getGTP for ME "
-								+ ne[1].value + " Order number # " + counter);
+						LOG.info("getAllGTPs: finished getGTP for ME " + ne[1].value + " Order number # " + counter);
 					}
 				} catch (ProcessingFailureException e) {
 					handleProcessingFailureException(e, "getAllGTPs. ME");
@@ -613,14 +564,12 @@ public class CorbaCommands {
 				LOG.info("getAllGTPs() complete.");
 			}
 		} catch (ProcessingFailureException prf) {
-			LOG.error("Ciena ON-Center>> getAllGTPs:"
-					+ CorbaErrorProcessor.printError(prf));
+			LOG.error("Ciena ON-Center>> getAllGTPs:" + CorbaErrorProcessor.printError(prf));
 			throw prf;
 		}
 	}
 
-	public void getAllTopologicalLinks() throws ProcessingFailureException,
-			SAXException {
+	public void getAllTopologicalLinks() throws ProcessingFailureException, SAXException {
 		if (LOG.isInfoEnabled()) {
 			LOG.info("getAllTopologicalLinks() start.");
 		}
@@ -631,8 +580,7 @@ public class CorbaCommands {
 		NameAndStringValue_T[] mlsn = new NameAndStringValue_T[2];
 
 		mlsn[0] = new NameAndStringValue_T(CorbaConstants.EMS_STR, emsName);
-		mlsn[1] = new NameAndStringValue_T(
-				CorbaConstants.MULTILAYER_SUBNETWORK_STR, "MLSN_1");
+		mlsn[1] = new NameAndStringValue_T(CorbaConstants.MULTILAYER_SUBNETWORK_STR, "MLSN_1");
 
 		if (this.tpNames == null)
 			this.tpNames = new ArrayList<NameAndStringValue_T[]>();
@@ -641,8 +589,7 @@ public class CorbaCommands {
 		TopologicalLinkIterator_IHolder topologicalLinkIterator = new TopologicalLinkIterator_IHolder();
 
 		try {
-			mlsnManager.getAllTopologicalLinks(mlsn, HOW_MANY,
-					topologicalLinkList, topologicalLinkIterator);
+			mlsnManager.getAllTopologicalLinks(mlsn, HOW_MANY, topologicalLinkList, topologicalLinkIterator);
 
 			for (int i = 0; i < topologicalLinkList.value.length; i++) {
 				handler.printStructure(getTopologicalLinkParams(topologicalLinkList.value[i]));
@@ -655,14 +602,11 @@ public class CorbaCommands {
 				try {
 					boolean hasMoreData = true;
 					while (hasMoreData) {
-						hasMoreData = topologicalLinkIterator.value.next_n(
-								HOW_MANY, topologicalLinkList);
+						hasMoreData = topologicalLinkIterator.value.next_n(HOW_MANY, topologicalLinkList);
 						for (int i = 0; i < topologicalLinkList.value.length; i++) {
 							handler.printStructure(getTopologicalLinkParams(topologicalLinkList.value[i]));
-							this.tpNames
-									.add(topologicalLinkList.value[i].aEndTP);
-							this.tpNames
-									.add(topologicalLinkList.value[i].zEndTP);
+							this.tpNames.add(topologicalLinkList.value[i].aEndTP);
+							this.tpNames.add(topologicalLinkList.value[i].zEndTP);
 						}
 					}
 
@@ -674,8 +618,7 @@ public class CorbaCommands {
 				}
 			}
 		} catch (ProcessingFailureException ex) {
-			handleProcessingFailureException(ex,
-					"getAllTopologicalLinks. MLS: " + mlsn[1].value);
+			handleProcessingFailureException(ex, "getAllTopologicalLinks. MLS: " + mlsn[1].value);
 		}
 
 		if (LOG.isInfoEnabled()) {
@@ -683,72 +626,52 @@ public class CorbaCommands {
 		}
 	}
 
-	public Corba2XMLContainer getTopologicalLinkParams(
-			TopologicalLink_T topologicalLink)
+	public Corba2XMLContainer getTopologicalLinkParams(TopologicalLink_T topologicalLink)
 			throws ProcessingFailureException {
-		Corba2XMLContainer container = new Corba2XMLContainer(
-				Corba2XMLStructure.TOPOL_LINKS);
+		Corba2XMLContainer container = new Corba2XMLContainer(Corba2XMLStructure.TOPOL_LINKS);
 
-		container.setFieldValue(CorbaConstants.USER_LABEL_STR,
-				topologicalLink.userLabel);
-		container
-				.setFieldValue(CorbaConstants.TL_ID_STR,
-						handler.getValueByName(topologicalLink.name,
-								"TopologicalLink"));
-		container.setFieldValue(CorbaConstants.NATIVE_EMS_NAME_STR,
-				topologicalLink.nativeEMSName);
-		container
-				.setFieldValue(CorbaConstants.OWNER_STR, topologicalLink.owner);
-		container.setFieldValue(CorbaConstants.DIRECTION_STR,
-				String.valueOf(topologicalLink.direction.value()));
-		container.setFieldValue(CorbaConstants.RATE_STR,
-				String.valueOf(topologicalLink.rate));
-		container.setFieldValue(CorbaConstants.A_END_NE_STR, handler
-				.getValueByName(topologicalLink.aEndTP,
-						CorbaConstants.MANAGED_ELEMENT_STR));
-		container
-				.setFieldValue(CorbaConstants.A_END_TP_STR, handler
-						.getValueByName(topologicalLink.aEndTP,
-								CorbaConstants.PTP_STR));
+		container.setFieldValue(CorbaConstants.USER_LABEL_STR, topologicalLink.userLabel);
+		container.setFieldValue(CorbaConstants.TL_ID_STR,
+				handler.getValueByName(topologicalLink.name, "TopologicalLink"));
+		container.setFieldValue(CorbaConstants.NATIVE_EMS_NAME_STR, topologicalLink.nativeEMSName);
+		container.setFieldValue(CorbaConstants.OWNER_STR, topologicalLink.owner);
+		container.setFieldValue(CorbaConstants.DIRECTION_STR, String.valueOf(topologicalLink.direction.value()));
+		container.setFieldValue(CorbaConstants.RATE_STR, String.valueOf(topologicalLink.rate));
+		
+		container.setFieldValue(CorbaConstants.A_END_NE_STR,
+				handler.getValueByName(topologicalLink.aEndTP, CorbaConstants.MANAGED_ELEMENT_STR));
+		container.setFieldValue(CorbaConstants.A_END_TP_STR,
+				handler.getValueByName(topologicalLink.aEndTP, CorbaConstants.PTP_STR));
 
-		container.setFieldValue(CorbaConstants.Z_END_NE_STR, handler
-				.getValueByName(topologicalLink.zEndTP,
-						CorbaConstants.MANAGED_ELEMENT_STR));
-		container
-				.setFieldValue(CorbaConstants.Z_END_TP_STR, handler
-						.getValueByName(topologicalLink.zEndTP,
-								CorbaConstants.PTP_STR));
+		container.setFieldValue(CorbaConstants.Z_END_NE_STR,
+				handler.getValueByName(topologicalLink.zEndTP, CorbaConstants.MANAGED_ELEMENT_STR));
+		container.setFieldValue(CorbaConstants.Z_END_TP_STR,
+				handler.getValueByName(topologicalLink.zEndTP, CorbaConstants.PTP_STR));
 
-		TerminationPoint_T aEndTP = getTerminationPoint(topologicalLink.aEndTP,
-				topologicalLink.rate);
+		TerminationPoint_T aEndTP = getTerminationPoint(topologicalLink.aEndTP, topologicalLink.rate);
 
 		if (aEndTP != null) {
-			container
-					.setFieldValue(
-							CorbaConstants.A_TRANSMISSION_PARAMS_STR,
-							handler.convertLayeredParametersToString(aEndTP.transmissionParams));
-		} else {
 			container.setFieldValue(CorbaConstants.A_TRANSMISSION_PARAMS_STR,
-					"");
+					handler.convertLayeredParametersToString(aEndTP.transmissionParams));
+		} else {
+			container.setFieldValue(CorbaConstants.A_TRANSMISSION_PARAMS_STR, "");
 		}
 
-		TerminationPoint_T zEndTP = getTerminationPoint(topologicalLink.zEndTP,
-				topologicalLink.rate);
+		TerminationPoint_T zEndTP = getTerminationPoint(topologicalLink.zEndTP, topologicalLink.rate);
 		if (zEndTP != null) {
-			container
-					.setFieldValue(
-							CorbaConstants.Z_TRANSMISSION_PARAMS_STR,
-							handler.convertLayeredParametersToString(zEndTP.transmissionParams));
-		} else {
 			container.setFieldValue(CorbaConstants.Z_TRANSMISSION_PARAMS_STR,
-					"");
+					handler.convertLayeredParametersToString(zEndTP.transmissionParams));
+		} else {
+			container.setFieldValue(CorbaConstants.Z_TRANSMISSION_PARAMS_STR, "");
 		}
+
+		container.setFieldValue(CorbaConstants.ADDITIONAL_INFO_STR,
+				handler.convertNameAndStringValueToString(topologicalLink.additionalInfo));
 
 		return container;
 	}
 
-	public void getAllProtectionGroups() throws ProcessingFailureException,
-			SAXException {
+	public void getAllProtectionGroups() throws ProcessingFailureException, SAXException {
 
 		if (LOG.isInfoEnabled()) {
 			LOG.info("getAllProtectionGroups() start.");
@@ -777,14 +700,12 @@ public class CorbaCommands {
 		for (String n : neNames) {
 			try {
 				nameAndStringValueArray[1].value = n;
-				protectionMgr.getAllProtectionGroups(nameAndStringValueArray,
-						HOW_MANY, protectionGroupList, protectionGroupIterator);
+				protectionMgr.getAllProtectionGroups(nameAndStringValueArray, HOW_MANY, protectionGroupList,
+						protectionGroupIterator);
 
 				if (LOG.isDebugEnabled()) {
-					LOG.debug("getAllProtectionGroups: got "
-							+ protectionGroupList.value.length
-							+ " pieces of ProtectionGroup for ME "
-							+ nameAndStringValueArray[1].value);
+					LOG.debug("getAllProtectionGroups: got " + protectionGroupList.value.length
+							+ " pieces of ProtectionGroup for ME " + nameAndStringValueArray[1].value);
 				}
 
 				helper.printProtectionGroup(protectionGroupList.value);
@@ -794,14 +715,11 @@ public class CorbaCommands {
 					try {
 						boolean hasMoreData = true;
 						while (hasMoreData) {
-							hasMoreData = protectionGroupIterator.value.next_n(
-									HOW_MANY, protectionGroupList);
+							hasMoreData = protectionGroupIterator.value.next_n(HOW_MANY, protectionGroupList);
 
 							if (LOG.isDebugEnabled()) {
-								LOG.debug("getAllProtectionGroups: got next "
-										+ protectionGroupList.value.length
-										+ " pieces of ProtectionGroup for ME "
-										+ nameAndStringValueArray[1].value);
+								LOG.debug("getAllProtectionGroups: got next " + protectionGroupList.value.length
+										+ " pieces of ProtectionGroup for ME " + nameAndStringValueArray[1].value);
 							}
 
 							helper.printProtectionGroup(protectionGroupList.value);
@@ -817,13 +735,11 @@ public class CorbaCommands {
 
 					if (LOG.isDebugEnabled()) {
 						LOG.debug("getAllProtectionGroups: finished getProtectionGroup for ME "
-								+ nameAndStringValueArray[1].value
-								+ " Order number # " + counter);
+								+ nameAndStringValueArray[1].value + " Order number # " + counter);
 					}
 				}
 			} catch (ProcessingFailureException ex) {
-				handleProcessingFailureException(ex,
-						"getAllProtectionGroups. ME: " + n);
+				handleProcessingFailureException(ex, "getAllProtectionGroups. ME: " + n);
 			}
 		}
 
@@ -832,16 +748,14 @@ public class CorbaCommands {
 		}
 	}
 
-	private TerminationPoint_T getTerminationPoint(
-			NameAndStringValue_T[] endPointName, short rate)
+	private TerminationPoint_T getTerminationPoint(NameAndStringValue_T[] endPointName, short rate)
 			throws ProcessingFailureException {
 
 		if (!setManagerByName(ME_MANAGER_NAME))
 			return null;
 
 		if (terminationPointRates == null
-				|| (terminationPointRates != null && !terminationPointRates
-						.contains(Short.valueOf(rate)))) {
+				|| (terminationPointRates != null && !terminationPointRates.contains(Short.valueOf(rate)))) {
 			return null;
 		}
 
@@ -850,8 +764,8 @@ public class CorbaCommands {
 		try {
 			meManager.getTP(endPointName, tpHolder);
 		} catch (ProcessingFailureException ex) {
-			handleProcessingFailureException(ex, "getTerminationPoint. TP: "
-					+ handler.convertNameAndStringValueToString(endPointName));
+			handleProcessingFailureException(ex,
+					"getTerminationPoint. TP: " + handler.convertNameAndStringValueToString(endPointName));
 		}
 
 		return tpHolder.value;
@@ -875,13 +789,10 @@ public class CorbaCommands {
 		FDFrIterator_I iterator = null;
 		short[] rateList = new short[0];
 
-		this.flowDomainManager.getAllFDFrs(fdname, HOW_MANY, rateList,
-				listHolder, iteratorHolder);
+		this.flowDomainManager.getAllFDFrs(fdname, HOW_MANY, rateList, listHolder, iteratorHolder);
 
 		if (LOG.isDebugEnabled()) {
-			LOG.debug("Got "
-					+ (listHolder.value != null ? listHolder.value.length : "0")
-					+ " FDFrs");
+			LOG.debug("Got " + (listHolder.value != null ? listHolder.value.length : "0") + " FDFrs");
 		}
 
 		helper.printFDFrs(listHolder.value);
@@ -899,9 +810,7 @@ public class CorbaCommands {
 				while (hasMoreData) {
 					hasMoreData = iterator.next_n(HOW_MANY, listHolder);
 					if (LOG.isDebugEnabled()) {
-						LOG.debug("Got "
-								+ (listHolder.value != null ? listHolder.value.length
-										: "0") + " FDFrs");
+						LOG.debug("Got " + (listHolder.value != null ? listHolder.value.length : "0") + " FDFrs");
 					}
 
 					helper.printFDFrs(listHolder.value);
@@ -920,8 +829,7 @@ public class CorbaCommands {
 		}
 	}
 
-	public List<String> getAllSubnetworkConnections()
-			throws ProcessingFailureException, SAXException {
+	public List<String> getAllSubnetworkConnections() throws ProcessingFailureException, SAXException {
 		if (LOG.isInfoEnabled()) {
 			LOG.info("getAllSubnetworkConnections() start.");
 		}
@@ -931,17 +839,14 @@ public class CorbaCommands {
 
 		NameAndStringValue_T[] nameAndStringValueArray = new NameAndStringValue_T[2];
 
-		nameAndStringValueArray[0] = new NameAndStringValue_T(
-				CorbaConstants.EMS_STR, emsName);
-		nameAndStringValueArray[1] = new NameAndStringValue_T(
-				CorbaConstants.MULTILAYER_SUBNETWORK_STR, "MLSN_1");
+		nameAndStringValueArray[0] = new NameAndStringValue_T(CorbaConstants.EMS_STR, emsName);
+		nameAndStringValueArray[1] = new NameAndStringValue_T(CorbaConstants.MULTILAYER_SUBNETWORK_STR, "MLSN_1");
 
 		SubnetworkConnectionList_THolder sncList = new SubnetworkConnectionList_THolder();
 		SNCIterator_IHolder sncIterator = new SNCIterator_IHolder();
 		short[] rateList = new short[0];
 
-		mlsnManager.getAllSubnetworkConnections(nameAndStringValueArray,
-				rateList, HOW_MANY, sncList, sncIterator);
+		mlsnManager.getAllSubnetworkConnections(nameAndStringValueArray, rateList, HOW_MANY, sncList, sncIterator);
 		sncNames = new ArrayList<String>();
 
 		if (LOG.isInfoEnabled()) {
@@ -950,13 +855,10 @@ public class CorbaCommands {
 
 		for (int i = 0; i < sncList.value.length; i++) {
 			if (LOG.isInfoEnabled()) {
-				LOG.info(handler.getValueByName(sncList.value[i].name,
-						CorbaConstants.SUBNETWORK_CONNECTION_STR));
+				LOG.info(handler.getValueByName(sncList.value[i].name, CorbaConstants.SUBNETWORK_CONNECTION_STR));
 			}
-			sncNames.add(handler.getValueByName(sncList.value[i].name,
-					CorbaConstants.SUBNETWORK_CONNECTION_STR));
-			handler.printStructure(helper
-					.getSubnetworkConnectionParams(sncList.value[i]));
+			sncNames.add(handler.getValueByName(sncList.value[i].name, CorbaConstants.SUBNETWORK_CONNECTION_STR));
+			handler.printStructure(helper.getSubnetworkConnectionParams(sncList.value[i]));
 		}
 
 		boolean exitWhile = false;
@@ -967,15 +869,12 @@ public class CorbaCommands {
 					hasMoreData = sncIterator.value.next_n(HOW_MANY, sncList);
 					for (int i = 0; i < sncList.value.length; i++) {
 						if (LOG.isInfoEnabled()) {
-							LOG.info(handler.getValueByName(
-									sncList.value[i].name,
+							LOG.info(handler.getValueByName(sncList.value[i].name,
 									CorbaConstants.SUBNETWORK_CONNECTION_STR));
 						}
-						sncNames.add(handler.getValueByName(
-								sncList.value[i].name,
+						sncNames.add(handler.getValueByName(sncList.value[i].name,
 								CorbaConstants.SUBNETWORK_CONNECTION_STR));
-						handler.printStructure(helper
-								.getSubnetworkConnectionParams(sncList.value[i]));
+						handler.printStructure(helper.getSubnetworkConnectionParams(sncList.value[i]));
 					}
 				}
 				exitWhile = true;
@@ -987,20 +886,14 @@ public class CorbaCommands {
 		}
 
 		if (LOG.isInfoEnabled()) {
-			LOG.info("--------------------getAllSubnetworkConnections() SNC Names List End--------------------.");
-		}
-
-		if (LOG.isInfoEnabled()) {
 			LOG.info("getAllSubnetworkConnections() complete.");
 		}
 
 		return sncNames;
 	}
 
-	public StringHolder createAndActivateSNC(SNCCreateData_T createData,
-			GradesOfImpact_T tolerableImpact,
-			EMSFreedomLevel_T emsFreedomLevel, TPDataList_THolder tpsToModify)
-			throws ProcessingFailureException {
+	public StringHolder createAndActivateSNC(SNCCreateData_T createData, GradesOfImpact_T tolerableImpact,
+			EMSFreedomLevel_T emsFreedomLevel, TPDataList_THolder tpsToModify) throws ProcessingFailureException {
 
 		if (LOG.isInfoEnabled()) {
 			LOG.info("createAndActivateSNC() start.");
@@ -1012,43 +905,35 @@ public class CorbaCommands {
 		SubnetworkConnection_THolder theSNC = new SubnetworkConnection_THolder();
 		StringHolder errorReason = new StringHolder();
 
-		this.mlsnManager.createAndActivateSNC(createData, tolerableImpact,
-				emsFreedomLevel, tpsToModify, theSNC, errorReason);
+		this.mlsnManager.createAndActivateSNC(createData, tolerableImpact, emsFreedomLevel, tpsToModify, theSNC,
+				errorReason);
 
 		if (LOG.isInfoEnabled()) {
 			LOG.info("createAndActivateSNC() complete.");
 			if (theSNC != null && theSNC.value != null) {
 				SubnetworkConnection_T createdSNC = theSNC.value;
-				LOG.info("createAndActivateSNC() SNC ID-User Label:"
-						+ createdSNC.userLabel);
-				LOG.info("createAndActivateSNC() SNC ID-Native EMS Name:"
-						+ createdSNC.nativeEMSName);
+				LOG.info("createAndActivateSNC() SNC ID-User Label:" + createdSNC.userLabel);
+				LOG.info("createAndActivateSNC() SNC ID-Native EMS Name:" + createdSNC.nativeEMSName);
 
 				if (createdSNC.name != null && createdSNC.name.length > 0) {
 
 					for (int counter = 0; counter < createdSNC.name.length; counter++) {
-						LOG.info("createAndActivateSNC() SNC ID-Name:"
-								+ createdSNC.name[counter].name);
-						LOG.info("createAndActivateSNC() SNC ID-Value:"
-								+ createdSNC.name[counter].value);
+						LOG.info("createAndActivateSNC() SNC ID-Name:" + createdSNC.name[counter].name);
+						LOG.info("createAndActivateSNC() SNC ID-Value:" + createdSNC.name[counter].value);
 					}
 				}
 			}
 
-			if (errorReason != null && errorReason.value != null
-					&& !"".equals(errorReason.value)) {
-				LOG.info("createAndActivateSNC() Error Reason:"
-						+ errorReason.value);
+			if (errorReason != null && errorReason.value != null && !"".equals(errorReason.value)) {
+				LOG.info("createAndActivateSNC() Error Reason:" + errorReason.value);
 			}
 		}
 
 		return errorReason;
 	}
 
-	public StringHolder deactivateAndDeleteSNC(NameAndStringValue_T[] sncName,
-			GradesOfImpact_T tolerableImpact,
-			EMSFreedomLevel_T emsFreedomLevel, TPDataList_THolder tpsToModify)
-			throws ProcessingFailureException {
+	public StringHolder deactivateAndDeleteSNC(NameAndStringValue_T[] sncName, GradesOfImpact_T tolerableImpact,
+			EMSFreedomLevel_T emsFreedomLevel, TPDataList_THolder tpsToModify) throws ProcessingFailureException {
 
 		if (LOG.isInfoEnabled()) {
 			LOG.info("deactivateAndDeleteSNC() start.");
@@ -1060,8 +945,8 @@ public class CorbaCommands {
 		SubnetworkConnection_THolder theSNC = new SubnetworkConnection_THolder();
 		StringHolder errorReason = new StringHolder();
 
-		this.mlsnManager.deactivateAndDeleteSNC(sncName, tolerableImpact,
-				emsFreedomLevel, tpsToModify, theSNC, errorReason);
+		this.mlsnManager.deactivateAndDeleteSNC(sncName, tolerableImpact, emsFreedomLevel, tpsToModify, theSNC,
+				errorReason);
 
 		if (LOG.isInfoEnabled()) {
 			LOG.info("deactivateAndDeleteSNC() complete.");
@@ -1070,8 +955,8 @@ public class CorbaCommands {
 		return errorReason;
 	}
 
-	public StringHolder releaseCall(NameAndStringValue_T[] sncName,
-			TPDataList_THolder tpsToModify) throws ProcessingFailureException {
+	public StringHolder releaseCall(NameAndStringValue_T[] sncName, TPDataList_THolder tpsToModify)
+			throws ProcessingFailureException {
 
 		if (LOG.isInfoEnabled()) {
 			LOG.info("releaseCall() start.");
@@ -1091,11 +976,9 @@ public class CorbaCommands {
 		return errorReason;
 	}
 
-	public GTP_THolder createGTP(String userLabel, boolean forceUniqueness,
-			String owner, NameAndStringValue_T[][] listOfTPs,
-			NameAndStringValue_T[] initialCTPname, int numberOfCTPs,
-			GTPEffort_T gtpEffort, NameAndStringValue_T[] additionalCreationInfo)
-			throws ProcessingFailureException {
+	public GTP_THolder createGTP(String userLabel, boolean forceUniqueness, String owner,
+			NameAndStringValue_T[][] listOfTPs, NameAndStringValue_T[] initialCTPname, int numberOfCTPs,
+			GTPEffort_T gtpEffort, NameAndStringValue_T[] additionalCreationInfo) throws ProcessingFailureException {
 
 		if (LOG.isInfoEnabled()) {
 			LOG.info("createGTP() start.");
@@ -1106,8 +989,7 @@ public class CorbaCommands {
 
 		GTP_THolder theGTP = new GTP_THolder();
 
-		this.meManager.createGTP(userLabel, forceUniqueness, owner, listOfTPs,
-				initialCTPname, numberOfCTPs, gtpEffort,
+		this.meManager.createGTP(userLabel, forceUniqueness, owner, listOfTPs, initialCTPname, numberOfCTPs, gtpEffort,
 				additionalCreationInfo, theGTP);
 
 		if (LOG.isInfoEnabled()) {
@@ -1117,8 +999,7 @@ public class CorbaCommands {
 		return theGTP;
 	}
 
-	public void deleteGTP(NameAndStringValue_T[] gtpName)
-			throws ProcessingFailureException {
+	public void deleteGTP(NameAndStringValue_T[] gtpName) throws ProcessingFailureException {
 
 		if (LOG.isInfoEnabled()) {
 			LOG.info("deleteGTP() start.");
@@ -1133,8 +1014,7 @@ public class CorbaCommands {
 		}
 	}
 
-	public void getRoute() throws ProcessingFailureException, SAXException,
-			NotFound, InvalidName, CannotProceed,
+	public void getRoute() throws ProcessingFailureException, SAXException, NotFound, InvalidName, CannotProceed,
 			org.omg.CORBA.ORBPackage.InvalidName {
 
 		if (LOG.isInfoEnabled()) {
@@ -1146,22 +1026,18 @@ public class CorbaCommands {
 
 		NameAndStringValue_T[] sncNameAndStringValueArray = new NameAndStringValue_T[2];
 
-		sncNameAndStringValueArray[0] = new NameAndStringValue_T(
-				CorbaConstants.EMS_STR, emsName);
-		sncNameAndStringValueArray[1] = new NameAndStringValue_T(
-				CorbaConstants.MULTILAYER_SUBNETWORK_STR, "MLSN_1");
+		sncNameAndStringValueArray[0] = new NameAndStringValue_T(CorbaConstants.EMS_STR, emsName);
+		sncNameAndStringValueArray[1] = new NameAndStringValue_T(CorbaConstants.MULTILAYER_SUBNETWORK_STR, "MLSN_1");
 
 		SubnetworkConnectionList_THolder sncList = new SubnetworkConnectionList_THolder();
 		SNCIterator_IHolder sncIterator = new SNCIterator_IHolder();
 		short[] rateList = new short[0];
 
-		mlsnManager.getAllSubnetworkConnections(sncNameAndStringValueArray,
-				rateList, HOW_MANY, sncList, sncIterator);
+		mlsnManager.getAllSubnetworkConnections(sncNameAndStringValueArray, rateList, HOW_MANY, sncList, sncIterator);
 		List<String> sncNames = new ArrayList<String>();
 
 		for (int i = 0; i < sncList.value.length; i++) {
-			sncNames.add(handler.getValueByName(sncList.value[i].name,
-					CorbaConstants.SUBNETWORK_CONNECTION_STR));
+			sncNames.add(handler.getValueByName(sncList.value[i].name, CorbaConstants.SUBNETWORK_CONNECTION_STR));
 		}
 
 		boolean exitWhile = false;
@@ -1171,8 +1047,7 @@ public class CorbaCommands {
 				while (hasMoreData) {
 					hasMoreData = sncIterator.value.next_n(HOW_MANY, sncList);
 					for (int i = 0; i < sncList.value.length; i++) {
-						sncNames.add(handler.getValueByName(
-								sncList.value[i].name,
+						sncNames.add(handler.getValueByName(sncList.value[i].name,
 								CorbaConstants.SUBNETWORK_CONNECTION_STR));
 					}
 				}
@@ -1201,34 +1076,24 @@ public class CorbaCommands {
 			while (iter.hasNext()) {
 				nameAndStringValueArray[2].value = iter.next();
 				try {
-					mlsnManager.getRoute(nameAndStringValueArray, true,
-							routeHolder);
+					mlsnManager.getRoute(nameAndStringValueArray, true, routeHolder);
 					for (CrossConnect_T crossConnect : routeHolder.value) {
-						handler.printStructure(getRouteParams(crossConnect,
-								nameAndStringValueArray[2].value));
+						handler.printStructure(getRouteParams(crossConnect, nameAndStringValueArray[2].value));
 					}
 				} catch (ProcessingFailureException ex) {
 					CorbaErrorProcessor err = new CorbaErrorProcessor(ex);
 					if (err.getPriority() == CorbaErrorDescriptions.PRIORITY.MAJOR) {
 						if (LOG.isErrorEnabled()) {
 							LOG.error(
-									"Ciena ON-Center>> getRoute: ME = "
-											+ nameAndStringValueArray[2].value
-											+ ";  "
-											+ err.printError()
-											+ " It is a major error. Stop interaction with server",
+									"Ciena ON-Center>> getRoute: ME = " + nameAndStringValueArray[2].value + ";  "
+											+ err.printError() + " It is a major error. Stop interaction with server",
 									ex);
 						}
 						throw ex;
 					} else {
 						if (LOG.isWarnEnabled()) {
-							LOG.warn(
-									"Ciena ON-Center>> getRoute: ME = "
-											+ nameAndStringValueArray[2].value
-											+ ";  "
-											+ err.printError()
-											+ " It is a minor error. Continue interaction with server",
-									ex);
+							LOG.warn("Ciena ON-Center>> getRoute: ME = " + nameAndStringValueArray[2].value + ";  "
+									+ err.printError() + " It is a minor error. Continue interaction with server", ex);
 						}
 					}
 				}
@@ -1237,65 +1102,49 @@ public class CorbaCommands {
 				LOG.info(" getRoute() complete");
 			}
 		} catch (org.omg.CORBA.SystemException se) {
-			if (se instanceof org.omg.CORBA.OBJECT_NOT_EXIST
-					|| se instanceof org.omg.CORBA.TRANSIENT
+			if (se instanceof org.omg.CORBA.OBJECT_NOT_EXIST || se instanceof org.omg.CORBA.TRANSIENT
 					|| se instanceof org.omg.CORBA.COMM_FAILURE) {
 
 				if (LOG.isErrorEnabled()) {
-					LOG.error("Ciena ON-Center>> getRoute: CORBA Error >> "
-							+ se.getMessage());
+					LOG.error("Ciena ON-Center>> getRoute: CORBA Error >> " + se.getMessage());
 				}
 			}
 		} catch (ProcessingFailureException prf) {
 			if (LOG.isErrorEnabled()) {
-				LOG.error("Ciena ON-Center>> getRoute:"
-						+ CorbaErrorProcessor.printError(prf));
+				LOG.error("Ciena ON-Center>> getRoute:" + CorbaErrorProcessor.printError(prf));
 			}
 			throw prf;
 		} catch (Exception e1) {
 			if (LOG.isErrorEnabled()) {
-				LOG.error("Ciena ON-Center>> getRoute: System Error >> "
-						+ e1.getMessage());
+				LOG.error("Ciena ON-Center>> getRoute: System Error >> " + e1.getMessage());
 			}
 		}
 	}
 
-	private Corba2XMLContainer getRouteParams(CrossConnect_T crossConnect,
-			String sncId) throws ProcessingFailureException {
+	private Corba2XMLContainer getRouteParams(CrossConnect_T crossConnect, String sncId)
+			throws ProcessingFailureException {
 
-		Corba2XMLContainer container = new Corba2XMLContainer(
-				Corba2XMLStructure.ROUTES);
+		Corba2XMLContainer container = new Corba2XMLContainer(Corba2XMLStructure.ROUTES);
 
 		container.setFieldValue(CorbaConstants.SNC_ID_STR, sncId);
-		container.setFieldValue(CorbaConstants.ACTIVE_STR,
-				String.valueOf(crossConnect.active));
-		container.setFieldValue(CorbaConstants.DIRECTION_STR,
-				String.valueOf(crossConnect.direction.value()));
-		container.setFieldValue(CorbaConstants.CC_TYPE_STR,
-				String.valueOf(crossConnect.ccType.value()));
-		container.setFieldValue(CorbaConstants.A_END_NE_STR, handler
-				.getValueByName(crossConnect.aEndNameList[0],
-						CorbaConstants.MANAGED_ELEMENT_STR));
-		container
-				.setFieldValue(
-						CorbaConstants.A_END_TP_STR,
-						handler.convertNameAndStringValuesToStringExcludingEMS(crossConnect.aEndNameList));
-		container.setFieldValue(CorbaConstants.Z_END_NE_STR, handler
-				.getValueByName(crossConnect.zEndNameList[0],
-						CorbaConstants.MANAGED_ELEMENT_STR));
-		container
-				.setFieldValue(
-						CorbaConstants.Z_END_TP_STR,
-						handler.convertNameAndStringValuesToStringExcludingEMS(crossConnect.zEndNameList));
+		container.setFieldValue(CorbaConstants.ACTIVE_STR, String.valueOf(crossConnect.active));
+		container.setFieldValue(CorbaConstants.DIRECTION_STR, String.valueOf(crossConnect.direction.value()));
+		container.setFieldValue(CorbaConstants.CC_TYPE_STR, String.valueOf(crossConnect.ccType.value()));
+		container.setFieldValue(CorbaConstants.A_END_NE_STR,
+				handler.getValueByName(crossConnect.aEndNameList[0], CorbaConstants.MANAGED_ELEMENT_STR));
+		container.setFieldValue(CorbaConstants.A_END_TP_STR,
+				handler.convertNameAndStringValuesToStringExcludingEMS(crossConnect.aEndNameList));
+		container.setFieldValue(CorbaConstants.Z_END_NE_STR,
+				handler.getValueByName(crossConnect.zEndNameList[0], CorbaConstants.MANAGED_ELEMENT_STR));
+		container.setFieldValue(CorbaConstants.Z_END_TP_STR,
+				handler.convertNameAndStringValuesToStringExcludingEMS(crossConnect.zEndNameList));
 
-		container.setFieldValue(CorbaConstants.SOURCE_TIME_STAMP_STR,
-				handler.convertSystemTimeToString());
+		container.setFieldValue(CorbaConstants.SOURCE_TIME_STAMP_STR, handler.convertSystemTimeToString());
 
 		return container;
 	}
 
-	public void getSNC(String sncName) throws ProcessingFailureException,
-			SAXException {
+	public void getSNC(String sncName) throws ProcessingFailureException, SAXException {
 		if (LOG.isInfoEnabled()) {
 			LOG.info("getSNC() start.");
 		}
@@ -1305,12 +1154,9 @@ public class CorbaCommands {
 
 		NameAndStringValue_T[] nameAndStringValueArray = new NameAndStringValue_T[3];
 
-		nameAndStringValueArray[0] = new NameAndStringValue_T(
-				CorbaConstants.EMS_STR, emsName);
-		nameAndStringValueArray[1] = new NameAndStringValue_T(
-				CorbaConstants.MULTILAYER_SUBNETWORK_STR, "MLSN_1");
-		nameAndStringValueArray[2] = new NameAndStringValue_T(
-				CorbaConstants.SUBNETWORK_CONNECTION_STR, sncName);
+		nameAndStringValueArray[0] = new NameAndStringValue_T(CorbaConstants.EMS_STR, emsName);
+		nameAndStringValueArray[1] = new NameAndStringValue_T(CorbaConstants.MULTILAYER_SUBNETWORK_STR, "MLSN_1");
+		nameAndStringValueArray[2] = new NameAndStringValue_T(CorbaConstants.SUBNETWORK_CONNECTION_STR, sncName);
 
 		SubnetworkConnection_THolder sncHolder = new SubnetworkConnection_THolder();
 
@@ -1321,8 +1167,7 @@ public class CorbaCommands {
 				LOG.info("SNC Name:" + sncHolder.value.userLabel);
 				LOG.info("SNC State:" + sncHolder.value.sncState);
 			}
-			handler.printStructure(helper
-					.getSubnetworkConnectionParams(sncHolder.value));
+			handler.printStructure(helper.getSubnetworkConnectionParams(sncHolder.value));
 		} else {
 			if (LOG.isInfoEnabled()) {
 				LOG.info("No SNC Found for SNC Name:" + sncName);
@@ -1335,8 +1180,7 @@ public class CorbaCommands {
 
 	}
 
-	public StringHolder establishCall(CallCreateData_T callCreateData,
-			SNCCreateData_T[] connectionCreateDataList,
+	public StringHolder establishCall(CallCreateData_T callCreateData, SNCCreateData_T[] connectionCreateDataList,
 			TPDataList_THolder tpsToModify) throws ProcessingFailureException {
 
 		if (LOG.isInfoEnabled()) {
@@ -1349,15 +1193,13 @@ public class CorbaCommands {
 		CallAndTopLevelConnections_THolder callAndTopLevelConnections = new CallAndTopLevelConnections_THolder();
 		StringHolder errorReason = new StringHolder();
 
-		this.mlsnManager.establishCall(callCreateData,
-				connectionCreateDataList, callAndTopLevelConnections,
+		this.mlsnManager.establishCall(callCreateData, connectionCreateDataList, callAndTopLevelConnections,
 				tpsToModify, errorReason);
 
 		if (LOG.isInfoEnabled()) {
 			LOG.info("establishCall() complete.");
 
-			if (errorReason != null && errorReason.value != null
-					&& !"".equals(errorReason.value)) {
+			if (errorReason != null && errorReason.value != null && !"".equals(errorReason.value)) {
 				LOG.info("establishCall() Error Reason:" + errorReason.value);
 			}
 		}
@@ -1366,12 +1208,10 @@ public class CorbaCommands {
 	}
 
 	public StringHolder createAndActivateFDFr(FDFrCreateData_T createData,
-			ConnectivityRequirement_T connectivityRequirement,
-			NamingAttributesList_THolder aEnd,
-			NamingAttributesList_THolder zEnd,
-			NamingAttributesList_THolder internalTPs,
-			MatrixFlowDomainFragmentList_THolder mfdfrs,
-			TPDataList_THolder tpsToModify) throws ProcessingFailureException {
+			ConnectivityRequirement_T connectivityRequirement, NamingAttributesList_THolder aEnd,
+			NamingAttributesList_THolder zEnd, NamingAttributesList_THolder internalTPs,
+			MatrixFlowDomainFragmentList_THolder mfdfrs, TPDataList_THolder tpsToModify)
+					throws ProcessingFailureException {
 
 		if (LOG.isInfoEnabled()) {
 			LOG.info("createAndActivateFDFr() start.");
@@ -1383,17 +1223,14 @@ public class CorbaCommands {
 		FlowDomainFragment_THolder theFDFr = new FlowDomainFragment_THolder();
 		StringHolder errorReason = new StringHolder();
 
-		this.flowDomainManager.createAndActivateFDFr(createData,
-				connectivityRequirement, aEnd, zEnd, internalTPs, mfdfrs,
-				tpsToModify, theFDFr, errorReason);
+		this.flowDomainManager.createAndActivateFDFr(createData, connectivityRequirement, aEnd, zEnd, internalTPs,
+				mfdfrs, tpsToModify, theFDFr, errorReason);
 
 		if (LOG.isInfoEnabled()) {
 			LOG.info("createAndActivateFDFr() complete.");
 
-			if (errorReason != null && errorReason.value != null
-					&& !"".equals(errorReason.value)) {
-				LOG.info("createAndActivateFDFr() Error Reason:"
-						+ errorReason.value);
+			if (errorReason != null && errorReason.value != null && !"".equals(errorReason.value)) {
+				LOG.info("createAndActivateFDFr() Error Reason:" + errorReason.value);
 			}
 		}
 
@@ -1401,15 +1238,13 @@ public class CorbaCommands {
 
 	}
 
-	public void getContainedInUseTPs() throws ProcessingFailureException,
-			SAXException {
+	public void getContainedInUseTPs() throws ProcessingFailureException, SAXException {
 
 		if (LOG.isInfoEnabled()) {
 			LOG.info("getContainedInUseTPs() start.");
 		}
 
-		if (this.tpNames == null
-				|| (this.tpNames != null && this.tpNames.size() <= 0)) {
+		if (this.tpNames == null || (this.tpNames != null && this.tpNames.size() <= 0)) {
 
 			if (!setManagerByName(MLS_MANAGER_NAME))
 				return;
@@ -1421,8 +1256,7 @@ public class CorbaCommands {
 			NameAndStringValue_T[] mlsn = new NameAndStringValue_T[2];
 
 			mlsn[0] = new NameAndStringValue_T(CorbaConstants.EMS_STR, emsName);
-			mlsn[1] = new NameAndStringValue_T(
-					CorbaConstants.MULTILAYER_SUBNETWORK_STR, "MLSN_1");
+			mlsn[1] = new NameAndStringValue_T(CorbaConstants.MULTILAYER_SUBNETWORK_STR, "MLSN_1");
 
 			this.tpNames = new ArrayList<NameAndStringValue_T[]>();
 
@@ -1430,8 +1264,7 @@ public class CorbaCommands {
 			TopologicalLinkIterator_IHolder topologicalLinkIterator = new TopologicalLinkIterator_IHolder();
 
 			try {
-				mlsnManager.getAllTopologicalLinks(mlsn, HOW_MANY,
-						topologicalLinkList, topologicalLinkIterator);
+				mlsnManager.getAllTopologicalLinks(mlsn, HOW_MANY, topologicalLinkList, topologicalLinkIterator);
 
 				for (int i = 0; i < topologicalLinkList.value.length; i++) {
 					if (topologicalLinkList.value[i].aEndTP != null) {
@@ -1448,17 +1281,14 @@ public class CorbaCommands {
 					try {
 						boolean hasMoreData = true;
 						while (hasMoreData) {
-							hasMoreData = topologicalLinkIterator.value.next_n(
-									HOW_MANY, topologicalLinkList);
+							hasMoreData = topologicalLinkIterator.value.next_n(HOW_MANY, topologicalLinkList);
 							for (int i = 0; i < topologicalLinkList.value.length; i++) {
 								if (topologicalLinkList.value[i].aEndTP != null) {
-									this.tpNames
-											.add(topologicalLinkList.value[i].aEndTP);
+									this.tpNames.add(topologicalLinkList.value[i].aEndTP);
 								}
 
 								if (topologicalLinkList.value[i].zEndTP != null) {
-									this.tpNames
-											.add(topologicalLinkList.value[i].zEndTP);
+									this.tpNames.add(topologicalLinkList.value[i].zEndTP);
 								}
 							}
 						}
@@ -1471,8 +1301,7 @@ public class CorbaCommands {
 					}
 				}
 			} catch (ProcessingFailureException ex) {
-				handleProcessingFailureException(ex,
-						"getContainedInUseTPs. MLS: " + mlsn[1].value);
+				handleProcessingFailureException(ex, "getContainedInUseTPs. MLS: " + mlsn[1].value);
 			}
 		}
 
@@ -1480,9 +1309,8 @@ public class CorbaCommands {
 			return;
 		}
 
-		LOG.info("TP Names List Size:" + this.tpNames != null
-				&& this.tpNames.size() > 0 ? String.valueOf(this.tpNames.size())
-				: "0");
+		LOG.info("TP Names List Size:" + this.tpNames != null && this.tpNames.size() > 0
+				? String.valueOf(this.tpNames.size()) : "0");
 
 		if (this.tpNames != null && this.tpNames.size() > 0) {
 
@@ -1500,14 +1328,11 @@ public class CorbaCommands {
 						LOG.info("getContainedInUseTPs: " + eachTPName);
 					}
 
-					meManager.getContainedInUseTPs(eachTPName, tpLayerRateList,
-							HOW_MANY, terminationPointList,
+					meManager.getContainedInUseTPs(eachTPName, tpLayerRateList, HOW_MANY, terminationPointList,
 							terminationPointIterator);
 
 					for (int i = 0; i < terminationPointList.value.length; i++) {
-						helper.printTerminationPoint(
-								terminationPointList.value[i],
-								CorbaConstants.IN_USE_TPS_STR);
+						helper.printTerminationPoint(terminationPointList.value[i], CorbaConstants.IN_USE_TPS_STR);
 					}
 
 					exitWhile = false;
@@ -1516,18 +1341,14 @@ public class CorbaCommands {
 						try {
 							boolean hasMoreData = true;
 							while (hasMoreData) {
-								hasMoreData = terminationPointIterator.value
-										.next_n(HOW_MANY, terminationPointList);
+								hasMoreData = terminationPointIterator.value.next_n(HOW_MANY, terminationPointList);
 								if (LOG.isInfoEnabled()) {
-									LOG.info(
-											"getContainedInUseTPs: got {} InUseTP for ME {}.",
-											terminationPointList.value.length,
-											eachTPName[1].value);
+									LOG.info("getContainedInUseTPs: got {} InUseTP for ME {}.",
+											terminationPointList.value.length, eachTPName[1].value);
 								}
 
 								for (int i = 0; i < terminationPointList.value.length; i++) {
-									helper.printTerminationPoint(
-											terminationPointList.value[i],
+									helper.printTerminationPoint(terminationPointList.value[i],
 											CorbaConstants.IN_USE_TPS_STR);
 								}
 							}
@@ -1542,14 +1363,11 @@ public class CorbaCommands {
 
 						if (LOG.isDebugEnabled()) {
 							LOG.debug("getContainedInUseTPs: finished getContainedInUseTP for Port "
-									+ eachTPName[1].value
-									+ " Order number # "
-									+ counter);
+									+ eachTPName[1].value + " Order number # " + counter);
 						}
 					}
 				} catch (ProcessingFailureException ex) {
-					handleProcessingFailureException(ex,
-							"getContainedInUseTPs. ");
+					handleProcessingFailureException(ex, "getContainedInUseTPs. ");
 				}
 			}
 
@@ -1559,8 +1377,7 @@ public class CorbaCommands {
 		}
 	}
 
-	public EquipmentConfigurationData_T configureEquipment(
-			EquipmentConfigurationData_T equipmentConfiguredData)
+	public EquipmentConfigurationData_T configureEquipment(EquipmentConfigurationData_T equipmentConfiguredData)
 			throws ProcessingFailureException {
 
 		if (LOG.isInfoEnabled()) {
@@ -1573,8 +1390,7 @@ public class CorbaCommands {
 
 		EquipmentConfigurationData_THolder outputEquipmentConfigHolder = new EquipmentConfigurationData_THolder();
 
-		this.equipmentCIENAManager.configureEquipment(equipmentConfiguredData,
-				outputEquipmentConfigHolder);
+		this.equipmentCIENAManager.configureEquipment(equipmentConfiguredData, outputEquipmentConfigHolder);
 
 		if (LOG.isInfoEnabled()) {
 			LOG.info("configureEquipment() complete.");
@@ -1590,8 +1406,7 @@ public class CorbaCommands {
 		return equipmentConfig;
 	}
 
-	public void getEquipmentConfiguration() throws ProcessingFailureException,
-			SAXException {
+	public void getEquipmentConfiguration() throws ProcessingFailureException, SAXException {
 
 		if (LOG.isInfoEnabled()) {
 			LOG.info("getEquipmentConfiguration() start.");
@@ -1601,35 +1416,27 @@ public class CorbaCommands {
 			return;
 		}
 
-		if (this.slotNames == null
-				|| (this.slotNames != null && this.slotNames.size() <= 0)) {
+		if (this.slotNames == null || (this.slotNames != null && this.slotNames.size() <= 0)) {
 
 			List<EquipmentOrHolder_T> equipmentList = getAllEquipmentList();
 
 			if (equipmentList != null && equipmentList.size() > 0) {
 				for (int i = 0; i < equipmentList.size(); i++) {
-					EquipmentOrHolder_T eachEquipmentOrHolder = equipmentList
-							.get(i);
+					EquipmentOrHolder_T eachEquipmentOrHolder = equipmentList.get(i);
 
-					if (eachEquipmentOrHolder != null
-							&& eachEquipmentOrHolder.discriminator().value() != 1) {
+					if (eachEquipmentOrHolder != null && eachEquipmentOrHolder.discriminator().value() != 1) {
 
 						Equipment_T equipment = eachEquipmentOrHolder.equip();
-						if (equipment != null
-								&& ("TSLM-12"
-										.equals(equipment.installedEquipmentObjectType) || "TSLM-48"
-										.equals(equipment.installedEquipmentObjectType))) {
+						if (equipment != null && ("TSLM-12".equals(equipment.installedEquipmentObjectType)
+								|| "TSLM-48".equals(equipment.installedEquipmentObjectType))) {
 
 							NameAndStringValue_T[] slotNameAndStringValueArray = new NameAndStringValue_T[3];
 							slotNameAndStringValueArray[0] = equipment.name[0];
 							slotNameAndStringValueArray[1] = equipment.name[1];
 
-							if ("EquipmentHolder"
-									.equals(equipment.name[2].name)) {
+							if ("EquipmentHolder".equals(equipment.name[2].name)) {
 								slotNameAndStringValueArray[2] = equipment.name[2];
-							} else if (equipment.name.length > 3
-									&& "EquipmentHolder"
-											.equals(equipment.name[3].name)) {
+							} else if (equipment.name.length > 3 && "EquipmentHolder".equals(equipment.name[3].name)) {
 								slotNameAndStringValueArray[2] = equipment.name[3];
 							}
 
@@ -1644,9 +1451,8 @@ public class CorbaCommands {
 			}
 		}
 
-		LOG.info("Slot Names List Size:" + this.slotNames != null
-				&& this.slotNames.size() > 0 ? String.valueOf(this.slotNames
-				.size()) : "0");
+		LOG.info("Slot Names List Size:" + this.slotNames != null && this.slotNames.size() > 0
+				? String.valueOf(this.slotNames.size()) : "0");
 
 		if (this.slotNames != null && this.slotNames.size() > 0) {
 
@@ -1656,22 +1462,18 @@ public class CorbaCommands {
 			for (NameAndStringValue_T[] eachSlotNameArray : this.slotNames) {
 
 				try {
-					this.equipmentCIENAManager.getEquipmentConfiguration(
-							eachSlotNameArray, eqtParametersList,
+					this.equipmentCIENAManager.getEquipmentConfiguration(eachSlotNameArray, eqtParametersList,
 							equipmentConfigDataHolder);
 
-					if (equipmentConfigDataHolder != null
-							&& equipmentConfigDataHolder.value != null) {
+					if (equipmentConfigDataHolder != null && equipmentConfigDataHolder.value != null) {
 
-						handler.printStructure(helper
-								.printEquipmentConfiguration(equipmentConfigDataHolder.value));
+						handler.printStructure(helper.printEquipmentConfiguration(equipmentConfigDataHolder.value));
 					} else {
 						LOG.info("equipmentConfigDataHolder is empty");
 					}
 
 				} catch (ProcessingFailureException ex) {
-					handleProcessingFailureException(ex,
-							"getEquipmentConfiguration. ");
+					handleProcessingFailureException(ex, "getEquipmentConfiguration. ");
 				}
 			}
 
@@ -1681,8 +1483,7 @@ public class CorbaCommands {
 		}
 	}
 
-	public TerminationPoint_T setTPData(TPData_T tpData)
-			throws ProcessingFailureException {
+	public TerminationPoint_T setTPData(TPData_T tpData) throws ProcessingFailureException {
 
 		if (LOG.isInfoEnabled()) {
 			LOG.info("setTPData() start.");
@@ -1710,8 +1511,7 @@ public class CorbaCommands {
 		return terminationPoint;
 	}
 
-	public void handleProcessingFailureException(
-			ProcessingFailureException pfe, String param)
+	public void handleProcessingFailureException(ProcessingFailureException pfe, String param)
 			throws ProcessingFailureException {
 		CorbaErrorProcessor err = new CorbaErrorProcessor(pfe);
 
@@ -1721,8 +1521,8 @@ public class CorbaCommands {
 
 			throw pfe;
 		} else {
-			LOG.error("Ciena OC>> " + param + err.printError()
-					+ " It is a minor error. Continue interaction with server",
+			LOG.error(
+					"Ciena OC>> " + param + err.printError() + " It is a minor error. Continue interaction with server",
 					pfe);
 		}
 	}

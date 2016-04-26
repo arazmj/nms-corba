@@ -122,7 +122,8 @@ public enum Corba2XMLStructure {
             CorbaConstants.Z_END_NE_STR,
             CorbaConstants.Z_END_TP_STR,
             CorbaConstants.A_TRANSMISSION_PARAMS_STR,
-            CorbaConstants.Z_TRANSMISSION_PARAMS_STR
+            CorbaConstants.Z_TRANSMISSION_PARAMS_STR,
+            CorbaConstants.ADDITIONAL_INFO_STR
     }),
 
     /**
@@ -185,6 +186,26 @@ public enum Corba2XMLStructure {
             CorbaConstants.Z2_CTP_STR,
     }),
 
+    /**
+     * CORBA entity: TopologicalLink_T
+     */
+    SNC_TOPOL_LINKS("SNC_TOPO_LINKS", new String[]{
+    		CorbaConstants.SNC_ID_STR,
+            CorbaConstants.USER_LABEL_STR,
+            CorbaConstants.TL_ID_STR,
+            CorbaConstants.NATIVE_EMS_NAME_STR,
+            CorbaConstants.OWNER_STR,
+            CorbaConstants.DIRECTION_STR,
+            CorbaConstants.RATE_STR,
+            CorbaConstants.A_END_NE_STR,
+            CorbaConstants.A_END_TP_STR,
+            CorbaConstants.Z_END_NE_STR,
+            CorbaConstants.Z_END_TP_STR,
+            CorbaConstants.A_TRANSMISSION_PARAMS_STR,
+            CorbaConstants.Z_TRANSMISSION_PARAMS_STR,
+            CorbaConstants.ADDITIONAL_INFO_STR
+    }),
+    
     /**
      * CORBA entity: ProtectionGroup_T
      */

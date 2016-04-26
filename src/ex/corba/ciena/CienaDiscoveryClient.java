@@ -1,6 +1,9 @@
 package ex.corba.ciena;
 
 import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
@@ -14,8 +17,7 @@ import ex.corba.ciena.error.CorbaErrorProcessor;
 import ex.corba.ciena.transform.sax.Corba2XMLHandler;
 
 public class CienaDiscoveryClient extends CienaConnection {
-	public static final Logger LOG = LoggerFactory
-			.getLogger(CienaDiscoveryClient.class);
+	public static final Logger LOG = LoggerFactory.getLogger(CienaDiscoveryClient.class);
 
 	protected static Corba2XMLHandler handler;
 
@@ -44,22 +46,21 @@ public class CienaDiscoveryClient extends CienaConnection {
 		cmd.getAllManagedElementNames();
 	}
 
-	public void executeCommandsXmlOutput(EmsSession_I emsSession)
-			throws Exception {
+	public void executeCommandsXmlOutput(EmsSession_I emsSession) throws Exception {
 		OutputFormat format = OutputFormat.createPrettyPrint();
-		XMLWriter xmlWriter = new XMLWriter(new FileOutputStream("output.xml"),
-				format);
+		Calendar calendar = Calendar.getInstance();
+		Date currentDate = calendar.getTime();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		XMLWriter xmlWriter = new XMLWriter(new FileOutputStream("ciena-" + sdf.format(currentDate) + ".xml"), format);
 
 		handler = new Corba2XMLHandler(xmlWriter);
 
-		CorbaCommands cmd = new CorbaCommands(emsSession, realEMSName,
-				xmlWriter);
+		CorbaCommands cmd = new CorbaCommands(emsSession, realEMSName, xmlWriter);
 
 		handler.handlerBuilderStart();
 
 		if (props.getProperty("getAllManagedElements") != null
-				&& props.getProperty("getAllManagedElements").equalsIgnoreCase(
-						"yes")) {
+				&& props.getProperty("getAllManagedElements").equalsIgnoreCase("yes")) {
 			cmd.getAllManagedElements();
 		}
 
@@ -68,49 +69,42 @@ public class CienaDiscoveryClient extends CienaConnection {
 			cmd.getAllEquipment();
 		}
 
-		if (props.getProperty("getAllPTPs") != null
-				&& props.getProperty("getAllPTPs").equalsIgnoreCase("yes")) {
+		if (props.getProperty("getAllPTPs") != null && props.getProperty("getAllPTPs").equalsIgnoreCase("yes")) {
 			cmd.getAllPTPs();
 		}
 
 		if (props.getProperty("getAllTopologicalLinks") != null
-				&& props.getProperty("getAllTopologicalLinks")
-						.equalsIgnoreCase("yes")) {
+				&& props.getProperty("getAllTopologicalLinks").equalsIgnoreCase("yes")) {
 			cmd.getAllTopologicalLinks();
 		}
 
 		if (props.getProperty("getAllSubnetworkConnections") != null
-				&& props.getProperty("getAllSubnetworkConnections")
-						.equalsIgnoreCase("yes")) {
+				&& props.getProperty("getAllSubnetworkConnections").equalsIgnoreCase("yes")) {
 			cmd.getAllSubnetworkConnections();
 		}
 
 		if (props.getProperty("getAllProtectionGroups") != null
-				&& props.getProperty("getAllProtectionGroups")
-						.equalsIgnoreCase("yes")) {
+				&& props.getProperty("getAllProtectionGroups").equalsIgnoreCase("yes")) {
 			cmd.getAllProtectionGroups();
 		}
-		
-		if (props.getProperty("getAllGTPs") != null
-				&& props.getProperty("getAllGTPs").equalsIgnoreCase("yes")) {
+
+		if (props.getProperty("getAllGTPs") != null && props.getProperty("getAllGTPs").equalsIgnoreCase("yes")) {
 			cmd.getAllGTPs();
 		}
-		
-		if (props.getProperty("getRoute") != null
-				&& props.getProperty("getRoute").equalsIgnoreCase("yes")) {
+
+		if (props.getProperty("getRoute") != null && props.getProperty("getRoute").equalsIgnoreCase("yes")) {
 			cmd.getRoute();
 		}
-		
-		if (props.getProperty("getAllFDFrs") != null
-				&& props.getProperty("getAllFDFrs").equalsIgnoreCase("yes")) {
+
+		if (props.getProperty("getAllFDFrs") != null && props.getProperty("getAllFDFrs").equalsIgnoreCase("yes")) {
 			cmd.getAllFDFrs();
 		}
-		
+
 		if (props.getProperty("getContainedInUseTPs") != null
 				&& props.getProperty("getContainedInUseTPs").equalsIgnoreCase("yes")) {
 			cmd.getContainedInUseTPs();
 		}
-		
+
 		if (props.getProperty("getEquipmentConfiguration") != null
 				&& props.getProperty("getEquipmentConfiguration").equalsIgnoreCase("yes")) {
 			cmd.getEquipmentConfiguration();

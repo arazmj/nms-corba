@@ -92,7 +92,8 @@ public enum Corba2XMLStructure {
 			CorbaConstants.A_END_TP_STR, CorbaConstants.Z_END_NE_STR,
 			CorbaConstants.Z_END_TP_STR,
 			CorbaConstants.A_TRANSMISSION_PARAMS_STR,
-			CorbaConstants.Z_TRANSMISSION_PARAMS_STR }),
+			CorbaConstants.Z_TRANSMISSION_PARAMS_STR,
+			CorbaConstants.ADDITIONAL_INFO_STR}),
 
 	/**
 	 * CORBA entity: ProtectionGroup_T
