@@ -63,8 +63,8 @@ public class HuaweiActivationClient extends HuaweiConnection {
 			// main.createE4withProtection();
 			// main.createSTM1_1_plus_0();
 			// main.createSTM1_1_plus_1();
-			main.createSTM1_1_plus_1v2();
-			main.getSNCsByUserLabelAndRoutes("NISA-STM1-1+1v2");
+			// main.createSTM1_1_plus_1v2();
+			// main.getSNCsByUserLabelAndRoutes("NISA-STM1-1+1v2");
 
 			// main.createServerTrail();
 
@@ -96,6 +96,7 @@ public class HuaweiActivationClient extends HuaweiConnection {
 			// main.delEthService();
 			// main.addBindingPathVC12();
 			// main.addBindingPathVC3();
+			main.addBindingPathVC4();
 			// main.addBindingPathVC12for4M();
 			// main.configureEthernetPort();
 			// main.configureVCTRUNKPort();
@@ -1998,20 +1999,16 @@ public class HuaweiActivationClient extends HuaweiConnection {
 
 		NameAndStringValue_T[][] aEnd = new NameAndStringValue_T[1][4];
 
-		// A-End
+		// A-End - Node
 		aEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
 		aEnd[0][1] = new NameAndStringValue_T("ManagedElement", "3145729");
-
-		// VC12 Path
 		aEnd[0][2] = new NameAndStringValue_T("PTP", "/rack=1/shelf=1/slot=5/domain=sdh/port=1");
 		aEnd[0][3] = new NameAndStringValue_T("CTP", "/sts3c_au4-j=1/vt2_tu12-k=3-l=1-m=1");
 
-		// Z-End
+		// Z-End - Node
 		NameAndStringValue_T[][] zEnd = new NameAndStringValue_T[1][4];
 		zEnd[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
 		zEnd[0][1] = new NameAndStringValue_T("ManagedElement", "3145728");
-
-		// VC12 Path
 		zEnd[0][2] = new NameAndStringValue_T("PTP", "/rack=1/shelf=1/slot=5/domain=sdh/port=1");
 		zEnd[0][3] = new NameAndStringValue_T("CTP", "/sts3c_au4-j=2/vt2_tu12-k=3-l=1-m=1");
 
@@ -2826,6 +2823,25 @@ public class HuaweiActivationClient extends HuaweiConnection {
 		cmd.addBindingPath(vctrunkPort, Directionality_T.D_BIDIRECTIONAL, pathList);
 	}
 
+	public void addBindingPathVC4() throws ProcessingFailureException {
+		NameAndStringValue_T[] vctrunkPort = new NameAndStringValue_T[3];
+		vctrunkPort[0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		vctrunkPort[1] = new NameAndStringValue_T("ManagedElement", "3145728");
+		vctrunkPort[2] = new NameAndStringValue_T("PTP", "/rack=1/shelf=1/slot=5/domain=eth/type=mp/port=3");
+
+		NameAndStringValue_T[][] pathList = new NameAndStringValue_T[1][4];
+
+		// Bind VCTRUNK port to VC-3 SDH path which is created using method
+		// createVC3Path
+		pathList[0][0] = new NameAndStringValue_T("EMS", this.realEMSName);
+		pathList[0][1] = new NameAndStringValue_T("ManagedElement", "3145728");
+		pathList[0][2] = new NameAndStringValue_T("PTP", "/rack=1/shelf=1/slot=5/domain=sdh/port=1");
+		pathList[0][3] = new NameAndStringValue_T("CTP", "/sts3c_au4-j=2");
+
+		CorbaCommands cmd = new CorbaCommands(emsSession, this.realEMSName);
+		cmd.addBindingPath(vctrunkPort, Directionality_T.D_BIDIRECTIONAL, pathList);
+	}
+	
 	// Bind 2 VC12 SDH Path for 4M Ethernet service
 	public void addBindingPathVC12for4M() throws ProcessingFailureException {
 		NameAndStringValue_T[] vctrunkPort = new NameAndStringValue_T[3];

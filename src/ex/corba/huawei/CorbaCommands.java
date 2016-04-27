@@ -916,6 +916,7 @@ public class CorbaCommands {
 		HW_MSTPEndPointIterator_IHolder iteratorHolder = new HW_MSTPEndPointIterator_IHolder();
 
 		HW_MSTPEndPointIterator_I iterator = null;
+		mstpEndPointList = new ArrayList<HW_MSTPEndPoint_T>();
 
 		for (String neName : neNames) {
 			ne[1].value = neName;
@@ -927,7 +928,7 @@ public class CorbaCommands {
 						+ " MstpEndPoints for managedElement: " + neName);
 			}
 
-			mstpEndPointList = helper.printMstpEndPoints(listHolder.value);
+			mstpEndPointList.addAll(helper.printMstpEndPoints(listHolder.value));
 
 			iterator = iteratorHolder.value;
 			if (iterator != null) {
@@ -940,7 +941,7 @@ public class CorbaCommands {
 				try {
 					while (hasMoreData) {
 						hasMoreData = iterator.next_n(HOW_MANY, listHolder);
-						mstpEndPointList = helper.printMstpEndPoints(listHolder.value);
+						mstpEndPointList.addAll(helper.printMstpEndPoints(listHolder.value));
 					}
 
 					exitedWhile = true;
@@ -1042,9 +1043,10 @@ public class CorbaCommands {
 			try {
 				mstpInvertoryManager.getBindingPath(mstpEndPoint.name, mstpBindingPathListHolder);
 
-				if (LOG.isInfoEnabled()) {
-					LOG.info("getBindingPath: got " + mstpBindingPathListHolder.value.length
-							+ " pieces of BindingPath for MSTP End point name " + mstpEndPoint.name);
+				if (LOG.isDebugEnabled()) {
+					LOG.debug("getBindingPath: got " + mstpBindingPathListHolder.value.length
+							+ " pieces of BindingPath for MSTP End point name "
+							+ handler.convertNameAndStringValueToString(mstpEndPoint.name));
 				}
 
 				for (int i = 0; i < mstpBindingPathListHolder.value.length; i++) {
