@@ -682,6 +682,57 @@ public class CorbaCommands {
 		}
 	}
 
+	public void getRouteAndTopologicalLinks() throws Exception {
+		if (LOG.isInfoEnabled()) {
+			LOG.info("getRouteAndTopologicalLinks() start.");
+		}
+
+		if (sncNames == null) {
+			sncNames = getAllSubnetworkConnections();
+		}
+
+		if (!setManagerByName(MLS_MANAGER_NAME))
+			return;
+
+		NameAndStringValue_T[] sncNameArray = new NameAndStringValue_T[3];
+
+		sncNameArray[0] = new NameAndStringValue_T(CorbaConstants.EMS_STR, emsName);
+		sncNameArray[1] = new NameAndStringValue_T(CorbaConstants.MULTILAYER_SUBNETWORK_STR, "1");
+		sncNameArray[2] = new NameAndStringValue_T();
+		sncNameArray[2].name = CorbaConstants.SUBNETWORK_CONNECTION_STR;
+
+		Route_THolder routeHolder = new Route_THolder();
+		TopologicalLinkList_THolder topologicalLinkList = new TopologicalLinkList_THolder();
+
+		for (String sncName : sncNames) {
+			sncNameArray[2].value = sncName;
+
+			try {
+				mlsnManager.getRouteAndTopologicalLinks(sncNameArray, routeHolder, topologicalLinkList);
+
+				if (LOG.isInfoEnabled()) {
+					LOG.info("getRouteAndTopologicalLinks: got " + routeHolder.value.length + " Cross-connects for SNC "
+							+ sncNameArray[2].value);
+				}
+
+				for (CrossConnect_T crossConnect : routeHolder.value) {
+					handler.printStructure(helper.getRouteParams(crossConnect, sncNameArray[2].value));
+				}
+
+				for (int i = 0; i < topologicalLinkList.value.length; i++) {
+					handler.printStructure(helper.getRouteAndTopologicalLinksParams(topologicalLinkList.value[i],
+							sncNameArray[2].value));
+				}
+			} catch (ProcessingFailureException ex) {
+				handleProcessingFailureException(ex, "getRouteAndTopologicalLinks. SNC: " + sncNameArray[2].value);
+			}
+		}
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info("getRouteAndTopologicalLinks() complete.");
+		}
+	}
+	
 	public void getSNCsByUserLabel(String userLabel) throws ProcessingFailureException, SAXException {
 
 		if (LOG.isInfoEnabled()) {

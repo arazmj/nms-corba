@@ -87,6 +87,11 @@ public class HuaweiDiscoveryClient extends HuaweiConnection {
 			cmd.getRoute();
 		}
 
+		if (props.getProperty("getRouteAndTopologicalLinks") != null
+				&& props.getProperty("getRouteAndTopologicalLinks").equalsIgnoreCase("yes")) {
+			cmd.getRouteAndTopologicalLinks();
+		}
+
 		if (props.getProperty("getAllProtectionGroups") != null
 				&& props.getProperty("getAllProtectionGroups").equalsIgnoreCase("yes")) {
 			cmd.getAllProtectionGroups();
